@@ -122,12 +122,13 @@ void SosoValentinesApp::defineMirrorGrid()
     
 	const float tri_width = distance( pt1, pt2 ) * tri_scale;
 	const float tri_height = std::sqrt((tri_width*tri_width) - ((tri_width/2) * (tri_width/2)));
-    
-	const int amtX = ceil((((getWindowWidth()*2) - .5) / (1.5*(tri_width))) + 0.5f );
+
+	// amtX and amtY controls the circling texture over the original image
+	const int amtX = ceil((((getWindowWidth()*3) - .5) / (1.5*(tri_width))) + 0.5f );
 	const float w = ((amtX*1.5) + .5) * tri_width;
 	const float xOffset = -(w-getWindowWidth())/2;
 	
-	const int amtY = ceil((getWindowHeight()*2) / (tri_height) + 0.5f );
+	const int amtY = ceil((getWindowHeight()*3) / (tri_height) + 0.5f );
 	const float yOffset = -((amtY*(tri_height) - getWindowHeight())/2);
 	
 	// creates a series of hexagons composed of 6 triangles each
@@ -277,6 +278,7 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 	vec2 mSamplePt3( mSamplePt1.x + (cos(M_PI/3)), mSamplePt1.y + (sin(M_PI/3)));
 	
 	mat3 mtrx( 1.0f );
+	// this part controls the sampling
 	mtrx = glm::translate( mtrx, mSamplePt.value() );
 	mtrx = glm::scale( mtrx, vec2( mSampleSize ) );
 	mtrx = glm::rotate( mtrx, float((getElapsedFrames()*4)/2*M_PI) );
@@ -289,7 +291,7 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 	mSamplePt2 /= mMirrorTexture->getSize();
 	mSamplePt3 /= mMirrorTexture->getSize();
 	
-	// loop through all the pieces and pass along the current texture and it's coordinates
+	// loop through all the pieces and pass along the current texture and its coordinates
 	int outCount = 0;
 	int inCount = 0;
 	for( int i = 0; i < vec->size(); i++ ) {

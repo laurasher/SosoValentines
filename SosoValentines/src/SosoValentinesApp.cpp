@@ -110,9 +110,9 @@ void SosoValentinesApp::continueCycle()
 // Creates the grid of kaleidoscope mirrored triangles
 void SosoValentinesApp::defineMirrorGrid()
 {
-	const int r = 1;
-	const float tri_scale = (float)randInt(120, 400);
-	
+	const int r = 1; // don't change this because this normalizes each triangle
+	const float tri_scale = (float)randInt(50, 100);
+
 	// delete any previous pieces and clear the old vector
 	mTriPieces.clear();
 	

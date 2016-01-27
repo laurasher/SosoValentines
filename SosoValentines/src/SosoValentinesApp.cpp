@@ -50,7 +50,7 @@ class SosoValentinesApp : public App {
 	gl::TextureRef				mBgTexture;				// texture for the still image
 	gl::TextureRef				mMirrorTexture;			// texture for the mirror
 	
-	vector<TrianglePiece>		mTriPieces;				// stores alll of the kaleidoscope mirror pieces
+	vector<TrianglePiece>		mTriPieces;				// stores all of the kaleidoscope mirror pieces
 	Anim<vec2>					mSamplePt;				// location of the piece of the image that is being sampled for the kaleidoscope
 	int							mPhase;					// current phase of the app (0 or 1)
 	Instagram					mCurInstagram;			// current instagram info
@@ -289,7 +289,7 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 	mSamplePt2 /= mMirrorTexture->getSize();
 	mSamplePt3 /= mMirrorTexture->getSize();
 	
-	// loop through all the pieces and pass along the current texture and it's coordinates
+	// loop through all the pieces and pass along the current texture and its coordinates
 	int outCount = 0;
 	int inCount = 0;
 	for( int i = 0; i < vec->size(); i++ ) {
@@ -326,12 +326,8 @@ void SosoValentinesApp::draw()
 {
 	gl::clear( Color( 0, 0, 0 ) );
 	gl::enableAlphaBlending( PREMULT );
-	
-	if( mBgTexture )
-		gl::draw( mBgTexture, Rectf( mBgTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
-	
+
 	drawMirrors( &mTriPieces );
-	mTextRibbon->draw();
 }
 
 void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )

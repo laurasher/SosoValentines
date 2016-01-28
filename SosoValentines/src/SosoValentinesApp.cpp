@@ -65,8 +65,10 @@ class SosoValentinesApp : public App {
 	bool						mPiecesIn;				// whether all of the mirror pieces are showing or not
 	bool						mPhaseChangeCalled;		// if the app has been told to change phases or not
 	bool						mFirstRun;				// if the app is on its first cycle
-    bool                        isDrawingHeartCutout;   // turn heart cutout on/off for debugging
-    bool                        isDrawingOriginalImage; // show original image for debugging
+    // helpful for debug
+    bool                        isDrawingHeartCutout;   // turn heart cutout on/off
+    bool                        isDrawingOriginalImage; // show original image
+    bool                        isInDebugMode;          // show just the first triangle in 1 * 1 grid texture rectangle
 };
 
 void SosoValentinesApp::prepareSettings( Settings *settings )
@@ -85,9 +87,10 @@ void SosoValentinesApp::setup()
 	mLoadingTexture = false;
 	mTextureLoaded = false;
 	mPhaseChangeCalled = false;
-    isDrawingHeartCutout = true;
+    isDrawingHeartCutout = false;
     isDrawingOriginalImage = false;
-	
+    isInDebugMode = true;
+    
     if (isDrawingHeartCutout)
     {
         auto heartCutout = loadImage( loadAsset( "heart1_cutout.png" ) );
@@ -133,12 +136,22 @@ void SosoValentinesApp::defineMirrorGrid()
 	const float tri_width = distance( pt1, pt2 ) * tri_scale;
 	const float tri_height = std::sqrt((tri_width*tri_width) - ((tri_width/2) * (tri_width/2)));
 
-	// amtX and amtY controls the circling texture over the original image
-	const int amtX = ceil((((getWindowWidth()*3) - .5) / (1.5*(tri_width))) + 0.5f );
-	const float w = ((amtX*1.5) + .5) * tri_width;
+	
+    // amtX and amtY controls the circling texture over the original image
+    int amtX = 0;
+    int amtY = 0;
+    
+    if (isInDebugMode) {
+        amtX = ceil((((getWindowWidth()*1) - .5) / (1.5*(tri_width))) + 0.5f );
+        amtY = ceil((getWindowHeight()*1) / (tri_height) + 0.5f );
+    }
+    else {
+        amtX = ceil((((getWindowWidth()*3) - .5) / (1.5*(tri_width))) + 0.5f );
+        amtY = ceil((getWindowHeight()*3) / (tri_height) + 0.5f );
+    }
+    const float w = ((amtX*1.5) + .5) * tri_width;
 	const float xOffset = -(w-getWindowWidth())/2;
 	
-	const int amtY = ceil((getWindowHeight()*3) / (tri_height) + 0.5f );
 	const float yOffset = -((amtY*(tri_height) - getWindowHeight())/2);
 	
 	// creates a series of hexagons composed of 6 triangles each
@@ -358,9 +371,15 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 	gl::translate( getWindowCenter() );
 	// texture global rotation
     gl::rotate( mMirrorRot );
-    for( int i = 0; i < vec->size()- 100; i++ ) {
-		(*vec)[i].draw();
-	}
+    if ( isInDebugMode ) {
+        (*vec)[0].draw();
+    }
+    else {
+        for( int i = 0; i < vec->size(); i++ ) {
+            (*vec)[i].draw();
+        }
+    }
+    
 }
 
 CINDER_APP( SosoValentinesApp, RendererGl( RendererGl::Options().msaa( 16 ) ) )

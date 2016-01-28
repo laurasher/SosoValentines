@@ -68,12 +68,13 @@ class SosoValentinesApp : public App {
 	bool												mFirstRun;				// if the app is on its first cycle
 
 	// helpful for debug
-	bool                        isDrawingHeartCutout = true;   // turn heart cutout on/off
-	bool                        isDrawingOriginalImage = false; // show original image
-	bool                        isDrawingFirstTriangle = false; // show just the first triangle in 1 * 1 grid texture rectangle
-	bool												isDrawingFirstHexagon = false;	// show just the first hexagon in 1 * 1 grid texture rectangle
-	bool												isDisablingGlobalRotation = false;
-	bool												isRandomizingHexInitalization = true; //this affects the initial size, position
+	bool                        isInDebugMode = true;
+	bool                        isDrawingHeartCutout;   // turn heart cutout on/off
+	bool                        isDrawingOriginalImage; // show original image
+	bool												isDrawingFirstHexagon ;	// show just the first hexagon in 1 * 1 grid texture rectangle
+	bool												isDisablingGlobalRotation;
+	bool												isRandomizingHexInitalization; //this affects the initial size, position
+	int													tri_index;											// which of the triangles to show of the first hexagon
 };
 
 void SosoValentinesApp::prepareSettings( Settings *settings )
@@ -92,8 +93,24 @@ void SosoValentinesApp::setup()
 	mLoadingTexture = false;
 	mTextureLoaded = false;
 	mPhaseChangeCalled = false;
+	tri_index = 0;
 
-	ui::initialize();
+	if(isInDebugMode){
+		ui::initialize();
+		isDrawingHeartCutout = false;
+		isDrawingOriginalImage = false;
+		isDrawingFirstHexagon = true;
+		isDisablingGlobalRotation = true;
+		isRandomizingHexInitalization = false;
+	} else {
+		isDrawingHeartCutout = true;
+		isDrawingOriginalImage = false;
+		isDrawingFirstHexagon = false;
+		isDisablingGlobalRotation = false;
+		isRandomizingHexInitalization = true;
+	}
+
+
 
 	if (isDrawingHeartCutout)
 	{
@@ -153,7 +170,7 @@ void SosoValentinesApp::defineMirrorGrid()
     int amtX = 0;
     int amtY = 0;
     
-    if (isDrawingFirstTriangle || isDrawingFirstHexagon) {
+    if (isDrawingFirstHexagon) {
         amtX = ceil((((getWindowWidth()*1) - .5) / (1.5*(tri_width))) + 0.5f );
         amtY = ceil((getWindowHeight()*1) / (tri_height) + 0.5f );
     } else {
@@ -187,7 +204,7 @@ void SosoValentinesApp::defineMirrorGrid()
 				else {alpha = 1.0f;}
 				
 				// rotate the whole triangle -120 degrees CC so the hexagon will have the the vertex at top
-				TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k - (2 * M_PI / 3), scale, alpha);
+				TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k, scale, alpha);
 				mTriPieces.push_back(tri);
 			}
 		}
@@ -385,18 +402,21 @@ void SosoValentinesApp::draw()
 	}
 	mTextRibbon->draw();
 
-	// draw debug GUI
-	ui::Begin("Debug Settings");
+	if (isInDebugMode){
+		// draw debug GUI
+		ui::Begin("Debug Settings");
 
-	ui::Checkbox("Show heart cutout", &isDrawingHeartCutout);
-	ui::Checkbox("Draw original image in the background", &isDrawingOriginalImage);
-	ui::Checkbox("Only draw the first triangle", &isDrawingFirstTriangle);
-	ui::Checkbox("Only draw the first hexagon", &isDrawingFirstHexagon);
-	ui::Checkbox("Diable global rotation", &isDisablingGlobalRotation);
-	ui::Checkbox("Randomize the hexagon initialization", &isRandomizingHexInitalization);
+		ui::Checkbox("Show heart cutout", &isDrawingHeartCutout);
+		ui::Checkbox("Draw original image in the background", &isDrawingOriginalImage);
+		ui::Checkbox("Only draw the first hexagon", &isDrawingFirstHexagon);
+		if (isDrawingFirstHexagon) {
+			ui::SliderInt( "triangle index (6 = all)", &tri_index, 0, 6 ); // 6 if drawing all triangles
+		}
+		ui::Checkbox("Diable global rotation", &isDisablingGlobalRotation);
+		ui::Checkbox("Randomize the hexagon initialization", &isRandomizingHexInitalization);
 
-
-	ui::End();
+		ui::End();
+	}
 }
 
 void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
@@ -407,12 +427,16 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 	if (!isDisablingGlobalRotation) {
 		gl::rotate( mMirrorRot );
 	}
-	if ( isDrawingFirstTriangle ) {
-			(*vec)[0].draw();
-	}
-	else if ( isDrawingFirstHexagon ) {
-		for( int i = 0; i < 6; i++ ) {
-			(*vec)[i].draw();
+
+	if ( isDrawingFirstHexagon ) {
+		if (tri_index < 6){
+			(*vec)[tri_index].draw();
+			cout << "my tri index is " << tri_index;
+		}
+		else {
+			for( int i = 0; i < 6; i++ ) {
+				(*vec)[i].draw();
+			}
 		}
 	}
 	else {

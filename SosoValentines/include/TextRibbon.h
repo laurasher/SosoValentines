@@ -19,11 +19,11 @@ class TextRibbon {
 	void	update( std::string tag, std::string user );
 	void	draw();
 	void	ribbonOut(float delay);
+	void			ribbonIn(float delay);
 	
   private:
 	void			makeText();
 	void			drawTextShape();
-	void			ribbonIn(float delay);
 	
 	std::string			mTag, mUser;
 	ci::vec2			mTextPos, mRibbonSize;

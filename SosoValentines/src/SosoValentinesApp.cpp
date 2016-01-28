@@ -15,7 +15,7 @@ using namespace ci::app;
 using namespace std;
 
 static const int MIRROR_DUR = 5;	// Duration of the mirror/kaleidoscope animation
-static const int STILL_DUR = 5;		// Duration of the still image
+static const int STILL_DUR = 0;		// Duration of the still image
 static const string TAG = "";		// Instagram tag to search for
 
 // Instagram Client Id - DO NOT USE THIS ONE!!! 
@@ -208,7 +208,8 @@ void SosoValentinesApp::transitionMirrorIn( vector<TrianglePiece> *vec )
 		float delay = randFloat( 0.1f, 0.5f );
 		(*vec)[i].reset( delay, mMirrorTexture );
 	}
-	mTextRibbon->ribbonOut(0);
+//	mTextRibbon->ribbonOut(0);
+	mTextRibbon->ribbonIn(0);
 }
 
 void SosoValentinesApp::imageLoaded()
@@ -324,11 +325,11 @@ void SosoValentinesApp::mirrorIn()
 
 void SosoValentinesApp::draw()
 {
-	gl::clear( Color( 0, 0, 0 ) );
+//	gl::clear( Color( 0, 0, 0 ) );
 	gl::enableAlphaBlending( PREMULT );
 
 	drawMirrors( &mTriPieces );
-		mTextRibbon->draw();
+	mTextRibbon->draw();
 }
 
 void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )

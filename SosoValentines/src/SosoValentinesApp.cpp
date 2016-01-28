@@ -328,6 +328,7 @@ void SosoValentinesApp::draw()
 	gl::enableAlphaBlending( PREMULT );
 
 	drawMirrors( &mTriPieces );
+		mTextRibbon->draw();
 }
 
 void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )

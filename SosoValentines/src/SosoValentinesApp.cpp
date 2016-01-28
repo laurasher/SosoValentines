@@ -176,7 +176,7 @@ void SosoValentinesApp::defineMirrorGrid()
                 
                 // rotate the whole triangle 90 degrees CC so the hexagon will have the the vertex at top
                 
-				TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k - (2 * M_PI / 3), scale, );
+				TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k - (2 * M_PI / 3), scale, alpha);
 				mTriPieces.push_back(tri);
 			}
 		}

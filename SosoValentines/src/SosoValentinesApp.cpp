@@ -368,7 +368,7 @@ void SosoValentinesApp::mirrorIn()
 
 void SosoValentinesApp::draw()
 {
-//	gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
+	gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
 	gl::enableAlphaBlending( PREMULT );
 
 	if( mBgTexture && isDrawingOriginalImage ) {

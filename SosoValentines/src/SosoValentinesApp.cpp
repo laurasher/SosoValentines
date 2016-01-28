@@ -49,6 +49,7 @@ class SosoValentinesApp : public App {
 	gl::TextureRef				mNewTex;				// the loaded texture
 	gl::TextureRef				mBgTexture;				// texture for the still image
 	gl::TextureRef				mMirrorTexture;			// texture for the mirror
+    gl::TextureRef              mHeartTexture;          // texture for the heart cutout
 	
 	vector<TrianglePiece>		mTriPieces;				// stores alll of the kaleidoscope mirror pieces
 	Anim<vec2>					mSamplePt;				// location of the piece of the image that is being sampled for the kaleidoscope
@@ -64,6 +65,10 @@ class SosoValentinesApp : public App {
 	bool						mPiecesIn;				// whether all of the mirror pieces are showing or not
 	bool						mPhaseChangeCalled;		// if the app has been told to change phases or not
 	bool						mFirstRun;				// if the app is on its first cycle
+    // helpful for debug
+    bool                        isDrawingHeartCutout;   // turn heart cutout on/off
+    bool                        isDrawingOriginalImage; // show original image
+    bool                        isDrawingFirstTriangle;          // show just the first triangle in 1 * 1 grid texture rectangle
 };
 
 void SosoValentinesApp::prepareSettings( Settings *settings )
@@ -82,8 +87,16 @@ void SosoValentinesApp::setup()
 	mLoadingTexture = false;
 	mTextureLoaded = false;
 	mPhaseChangeCalled = false;
-	
-	mTextRibbon = new TextRibbon();
+    isDrawingHeartCutout = false;
+    isDrawingOriginalImage = true;
+    isDrawingFirstTriangle = false;
+    
+    if (isDrawingHeartCutout)
+    {
+        auto heartCutout = loadImage( loadAsset( "heart1_cutout.png" ) );
+        mHeartTexture = gl::Texture2d::create( heartCutout );
+    }
+    	mTextRibbon = new TextRibbon();
 	
 	// Popular images stream
 	//mInstaStream = make_shared<InstagramStream>( CLIENT_ID );
@@ -91,7 +104,7 @@ void SosoValentinesApp::setup()
 	mInstaStream = make_shared<InstagramStream>( "sosolimited", CLIENT_ID );
 	// Image stream in a particular area
 	// mInstaStream = make_shared<InstagramStream>( vec2(40.720467,-74.00603), 5000, CLIENT_ID );
-
+    
 	continueCycle();
 }
 
@@ -123,12 +136,21 @@ void SosoValentinesApp::defineMirrorGrid()
 	const float tri_width = distance( pt1, pt2 ) * tri_scale;
 	const float tri_height = std::sqrt((tri_width*tri_width) - ((tri_width/2) * (tri_width/2)));
 
-	// amtX and amtY controls the circling texture over the original image
-	const int amtX = ceil((((getWindowWidth()*3) - .5) / (1.5*(tri_width))) + 0.5f );
-	const float w = ((amtX*1.5) + .5) * tri_width;
+	
+    // amtX and amtY controls the circling texture over the original image
+    int amtX = 0;
+    int amtY = 0;
+    
+    if (isDrawingFirstTriangle) {
+        amtX = ceil((((getWindowWidth()*1) - .5) / (1.5*(tri_width))) + 0.5f );
+        amtY = ceil((getWindowHeight()*1) / (tri_height) + 0.5f );
+    } else {
+        amtX = ceil((((getWindowWidth()*3) - .5) / (1.5*(tri_width))) + 0.5f );
+        amtY = ceil((getWindowHeight()*3) / (tri_height) + 0.5f );
+    }
+    const float w = ((amtX*1.5) + .5) * tri_width;
 	const float xOffset = -(w-getWindowWidth())/2;
 	
-	const int amtY = ceil((getWindowHeight()*3) / (tri_height) + 0.5f );
 	const float yOffset = -((amtY*(tri_height) - getWindowHeight())/2);
 	
 	// creates a series of hexagons composed of 6 triangles each
@@ -146,7 +168,15 @@ void SosoValentinesApp::defineMirrorGrid()
 				
 				vec2 start( startX, startY );
 				
-				TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k, scale);
+                // assign transparency for the sides of the cube
+                float alpha = 0.0f;
+                if (k == 0 || k == 1) {alpha = 0.4f;}
+                else if (k == 2 || k == 3) {alpha = 0.7f;}
+                else {alpha = 1.0f;}
+                
+                // rotate the whole triangle 90 degrees CC so the hexagon will have the the vertex at top
+                
+				TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k - (M_PI / 4), scale, alpha);
 				mTriPieces.push_back(tri);
 			}
 		}
@@ -329,10 +359,17 @@ void SosoValentinesApp::draw()
 	gl::clear( Color( 0, 0, 0 ) );
 	gl::enableAlphaBlending( PREMULT );
 	
-	if( mBgTexture )
+    if( mBgTexture && isDrawingOriginalImage ) {
 		gl::draw( mBgTexture, Rectf( mBgTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
+    }
 	
-	drawMirrors( &mTriPieces );
+    drawMirrors( &mTriPieces );
+    
+    // heart cutout should always be on top (under the text)
+    if (isDrawingHeartCutout)
+    {
+        gl::draw( mHeartTexture, Rectf( mHeartTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
+    }
 	mTextRibbon->draw();
 }
 
@@ -340,10 +377,16 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 {
 	gl::ScopedModelMatrix scopedMat;
 	gl::translate( getWindowCenter() );
-	gl::rotate( mMirrorRot );
-	for( int i = 0; i < vec->size(); i++ ) {
-		(*vec)[i].draw();
-	}
+	// texture global rotation
+    gl::rotate( mMirrorRot );
+    if ( isDrawingFirstTriangle ) {
+        (*vec)[0].draw();
+    }
+    else {
+        for( int i = 0; i < vec->size(); i++ ) {
+            (*vec)[i].draw();
+        }
+    }
 }
 
 CINDER_APP( SosoValentinesApp, RendererGl( RendererGl::Options().msaa( 16 ) ) )

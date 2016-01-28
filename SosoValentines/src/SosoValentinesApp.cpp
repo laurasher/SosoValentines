@@ -75,6 +75,7 @@ class SosoValentinesApp : public App {
 	bool												isDisablingGlobalRotation;
 	bool												isRandomizingHexInitalization; //this affects the initial size, position
 	int													tri_index;											// which of the triangles to show of the first hexagon
+	vec2 start;
 };
 
 void SosoValentinesApp::prepareSettings( Settings *settings )
@@ -109,8 +110,6 @@ void SosoValentinesApp::setup()
 		isDisablingGlobalRotation = false;
 		isRandomizingHexInitalization = true;
 	}
-
-
 
 	if (isDrawingHeartCutout)
 	{
@@ -195,7 +194,7 @@ void SosoValentinesApp::defineMirrorGrid()
 				int scaleX = (k%2==0) ? 1 : -1;
 				vec2 scale( scaleX * tri_scale, tri_scale );
 				
-				vec2 start( startX, startY );
+				start = vec2(startX, startY );
 				
 				// assign transparency for the sides of the cube
 				float alpha = 0.0f;
@@ -205,6 +204,7 @@ void SosoValentinesApp::defineMirrorGrid()
 				
 				// rotate the whole triangle -120 degrees CC so the hexagon will have the the vertex at top
 				TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k, scale, alpha);
+				//cout << "scale for triangle " << tri_index << " is " << scale <<endl;
 				mTriPieces.push_back(tri);
 			}
 		}
@@ -431,7 +431,9 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 	if ( isDrawingFirstHexagon ) {
 		if (tri_index < 6){
 			(*vec)[tri_index].draw();
-			cout << "my tri index is " << tri_index;
+			// debug
+			gl::color(Color(1.0f, 0, 0));
+			gl::drawSolidCircle((*vec)[tri_index].mStartPt, 5.0f);
 		}
 		else {
 			for( int i = 0; i < 6; i++ ) {

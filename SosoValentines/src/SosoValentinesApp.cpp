@@ -53,9 +53,9 @@ class SosoValentinesApp : public App {
 	gl::TextureRef					mHeartTexture;  // texture for the heart cutout
 	
 	vector<TrianglePiece>		mTriPieces;				// stores all of the kaleidoscope mirror pieces
-	Anim<vec2>					mSamplePt;				// location of the piece of the image that is being sampled for the kaleidoscope
-	int							mPhase;					// current phase of the app (0 or 1)
-	Instagram					mCurInstagram;			// current instagram info
+	Anim<vec2>							mSamplePt;				// location of the piece of the image that is being sampled for the kaleidoscope
+	int											mPhase;						// current phase of the app (0 or 1)
+	Instagram								mCurInstagram;		// current instagram info
 	
 	shared_ptr<InstagramStream> mInstaStream;			// stream and loader for instagram data
 	bool												mLoadingTexture;	// If the texture image is currently loading
@@ -119,9 +119,9 @@ void SosoValentinesApp::setup()
 void SosoValentinesApp::continueCycle()
 {
 	mPhaseChangeCalled = false;		// it has net been told to change phases yet. It should only do that once shit is loaded
-	defineMirrorGrid();				// redefine the kaleidoscope grid
-	mTextureLoaded = false;			// This will trigger checking if an image has loaded in the update function
-	newInstagram();					// grab the next instagram item
+	defineMirrorGrid();						// redefine the kaleidoscope grid
+	mTextureLoaded = false;				// This will trigger checking if an image has loaded in the update function
+	newInstagram();								// grab the next instagram item
 }
 
 // Creates the grid of kaleidoscope mirrored triangles
@@ -194,6 +194,7 @@ void SosoValentinesApp::defineMirrorGrid()
 	}
 }
 
+// replaces the mCurInstagram with new Instagram
 void SosoValentinesApp::newInstagram()
 {
 	if( mInstaStream->hasInstagramAvailable() )
@@ -304,9 +305,9 @@ void SosoValentinesApp::update()
 	else {
 		// we want to call this only once the image has been loaded
 		// if the texture has been loaded and the phase hasn't been called to change yet...
-		if( ! mPhaseChangeCalled)
+		if( ! mPhaseChangeCalled )
 			imageLoaded();
-		updateMirrors( &mTriPieces );
+			updateMirrors( &mTriPieces );
 	}
 }
 
@@ -372,7 +373,7 @@ void SosoValentinesApp::draw()
 	gl::enableAlphaBlending( PREMULT );
 
 	if( mBgTexture && isDrawingOriginalImage ) {
-	gl::draw( mBgTexture, Rectf( mBgTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
+		gl::draw( mBgTexture, Rectf( mBgTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
 	}
 
 	drawMirrors( &mTriPieces );

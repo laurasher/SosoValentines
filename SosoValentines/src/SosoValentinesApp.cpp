@@ -199,10 +199,11 @@ void SosoValentinesApp::defineMirrorGrid()
 				// assign transparency for the sides of the cube
 				float alpha = 0.0f;
 				if (k == 0 || k == 1) {alpha = 0.4f;}
-				else if (k == 2 || k == 3) {alpha = 0.7f;}
+				else if (k == 2 || k == 5) {alpha = 0.7f;}
 				else {alpha = 1.0f;}
 				
 				// rotate the whole triangle -120 degrees CC so the hexagon will have the the vertex at top
+				// the scale flips the location of the odd number triangles
 				TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k, scale, alpha);
 				//cout << "scale for triangle " << tri_index << " is " << scale <<endl;
 				mTriPieces.push_back(tri);

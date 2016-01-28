@@ -46,29 +46,33 @@ class SosoValentinesApp : public App {
 	void	mirrorIn();
 	void	imageLoaded();
 	
-	gl::TextureRef				mNewTex;				// the loaded texture
-	gl::TextureRef				mBgTexture;				// texture for the still image
-	gl::TextureRef				mMirrorTexture;			// texture for the mirror
-    gl::TextureRef              mHeartTexture;          // texture for the heart cutout
+	gl::TextureRef					mNewTex;				// the loaded texture
+	gl::TextureRef					mBgTexture;			// texture for the still image
+	gl::TextureRef					mMirrorTexture;	// texture for the mirror
+    gl::TextureRef				mHeartTexture;  // texture for the heart cutout
 	
-	vector<TrianglePiece>		mTriPieces;				// stores alll of the kaleidoscope mirror pieces
-	Anim<vec2>					mSamplePt;				// location of the piece of the image that is being sampled for the kaleidoscope
-	int							mPhase;					// current phase of the app (0 or 1)
-	Instagram					mCurInstagram;			// current instagram info
+	vector<TrianglePiece>		mTriPieces;			// stores alll of the kaleidoscope mirror pieces
+	Anim<vec2>							mSamplePt;			// location of the piece of the image that is being sampled for the kaleidoscope
+	int											mPhase;					// current phase of the app (0 or 1)
+	Instagram								mCurInstagram;	// current instagram info
 	
 	shared_ptr<InstagramStream> mInstaStream;			// stream and loader for instagram data
-	bool						mLoadingTexture;		// If the texture image is currently loading
-	bool						mTextureLoaded;			// If the new texture has finished loading
-	float						mSampleSize;			// Size of the image sample to grab for the kaleidoscope		   
-	TextRibbon					*mTextRibbon;			// The text ribbon that shows up in "sill image" mode
-	Anim<float>					mMirrorRot;				// rotation of the canvas in kaleidoscope mode
-	bool						mPiecesIn;				// whether all of the mirror pieces are showing or not
-	bool						mPhaseChangeCalled;		// if the app has been told to change phases or not
-	bool						mFirstRun;				// if the app is on its first cycle
-    // helpful for debug
-    bool                        isDrawingHeartCutout;   // turn heart cutout on/off
-    bool                        isDrawingOriginalImage; // show original image
-    bool                        isDrawingFirstTriangle;          // show just the first triangle in 1 * 1 grid texture rectangle
+	bool												mLoadingTexture;	// If the texture image is currently loading
+	bool												mTextureLoaded;		// If the new texture has finished loading
+	float												mSampleSize;			// Size of the image sample to grab for the kaleidoscope
+	TextRibbon									*mTextRibbon;			// The text ribbon that shows up in "sill image" mode
+	Anim<float>									mMirrorRot;				// rotation of the canvas in kaleidoscope mode
+	bool												mPiecesIn;				// whether all of the mirror pieces are showing or not
+	bool												mPhaseChangeCalled;		// if the app has been told to change phases or not
+	bool												mFirstRun;				// if the app is on its first cycle
+
+	// helpful for debug
+	bool                        isDrawingHeartCutout;   // turn heart cutout on/off
+	bool                        isDrawingOriginalImage; // show original image
+	bool                        isDrawingFirstTriangle; // show just the first triangle in 1 * 1 grid texture rectangle
+	bool												isDrawingFirstHexagon;	// show just the first hexagon in 1 * 1 grid texture rectangle
+	bool												isDisablingGlobalRotation;
+	bool												isRandomizingHexInitalization; //this affects the initial size, position
 };
 
 void SosoValentinesApp::prepareSettings( Settings *settings )
@@ -87,9 +91,12 @@ void SosoValentinesApp::setup()
 	mLoadingTexture = false;
 	mTextureLoaded = false;
 	mPhaseChangeCalled = false;
-    isDrawingHeartCutout = false;
-    isDrawingOriginalImage = true;
-    isDrawingFirstTriangle = false;
+	isDrawingHeartCutout = false;
+	isDrawingOriginalImage = false;
+	isDrawingFirstTriangle = false;
+	isDrawingFirstHexagon = true;
+	isDisablingGlobalRotation = true;
+	isRandomizingHexInitalization = false;
     
     if (isDrawingHeartCutout)
     {
@@ -124,7 +131,15 @@ void SosoValentinesApp::continueCycle()
 void SosoValentinesApp::defineMirrorGrid()
 {
 	const int r = 1; // don't change this because this normalizes each triangle
-	const float tri_scale = (float)randInt(50, 100);
+	// this controls the initial position of the kaleidoscope
+	float tri_scale = 0.0f;
+
+	if (isRandomizingHexInitalization){
+		tri_scale = (float)randInt(50, 100);
+	}
+	else {
+		tri_scale = 50;
+	}
 
 	// delete any previous pieces and clear the old vector
 	mTriPieces.clear();
@@ -141,7 +156,7 @@ void SosoValentinesApp::defineMirrorGrid()
     int amtX = 0;
     int amtY = 0;
     
-    if (isDrawingFirstTriangle) {
+    if (isDrawingFirstTriangle || isDrawingFirstHexagon) {
         amtX = ceil((((getWindowWidth()*1) - .5) / (1.5*(tri_width))) + 0.5f );
         amtY = ceil((getWindowHeight()*1) / (tri_height) + 0.5f );
     } else {
@@ -168,14 +183,13 @@ void SosoValentinesApp::defineMirrorGrid()
 				
 				vec2 start( startX, startY );
 				
-                // assign transparency for the sides of the cube
-                float alpha = 0.0f;
-                if (k == 0 || k == 1) {alpha = 0.4f;}
-                else if (k == 2 || k == 3) {alpha = 0.7f;}
-                else {alpha = 1.0f;}
-                
-                // rotate the whole triangle 90 degrees CC so the hexagon will have the the vertex at top
-                
+				// assign transparency for the sides of the cube
+				float alpha = 0.0f;
+				if (k == 0 || k == 1) {alpha = 0.4f;}
+				else if (k == 2 || k == 3) {alpha = 0.7f;}
+				else {alpha = 1.0f;}
+				
+				// rotate the whole triangle -120 degrees CC so the hexagon will have the the vertex at top
 				TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k - (2 * M_PI / 3), scale, alpha);
 				mTriPieces.push_back(tri);
 			}
@@ -356,7 +370,7 @@ void SosoValentinesApp::mirrorIn()
 
 void SosoValentinesApp::draw()
 {
-	gl::clear( Color( 0, 0, 0 ) );
+	gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
 	gl::enableAlphaBlending( PREMULT );
 	
     if( mBgTexture && isDrawingOriginalImage ) {
@@ -378,15 +392,22 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 	gl::ScopedModelMatrix scopedMat;
 	gl::translate( getWindowCenter() );
 	// texture global rotation
-    gl::rotate( mMirrorRot );
-    if ( isDrawingFirstTriangle ) {
-        (*vec)[0].draw();
-    }
-    else {
-        for( int i = 0; i < vec->size(); i++ ) {
-            (*vec)[i].draw();
-        }
-    }
+	if (!isDisablingGlobalRotation) {
+		gl::rotate( mMirrorRot );
+	}
+	if ( isDrawingFirstTriangle ) {
+			(*vec)[0].draw();
+	}
+	else if ( isDrawingFirstHexagon ) {
+		for( int i = 0; i < 6; i++ ) {
+			(*vec)[i].draw();
+		}
+	}
+	else {
+			for( int i = 0; i < vec->size(); i++ ) {
+					(*vec)[i].draw();
+			}
+	}
 }
 
 CINDER_APP( SosoValentinesApp, RendererGl( RendererGl::Options().msaa( 16 ) ) )

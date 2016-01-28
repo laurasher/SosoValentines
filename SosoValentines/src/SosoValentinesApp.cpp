@@ -65,6 +65,8 @@ class SosoValentinesApp : public App {
 	bool						mPiecesIn;				// whether all of the mirror pieces are showing or not
 	bool						mPhaseChangeCalled;		// if the app has been told to change phases or not
 	bool						mFirstRun;				// if the app is on its first cycle
+    bool                        isDrawingHeartCutout;   // turn heart cutout on/off for debugging
+    bool                        isDrawingOriginalImage; // show original image for debugging
 };
 
 void SosoValentinesApp::prepareSettings( Settings *settings )
@@ -83,11 +85,15 @@ void SosoValentinesApp::setup()
 	mLoadingTexture = false;
 	mTextureLoaded = false;
 	mPhaseChangeCalled = false;
+    isDrawingHeartCutout = true;
+    isDrawingOriginalImage = false;
 	
-    auto heartCutout = loadImage( loadAsset( "heart1_cutout.png" ) );
-    mHeartTexture = gl::Texture2d::create( heartCutout );
-    
-	mTextRibbon = new TextRibbon();
+    if (isDrawingHeartCutout)
+    {
+        auto heartCutout = loadImage( loadAsset( "heart1_cutout.png" ) );
+        mHeartTexture = gl::Texture2d::create( heartCutout );
+    }
+    	mTextRibbon = new TextRibbon();
 	
 	// Popular images stream
 	//mInstaStream = make_shared<InstagramStream>( CLIENT_ID );
@@ -333,13 +339,16 @@ void SosoValentinesApp::draw()
 	gl::clear( Color( 0, 0, 0 ) );
 	gl::enableAlphaBlending( PREMULT );
 	
-	if( mBgTexture )
+	if( mBgTexture && isDrawingOriginalImage )
 		gl::draw( mBgTexture, Rectf( mBgTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
 	
 	drawMirrors( &mTriPieces );
     
     // heart cutout should always be on top (under the text)
-    gl::draw( mHeartTexture, Rectf( mHeartTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
+    if (isDrawingHeartCutout)
+    {
+        gl::draw( mHeartTexture, Rectf( mHeartTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
+    }
 	mTextRibbon->draw();
 }
 
@@ -347,8 +356,9 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 {
 	gl::ScopedModelMatrix scopedMat;
 	gl::translate( getWindowCenter() );
-	gl::rotate( mMirrorRot );
-	for( int i = 0; i < vec->size(); i++ ) {
+	// texture global rotation
+    gl::rotate( mMirrorRot );
+    for( int i = 0; i < vec->size()- 100; i++ ) {
 		(*vec)[i].draw();
 	}
 }

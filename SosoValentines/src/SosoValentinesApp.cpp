@@ -88,7 +88,7 @@ void SosoValentinesApp::setup()
 	mTextureLoaded = false;
 	mPhaseChangeCalled = false;
     isDrawingHeartCutout = false;
-    isDrawingOriginalImage = false;
+    isDrawingOriginalImage = true;
     isDrawingFirstTriangle = false;
     
     if (isDrawingHeartCutout)
@@ -167,8 +167,16 @@ void SosoValentinesApp::defineMirrorGrid()
 				vec2 scale( scaleX * tri_scale, tri_scale );
 				
 				vec2 start( startX, startY );
-				// rotate the whole triangle 90 degrees CC so the hexagon will have the the vertex at top
-				TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k - (M_PI / 4), scale);
+				
+                // assign transparency for the sides of the cube
+                float alpha = 0.0f;
+                if (k == 0 || k == 1) {alpha = 0.4f;}
+                else if (k == 2 || k == 3) {alpha = 0.7f;}
+                else {alpha = 1.0f;}
+                
+                // rotate the whole triangle 90 degrees CC so the hexagon will have the the vertex at top
+                
+				TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k - (M_PI / 4), scale, alpha);
 				mTriPieces.push_back(tri);
 			}
 		}
@@ -351,10 +359,11 @@ void SosoValentinesApp::draw()
 	gl::clear( Color( 0, 0, 0 ) );
 	gl::enableAlphaBlending( PREMULT );
 	
-	if( mBgTexture && isDrawingOriginalImage )
+    if( mBgTexture && isDrawingOriginalImage ) {
 		gl::draw( mBgTexture, Rectf( mBgTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
+    }
 	
-	drawMirrors( &mTriPieces );
+    drawMirrors( &mTriPieces );
     
     // heart cutout should always be on top (under the text)
     if (isDrawingHeartCutout)
@@ -378,7 +387,6 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
             (*vec)[i].draw();
         }
     }
-    
 }
 
 CINDER_APP( SosoValentinesApp, RendererGl( RendererGl::Options().msaa( 16 ) ) )

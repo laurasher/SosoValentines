@@ -27,6 +27,9 @@
 		E01A60CC1C59828300A1EA97 /* Asap-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E01A60C91C59828300A1EA97 /* Asap-Regular.ttf */; };
 		E01A60CD1C59828300A1EA97 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E01A60CA1C59828300A1EA97 /* Icon.png */; };
 		E01A60CE1C59828300A1EA97 /* Kreon-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E01A60CB1C59828300A1EA97 /* Kreon-Bold.ttf */; };
+		E01A60DB1C5A8A8E00A1EA97 /* CinderImGui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E01A60DA1C5A8A8E00A1EA97 /* CinderImGui.cpp */; };
+		E01A60DD1C5A8B0000A1EA97 /* imgui.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E01A60DC1C5A8B0000A1EA97 /* imgui.cpp */; };
+		E01A60E31C5A8B2D00A1EA97 /* imgui_draw.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E01A60E21C5A8B2D00A1EA97 /* imgui_draw.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -59,6 +62,9 @@
 		E01A60C91C59828300A1EA97 /* Asap-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Asap-Regular.ttf"; path = "../resources/Asap-Regular.ttf"; sourceTree = "<group>"; };
 		E01A60CA1C59828300A1EA97 /* Icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Icon.png; path = ../resources/Icon.png; sourceTree = "<group>"; };
 		E01A60CB1C59828300A1EA97 /* Kreon-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "Kreon-Bold.ttf"; path = "../resources/Kreon-Bold.ttf"; sourceTree = "<group>"; };
+		E01A60DA1C5A8A8E00A1EA97 /* CinderImGui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CinderImGui.cpp; path = "../../lib/Cinder-ImGui/src/CinderImGui.cpp"; sourceTree = "<group>"; };
+		E01A60DC1C5A8B0000A1EA97 /* imgui.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui.cpp; path = "../../lib/Cinder-ImGui/lib/imgui/imgui.cpp"; sourceTree = "<group>"; };
+		E01A60E21C5A8B2D00A1EA97 /* imgui_draw.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = imgui_draw.cpp; path = "../../lib/Cinder-ImGui/lib/imgui/imgui_draw.cpp"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +92,7 @@
 		01B97315FEAEA392516A2CEA /* Blocks */ = {
 			isa = PBXGroup;
 			children = (
+				E01A60D91C5A8A4900A1EA97 /* Cinder-ImGui */,
 			);
 			name = Blocks;
 			sourceTree = "<group>";
@@ -183,6 +190,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		E01A60D91C5A8A4900A1EA97 /* Cinder-ImGui */ = {
+			isa = PBXGroup;
+			children = (
+				E01A60E21C5A8B2D00A1EA97 /* imgui_draw.cpp */,
+				E01A60DC1C5A8B0000A1EA97 /* imgui.cpp */,
+				E01A60DA1C5A8A8E00A1EA97 /* CinderImGui.cpp */,
+			);
+			name = "Cinder-ImGui";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -251,9 +268,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				E01A60C31C5980EA00A1EA97 /* TextRibbon.cpp in Sources */,
+				E01A60E31C5A8B2D00A1EA97 /* imgui_draw.cpp in Sources */,
 				E01A60C41C5980EA00A1EA97 /* TrianglePiece.cpp in Sources */,
 				E01A60C11C5980EA00A1EA97 /* InstagramStream.cpp in Sources */,
 				D4DC85E1B45D431995216AED /* SosoValentinesApp.cpp in Sources */,
+				E01A60DB1C5A8A8E00A1EA97 /* CinderImGui.cpp in Sources */,
+				E01A60DD1C5A8B0000A1EA97 /* imgui.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

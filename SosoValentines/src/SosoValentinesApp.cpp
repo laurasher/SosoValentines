@@ -50,7 +50,7 @@ class SosoValentinesApp : public App {
 	gl::TextureRef					mNewTex;				// the loaded texture
 	gl::TextureRef					mBgTexture;			// texture for the still image
 	gl::TextureRef					mMirrorTexture;	// texture for the mirror
-    gl::TextureRef				mHeartTexture;  // texture for the heart cutout
+	gl::TextureRef					mHeartTexture;  // texture for the heart cutout
 	
 	vector<TrianglePiece>		mTriPieces;			// stores alll of the kaleidoscope mirror pieces
 	Anim<vec2>							mSamplePt;			// location of the piece of the image that is being sampled for the kaleidoscope
@@ -68,12 +68,12 @@ class SosoValentinesApp : public App {
 	bool												mFirstRun;				// if the app is on its first cycle
 
 	// helpful for debug
-	bool                        isDrawingHeartCutout;   // turn heart cutout on/off
-	bool                        isDrawingOriginalImage; // show original image
-	bool                        isDrawingFirstTriangle; // show just the first triangle in 1 * 1 grid texture rectangle
-	bool												isDrawingFirstHexagon;	// show just the first hexagon in 1 * 1 grid texture rectangle
-	bool												isDisablingGlobalRotation;
-	bool												isRandomizingHexInitalization; //this affects the initial size, position
+	bool                        isDrawingHeartCutout = true;   // turn heart cutout on/off
+	bool                        isDrawingOriginalImage = false; // show original image
+	bool                        isDrawingFirstTriangle = false; // show just the first triangle in 1 * 1 grid texture rectangle
+	bool												isDrawingFirstHexagon = false;	// show just the first hexagon in 1 * 1 grid texture rectangle
+	bool												isDisablingGlobalRotation = false;
+	bool												isRandomizingHexInitalization = true; //this affects the initial size, position
 };
 
 void SosoValentinesApp::prepareSettings( Settings *settings )
@@ -92,20 +92,16 @@ void SosoValentinesApp::setup()
 	mLoadingTexture = false;
 	mTextureLoaded = false;
 	mPhaseChangeCalled = false;
-	isDrawingHeartCutout = false;
-	isDrawingOriginalImage = false;
-	isDrawingFirstTriangle = false;
-	isDrawingFirstHexagon = true;
-	isDisablingGlobalRotation = true;
-	isRandomizingHexInitalization = false;
-    
-    if (isDrawingHeartCutout)
-    {
-        auto heartCutout = loadImage( loadAsset( "heart1_cutout.png" ) );
-        mHeartTexture = gl::Texture2d::create( heartCutout );
-    }
-    	mTextRibbon = new TextRibbon();
-	
+
+	ui::initialize();
+
+	if (isDrawingHeartCutout)
+	{
+		auto heartCutout = loadImage( loadAsset( "heart1_cutout.png" ) );
+		mHeartTexture = gl::Texture2d::create( heartCutout );
+	}
+	mTextRibbon = new TextRibbon();
+
 	// Popular images stream
 	//mInstaStream = make_shared<InstagramStream>( CLIENT_ID );
 	// Image stream of a particular tag
@@ -373,19 +369,32 @@ void SosoValentinesApp::draw()
 {
 	gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
 	gl::enableAlphaBlending( PREMULT );
+
+	if( mBgTexture && isDrawingOriginalImage ) {
+	gl::draw( mBgTexture, Rectf( mBgTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
+	}
+
+	drawMirrors( &mTriPieces );
 	
-    if( mBgTexture && isDrawingOriginalImage ) {
-		gl::draw( mBgTexture, Rectf( mBgTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
-    }
-	
-    drawMirrors( &mTriPieces );
-    
-    // heart cutout should always be on top (under the text)
-    if (isDrawingHeartCutout)
-    {
-        gl::draw( mHeartTexture, Rectf( mHeartTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
-    }
+	// heart cutout should always be on top (under the text)
+	if (isDrawingHeartCutout)
+	{
+			gl::draw( mHeartTexture, Rectf( mHeartTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
+	}
 	mTextRibbon->draw();
+
+	// draw debug GUI
+	ui::Begin("Debug Settings");
+
+	ui::Checkbox("Show heart cutout", &isDrawingHeartCutout);
+	ui::Checkbox("Draw original image in the background", &isDrawingOriginalImage);
+	ui::Checkbox("Only draw the first triangle", &isDrawingFirstTriangle);
+	ui::Checkbox("Only draw the first hexagon", &isDrawingFirstHexagon);
+	ui::Checkbox("Diable global rotation", &isDisablingGlobalRotation);
+	ui::Checkbox("Randomize the hexagon initialization", &isRandomizingHexInitalization);
+
+
+	ui::End();
 }
 
 void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )

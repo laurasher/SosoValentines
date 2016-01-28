@@ -49,6 +49,7 @@ class SosoValentinesApp : public App {
 	gl::TextureRef				mNewTex;				// the loaded texture
 	gl::TextureRef				mBgTexture;				// texture for the still image
 	gl::TextureRef				mMirrorTexture;			// texture for the mirror
+    gl::TextureRef              mHeartTexture;          // texture for the heart cutout
 	
 	vector<TrianglePiece>		mTriPieces;				// stores alll of the kaleidoscope mirror pieces
 	Anim<vec2>					mSamplePt;				// location of the piece of the image that is being sampled for the kaleidoscope
@@ -83,6 +84,9 @@ void SosoValentinesApp::setup()
 	mTextureLoaded = false;
 	mPhaseChangeCalled = false;
 	
+    auto heartCutout = loadImage( loadAsset( "heart1_cutout.png" ) );
+    mHeartTexture = gl::Texture2d::create( heartCutout );
+    
 	mTextRibbon = new TextRibbon();
 	
 	// Popular images stream
@@ -91,7 +95,7 @@ void SosoValentinesApp::setup()
 	mInstaStream = make_shared<InstagramStream>( "sosolimited", CLIENT_ID );
 	// Image stream in a particular area
 	// mInstaStream = make_shared<InstagramStream>( vec2(40.720467,-74.00603), 5000, CLIENT_ID );
-
+    
 	continueCycle();
 }
 
@@ -333,6 +337,9 @@ void SosoValentinesApp::draw()
 		gl::draw( mBgTexture, Rectf( mBgTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
 	
 	drawMirrors( &mTriPieces );
+    
+    // heart cutout should be on top
+    gl::draw( mHeartTexture, Rectf( mHeartTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
 	mTextRibbon->draw();
 }
 

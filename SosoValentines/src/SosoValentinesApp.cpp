@@ -5,6 +5,7 @@
 #include "cinder/Rand.h"
 #include "cinder/Timeline.h"
 #include "cinder/Utilities.h"
+#include "CinderImGui.h"
 
 #include "TrianglePiece.h"
 #include "InstagramStream.h"

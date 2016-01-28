@@ -1,2 +1,68 @@
+#ignoring lib
+lib/*
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+
+# Compiled Dynamic libraries
+*.so
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+
+#Compiled apps
+*.app
+*.xcuserstate
+*.DS_store
+
+*.xcodeproj/xcuserdata/*.xcuserdatad
+*.xcodeproj/project.xcworkspace/xcuserdata/*.xcuserdatad
+
+#Scripts and Maps - trying to keep this lightweight for now
+scripts/maps/*
+#bin/data/maps/*
+bin/data/maps/*.png
+bin/data/frames/*.png
+
+#Settings file
+bin/data/xml/settings.xml
+bin/data/settings.xml
+
+#Movies
+bin/data/copy_from_dropbox/*
+bin/data/movies/*
+#bin/data/images/*
+bin/data/_unused/*
+bin/data/frames/*
+
+# Just in case, additional ignores...
+
+# Xcode gitignore
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata
+*.xccheckout
+*.xcscmblueprint
+*.moved-aside
+DerivedData
+*.xcuserstate
+*.log
+
+# OSX
 .DS_Store
-SosoValentines/xcode/
+.AppleDouble
+.LSOverride
+
+# ImGUI
+imgui.ini

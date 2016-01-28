@@ -15,7 +15,7 @@ using namespace ci::app;
 using namespace std;
 
 static const int MIRROR_DUR = 5;	// Duration of the mirror/kaleidoscope animation
-static const int STILL_DUR = 5;		// Duration of the still image
+static const int STILL_DUR = 0;		// Duration of the still image
 static const string TAG = "";		// Instagram tag to search for
 
 // Instagram Client Id - DO NOT USE THIS ONE!!! 
@@ -50,7 +50,7 @@ class SosoValentinesApp : public App {
 	gl::TextureRef				mBgTexture;				// texture for the still image
 	gl::TextureRef				mMirrorTexture;			// texture for the mirror
 	
-	vector<TrianglePiece>		mTriPieces;				// stores alll of the kaleidoscope mirror pieces
+	vector<TrianglePiece>		mTriPieces;				// stores all of the kaleidoscope mirror pieces
 	Anim<vec2>					mSamplePt;				// location of the piece of the image that is being sampled for the kaleidoscope
 	int							mPhase;					// current phase of the app (0 or 1)
 	Instagram					mCurInstagram;			// current instagram info
@@ -208,7 +208,8 @@ void SosoValentinesApp::transitionMirrorIn( vector<TrianglePiece> *vec )
 		float delay = randFloat( 0.1f, 0.5f );
 		(*vec)[i].reset( delay, mMirrorTexture );
 	}
-	mTextRibbon->ribbonOut(0);
+//	mTextRibbon->ribbonOut(0);
+	mTextRibbon->ribbonIn(0);
 }
 
 void SosoValentinesApp::imageLoaded()
@@ -289,7 +290,7 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 	mSamplePt2 /= mMirrorTexture->getSize();
 	mSamplePt3 /= mMirrorTexture->getSize();
 	
-	// loop through all the pieces and pass along the current texture and it's coordinates
+	// loop through all the pieces and pass along the current texture and its coordinates
 	int outCount = 0;
 	int inCount = 0;
 	for( int i = 0; i < vec->size(); i++ ) {
@@ -324,12 +325,9 @@ void SosoValentinesApp::mirrorIn()
 
 void SosoValentinesApp::draw()
 {
-	gl::clear( Color( 0, 0, 0 ) );
+//	gl::clear( Color( 0, 0, 0 ) );
 	gl::enableAlphaBlending( PREMULT );
-	
-	if( mBgTexture )
-		gl::draw( mBgTexture, Rectf( mBgTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
-	
+
 	drawMirrors( &mTriPieces );
 	mTextRibbon->draw();
 }

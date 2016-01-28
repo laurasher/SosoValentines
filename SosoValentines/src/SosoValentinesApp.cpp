@@ -68,7 +68,7 @@ class SosoValentinesApp : public App {
     // helpful for debug
     bool                        isDrawingHeartCutout;   // turn heart cutout on/off
     bool                        isDrawingOriginalImage; // show original image
-    bool                        isInDebugMode;          // show just the first triangle in 1 * 1 grid texture rectangle
+    bool                        isDrawingFirstTriangle;          // show just the first triangle in 1 * 1 grid texture rectangle
 };
 
 void SosoValentinesApp::prepareSettings( Settings *settings )
@@ -89,7 +89,7 @@ void SosoValentinesApp::setup()
 	mPhaseChangeCalled = false;
     isDrawingHeartCutout = false;
     isDrawingOriginalImage = false;
-    isInDebugMode = true;
+    isDrawingFirstTriangle = false;
     
     if (isDrawingHeartCutout)
     {
@@ -141,11 +141,10 @@ void SosoValentinesApp::defineMirrorGrid()
     int amtX = 0;
     int amtY = 0;
     
-    if (isInDebugMode) {
+    if (isDrawingFirstTriangle) {
         amtX = ceil((((getWindowWidth()*1) - .5) / (1.5*(tri_width))) + 0.5f );
         amtY = ceil((getWindowHeight()*1) / (tri_height) + 0.5f );
-    }
-    else {
+    } else {
         amtX = ceil((((getWindowWidth()*3) - .5) / (1.5*(tri_width))) + 0.5f );
         amtY = ceil((getWindowHeight()*3) / (tri_height) + 0.5f );
     }
@@ -168,8 +167,8 @@ void SosoValentinesApp::defineMirrorGrid()
 				vec2 scale( scaleX * tri_scale, tri_scale );
 				
 				vec2 start( startX, startY );
-				
-				TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k, scale);
+				// rotate the whole triangle 90 degrees CC so the hexagon will have the the vertex at top
+				TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k - (M_PI / 4), scale);
 				mTriPieces.push_back(tri);
 			}
 		}
@@ -371,7 +370,7 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 	gl::translate( getWindowCenter() );
 	// texture global rotation
     gl::rotate( mMirrorRot );
-    if ( isInDebugMode ) {
+    if ( isDrawingFirstTriangle ) {
         (*vec)[0].draw();
     }
     else {

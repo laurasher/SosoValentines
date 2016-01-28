@@ -338,7 +338,7 @@ void SosoValentinesApp::draw()
 	
 	drawMirrors( &mTriPieces );
     
-    // heart cutout should be on top
+    // heart cutout should always be on top (under the text)
     gl::draw( mHeartTexture, Rectf( mHeartTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
 	mTextRibbon->draw();
 }

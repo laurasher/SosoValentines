@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "BECA2DF5855F6214C16582369D145BDEF3940B13",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "AD4B458D0D225ED63FAE0155615993B7D3ECE020" : 0,
+    "BECA2DF5855F6214C16582369D145BDEF3940B13" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "85CA4C37-4DF8-4BB3-84CF-CC28186BB7D6",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "AD4B458D0D225ED63FAE0155615993B7D3ECE020" : "SosoValentines\/lib\/Cinder\/",
+    "BECA2DF5855F6214C16582369D145BDEF3940B13" : "SosoValentines\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "SosoValentines",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "SosoValentines\/xcode\/SosoValentines.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:cinder\/Cinder.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "AD4B458D0D225ED63FAE0155615993B7D3ECE020"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "github.com:laurasher\/SosoValentines.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "BECA2DF5855F6214C16582369D145BDEF3940B13"
+    }
+  ]
+}

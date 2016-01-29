@@ -27,7 +27,7 @@ static const string CLIENT_ID = "def20410b5134f7d9b828668775aee4a";
 static const bool PREMULT = false;
 
 class SosoValentinesApp : public App {
-  private:
+private:
 	void	setup();
 	void	prepareSettings( Settings *settings );
 	void	update();
@@ -101,10 +101,11 @@ void SosoValentinesApp::setup()
 	if(isInDebugMode){
 		isDrawingHeartCutout = false;
 		isDrawingOriginalImage = false;
-		isDrawingFirstHexagon = true;
+		isDrawingFirstHexagon = false;
 		isDisablingGlobalRotation = true;
 		isRandomizingHexInitalization = false;
 		isRotatingHexagon = true;
+		//isTwinklingWithOpacity = true;
 	} else {
 		isDrawingHeartCutout = true;
 		isDrawingOriginalImage = false;
@@ -112,6 +113,7 @@ void SosoValentinesApp::setup()
 		isDisablingGlobalRotation = false;
 		isRandomizingHexInitalization = true;
 		isRotatingHexagon = true;
+		//isTwinklingWithOpacity = true;
 	}
 
 	auto heartCutout = loadImage( loadAsset( "heart1_cutout.png" ) );
@@ -145,6 +147,7 @@ void SosoValentinesApp::continueCycle()
 void SosoValentinesApp::defineMirrorGrid()
 {
 	const int r = 1; // don't change this because this normalizes each triangle
+	const int numTriangles = 30;
 	// this controls the initial position of the kaleidoscope
 	float tri_scale = 0.0f;
 
@@ -152,7 +155,7 @@ void SosoValentinesApp::defineMirrorGrid()
 		tri_scale = (float)randInt(50, 100);
 	}
 	else {
-		tri_scale = (float)( getWindowWidth() / 30 );
+		tri_scale = (float)( getWindowWidth() / numTriangles );
 	}
 
 	// delete any previous pieces and clear the old vector
@@ -175,17 +178,15 @@ void SosoValentinesApp::defineMirrorGrid()
 	const float tri_width = distance( pt1, pt2 ) * tri_scale;
 	const float tri_height = std::sqrt((tri_width*tri_width) - ((tri_width/2) * (tri_width/2)));
 
-    // amtX and amtY controls the circling texture over the original image
-    int amtX = 0;
-    int amtY = 0;
-
-		amtX = ceil((((getWindowWidth()*1) - .5) / (1.5*(tri_width))) + 0.5f );
-		amtY = ceil((getWindowHeight()*1) / (tri_height) + 0.5f );
-
-    const float w = ((amtX*1.5) + .5) * tri_width;
-	const float xOffset = -(w-getWindowWidth())/2;
-	
-	const float yOffset = -((amtY*(tri_height) - getWindowHeight())/2);
+	// amtX and amtY controls the circling texture over the original image
+	//	int	amtX = ceil((((getWindowWidth()*2) - .5) / (1.5*(tri_width))) + 0.5f );
+	//	int amtY = ceil((getWindowHeight()*2) / (tri_height) + 0.5f );
+	float diagonal = getWindowWidth(); //make this =1. If we will be rotating+ shifting the grid, apply a factor > 1
+	//float diagonal = sqrt((getWindowWidth() * getWindowWidth()) + (getWindowHeight() * getWindowHeight()));
+	int amtX = numTriangles * (diagonal/getWindowWidth()); // draw some extra so we have enough for when it's rotating
+	int amtY = (int)(numTriangles * (float)(getWindowHeight())/(float)(getWindowWidth()) * (diagonal/getWindowWidth()));
+	const float xOffset = (-1) * getWindowWidth()/2;
+	const float yOffset = (-1) * getWindowHeight()/2;
 	
 	// creates a series of hexagons composed of 6 triangles each
 	if (!isRotatingHexagon) {
@@ -219,7 +220,7 @@ void SosoValentinesApp::defineMirrorGrid()
 		}
 	} else {
 		for( int j = 0; j < amtY; j++ ) {
-			float startY = ((tri_width) * 1.5 * j * (-1)) + ( tri_width * (1/2) * (-1));
+			float startY = ((tri_width) * 1.5 * j) + ( tri_width * (1/2));
 			startY += yOffset;
 			for( int i = 0; i < amtX; i++ ) {
 				float startX = (j%2==0) ? (tri_height*2*i) : (tri_height*2*i - tri_height);
@@ -381,6 +382,7 @@ void SosoValentinesApp::update()
 			ui::Checkbox("Disable global rotation", &isDisablingGlobalRotation);
 			ui::Checkbox("Randomize the hexagon initialization", &isRandomizingHexInitalization);
 			ui::Checkbox("Rotate the hexagon by 30 degrees", &isRotatingHexagon);
+			//ui::Checkbox("Twinkle with opacity", &isTwinklingWithOpacity);
 		}
 	}
 }
@@ -463,7 +465,7 @@ void SosoValentinesApp::draw()
 void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 {
 	gl::ScopedModelMatrix scopedMat;
-	gl::translate( getWindowCenter() );
+	gl::translate( getWindowCenter() ); // draws the texture in the middle of the screen
 
 	// texture global rotation
 	if (!isDisablingGlobalRotation) {

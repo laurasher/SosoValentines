@@ -11,6 +11,8 @@
 #include "cinder/gl/Texture.h"
 #include "cinder/Timeline.h"
 
+//static bool isTwinklingWithOpacity;
+
 class TrianglePiece {
   public:
     TrianglePiece( ci::vec2 _startPt, ci::vec2 _pt1, ci::vec2 _pt2, ci::vec2 _pt3, float _rotation, ci::vec2 _scale, ci::Anim<float> _Alpha );

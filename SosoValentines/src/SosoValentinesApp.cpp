@@ -97,8 +97,8 @@ void SosoValentinesApp::setup()
 	mPhaseChangeCalled = false;
 	tri_index = 0;
 
+	ui::initialize();
 	if(isInDebugMode){
-		ui::initialize();
 		isDrawingHeartCutout = false;
 		isDrawingOriginalImage = false;
 		isDrawingFirstHexagon = true;
@@ -368,6 +368,25 @@ void SosoValentinesApp::update()
 			imageLoaded();
 			updateMirrors( &mTriPieces );
 	}
+
+	if (isInDebugMode){
+		// draw debug GUI
+		ui::ScopedWindow window( "Settings" );
+
+		if (ui::CollapsingHeader("Debug", nullptr, true, true)) {
+			ui::Checkbox("Draw original image in the background", &isDrawingOriginalImage);
+			ui::Checkbox("Only draw the first hexagon", &isDrawingFirstHexagon);
+			if (isDrawingFirstHexagon) {
+				ui::SliderInt( "triangle index (6 = all)", &tri_index, 0, 6 ); // 6 if drawing all triangles
+			}
+		}
+		if (ui::CollapsingHeader("Animation", nullptr, true, true)){
+			ui::Checkbox("Show heart cutout", &isDrawingHeartCutout);
+			ui::Checkbox("Disable global rotation", &isDisablingGlobalRotation);
+			ui::Checkbox("Randomize the hexagon initialization", &isRandomizingHexInitalization);
+			ui::Checkbox("Rotate the hexagon by 30 degrees", &isRotatingHexagon);
+		}
+	}
 }
 
 void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
@@ -378,7 +397,7 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 	vec2 mSamplePt1( -0.5, -(sin(M_PI/3)/3) );
 	vec2 mSamplePt2( mSamplePt1.x + 1, mSamplePt1.y);
 	vec2 mSamplePt3( mSamplePt1.x + (cos(M_PI/3)), mSamplePt1.y + (sin(M_PI/3)));
-	
+
 	mat3 mtrx( 1.0f );
 	// this part controls the sampling
 	mtrx = glm::translate( mtrx, mSamplePt.value() );
@@ -443,26 +462,6 @@ void SosoValentinesApp::draw()
 			gl::draw( mHeartTexture, Rectf( mHeartTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
 	}
 	mTextRibbon->draw();
-
-	if (isInDebugMode){
-		// draw debug GUI
-		ui::Begin("Customize Settings");
-
-		ui::Text("Debug Settings");
-		ui::Checkbox("Draw original image in the background", &isDrawingOriginalImage);
-		ui::Checkbox("Only draw the first hexagon", &isDrawingFirstHexagon);
-		if (isDrawingFirstHexagon) {
-			ui::SliderInt( "triangle index (6 = all)", &tri_index, 0, 6 ); // 6 if drawing all triangles
-		}
-
-		ui::Text("Animation Settings");
-		ui::Checkbox("Show heart cutout", &isDrawingHeartCutout);
-		ui::Checkbox("Diable global rotation", &isDisablingGlobalRotation);
-		ui::Checkbox("Randomize the hexagon initialization", &isRandomizingHexInitalization);
-		ui::Checkbox("Rotate the hexagon by 30 degrees", &isRotatingHexagon);
-
-		ui::End();
-	}
 }
 
 void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )

@@ -22,14 +22,15 @@ class TrianglePiece {
 	void		setTransitionOut( float _delay );
 	bool		isOut() const;
 	bool		isIn() const;
-	
+	ci::vec2		mStartPt; // moved from protected for debugging
+
   protected:
 	void		setVisible( bool vis );
 	void		outComplete();
 	
 	ci::gl::TextureRef	mTempTex, mDrawTex;
 	
-	ci::vec2		mStartPt, mVertices[3], mTexVertices[3];
+	ci::vec2		mVertices[3], mTexVertices[3];
 	
 	float			mRotation;
 	ci::Anim<float> mAlpha;

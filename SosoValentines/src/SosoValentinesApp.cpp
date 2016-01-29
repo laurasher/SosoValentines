@@ -68,12 +68,14 @@ class SosoValentinesApp : public App {
 	bool												mFirstRun;				// if the app is on its first cycle
 
 	// helpful for debug
-	bool                        isDrawingHeartCutout = true;   // turn heart cutout on/off
-	bool                        isDrawingOriginalImage = false; // show original image
-	bool                        isDrawingFirstTriangle = false; // show just the first triangle in 1 * 1 grid texture rectangle
-	bool												isDrawingFirstHexagon = false;	// show just the first hexagon in 1 * 1 grid texture rectangle
-	bool												isDisablingGlobalRotation = false;
-	bool												isRandomizingHexInitalization = true; //this affects the initial size, position
+	bool                        isInDebugMode = true;
+	bool                        isDrawingHeartCutout;   // turn heart cutout on/off
+	bool                        isDrawingOriginalImage; // show original image
+	bool												isDrawingFirstHexagon ;	// show just the first hexagon in 1 * 1 grid texture rectangle
+	bool												isDisablingGlobalRotation;
+	bool												isRandomizingHexInitalization; //this affects the initial size, position
+	int													tri_index;											// which of the triangles to show of the first hexagon
+	vec2 start;
 };
 
 void SosoValentinesApp::prepareSettings( Settings *settings )
@@ -92,14 +94,26 @@ void SosoValentinesApp::setup()
 	mLoadingTexture = false;
 	mTextureLoaded = false;
 	mPhaseChangeCalled = false;
+	tri_index = 0;
 
-	ui::initialize();
-
-	if (isDrawingHeartCutout)
-	{
-		auto heartCutout = loadImage( loadAsset( "heart1_cutout.png" ) );
-		mHeartTexture = gl::Texture2d::create( heartCutout );
+	if(isInDebugMode){
+		ui::initialize();
+		isDrawingHeartCutout = false;
+		isDrawingOriginalImage = false;
+		isDrawingFirstHexagon = true;
+		isDisablingGlobalRotation = true;
+		isRandomizingHexInitalization = false;
+	} else {
+		isDrawingHeartCutout = true;
+		isDrawingOriginalImage = false;
+		isDrawingFirstHexagon = false;
+		isDisablingGlobalRotation = false;
+		isRandomizingHexInitalization = true;
 	}
+
+	auto heartCutout = loadImage( loadAsset( "heart1_cutout.png" ) );
+	mHeartTexture = gl::Texture2d::create( heartCutout );
+
 	mTextRibbon = new TextRibbon();
 
 	// Popular images stream
@@ -153,7 +167,7 @@ void SosoValentinesApp::defineMirrorGrid()
     int amtX = 0;
     int amtY = 0;
     
-    if (isDrawingFirstTriangle || isDrawingFirstHexagon) {
+    if (isDrawingFirstHexagon) {
         amtX = ceil((((getWindowWidth()*1) - .5) / (1.5*(tri_width))) + 0.5f );
         amtY = ceil((getWindowHeight()*1) / (tri_height) + 0.5f );
     } else {
@@ -178,16 +192,18 @@ void SosoValentinesApp::defineMirrorGrid()
 				int scaleX = (k%2==0) ? 1 : -1;
 				vec2 scale( scaleX * tri_scale, tri_scale );
 				
-				vec2 start( startX, startY );
+				start = vec2(startX, startY );
 				
 				// assign transparency for the sides of the cube
 				float alpha = 0.0f;
 				if (k == 0 || k == 1) {alpha = 0.4f;}
-				else if (k == 2 || k == 3) {alpha = 0.7f;}
+				else if (k == 2 || k == 5) {alpha = 0.7f;}
 				else {alpha = 1.0f;}
 				
 				// rotate the whole triangle -120 degrees CC so the hexagon will have the the vertex at top
-				TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k - (2 * M_PI / 3), scale, alpha);
+				// the scale flips the location of the odd number triangles
+				TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k, scale, alpha);
+				//cout << "scale for triangle " << tri_index << " is " << scale <<endl;
 				mTriPieces.push_back(tri);
 			}
 		}
@@ -371,7 +387,7 @@ void SosoValentinesApp::draw()
 {
 	gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
 	gl::enableAlphaBlending( PREMULT );
-
+	gl::color(Color( 1.0f, 1.0f, 1.0f ));
 	if( mBgTexture && isDrawingOriginalImage ) {
 		gl::draw( mBgTexture, Rectf( mBgTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
 	}
@@ -385,34 +401,46 @@ void SosoValentinesApp::draw()
 	}
 	mTextRibbon->draw();
 
-	// draw debug GUI
-	ui::Begin("Debug Settings");
+	if (isInDebugMode){
+		// draw debug GUI
+		ui::Begin("Debug Settings");
 
-	ui::Checkbox("Show heart cutout", &isDrawingHeartCutout);
-	ui::Checkbox("Draw original image in the background", &isDrawingOriginalImage);
-	ui::Checkbox("Only draw the first triangle", &isDrawingFirstTriangle);
-	ui::Checkbox("Only draw the first hexagon", &isDrawingFirstHexagon);
-	ui::Checkbox("Diable global rotation", &isDisablingGlobalRotation);
-	ui::Checkbox("Randomize the hexagon initialization", &isRandomizingHexInitalization);
+		ui::Checkbox("Show heart cutout", &isDrawingHeartCutout);
+		ui::Checkbox("Draw original image in the background", &isDrawingOriginalImage);
+		ui::Checkbox("Only draw the first hexagon", &isDrawingFirstHexagon);
+		if (isDrawingFirstHexagon) {
+			ui::SliderInt( "triangle index (6 = all)", &tri_index, 0, 6 ); // 6 if drawing all triangles
+		}
+		ui::Checkbox("Diable global rotation", &isDisablingGlobalRotation);
+		ui::Checkbox("Randomize the hexagon initialization", &isRandomizingHexInitalization);
 
-
-	ui::End();
+		ui::End();
+	}
 }
 
 void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 {
 	gl::ScopedModelMatrix scopedMat;
 	gl::translate( getWindowCenter() );
+
 	// texture global rotation
 	if (!isDisablingGlobalRotation) {
 		gl::rotate( mMirrorRot );
 	}
-	if ( isDrawingFirstTriangle ) {
-			(*vec)[0].draw();
-	}
-	else if ( isDrawingFirstHexagon ) {
-		for( int i = 0; i < 6; i++ ) {
-			(*vec)[i].draw();
+
+	if ( isDrawingFirstHexagon ) {
+		if (tri_index < 6){
+			(*vec)[tri_index].draw();
+			// debug
+			gl::pushModelMatrix();
+			gl::color(Color(1.0f, 0, 0));
+			gl::drawSolidCircle((*vec)[tri_index].mStartPt, 5.0f);
+			gl::popModelMatrix();
+		}
+		else {
+			for( int i = 0; i < 6; i++ ) {
+				(*vec)[i].draw();
+			}
 		}
 	}
 	else {

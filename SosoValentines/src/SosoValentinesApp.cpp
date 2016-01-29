@@ -105,7 +105,7 @@ void SosoValentinesApp::setup()
 		isDisablingGlobalRotation = true;
 		isRandomizingHexInitalization = false;
 		isRotatingHexagon = true;
-		//isTwinklingWithOpacity = true;
+		isTwinklingWithOpacity = true;
 	} else {
 		isDrawingHeartCutout = true;
 		isDrawingOriginalImage = false;
@@ -113,7 +113,7 @@ void SosoValentinesApp::setup()
 		isDisablingGlobalRotation = false;
 		isRandomizingHexInitalization = true;
 		isRotatingHexagon = true;
-		//isTwinklingWithOpacity = true;
+		isTwinklingWithOpacity = true;
 	}
 
 	auto heartCutout = loadImage( loadAsset( "heart1_cutout.png" ) );
@@ -382,7 +382,7 @@ void SosoValentinesApp::update()
 			ui::Checkbox("Disable global rotation", &isDisablingGlobalRotation);
 			ui::Checkbox("Randomize the hexagon initialization", &isRandomizingHexInitalization);
 			ui::Checkbox("Rotate the hexagon by 30 degrees", &isRotatingHexagon);
-			//ui::Checkbox("Twinkle with opacity", &isTwinklingWithOpacity);
+			ui::Checkbox("Twinkle with opacity", &isTwinklingWithOpacity);
 		}
 	}
 }

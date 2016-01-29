@@ -11,7 +11,7 @@
 #include "cinder/gl/Texture.h"
 #include "cinder/Timeline.h"
 
-//static bool isTwinklingWithOpacity;
+static bool isTwinklingWithOpacity;
 
 class TrianglePiece {
   public:

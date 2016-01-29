@@ -149,7 +149,7 @@ void SosoValentinesApp::defineMirrorGrid()
 		tri_scale = (float)randInt(50, 100);
 	}
 	else {
-		tri_scale = 50;
+		tri_scale = (float)( getWindowWidth() / 30 );
 	}
 
 	// delete any previous pieces and clear the old vector

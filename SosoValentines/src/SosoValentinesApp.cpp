@@ -111,11 +111,9 @@ void SosoValentinesApp::setup()
 		isRandomizingHexInitalization = true;
 	}
 
-	if (isDrawingHeartCutout)
-	{
-		auto heartCutout = loadImage( loadAsset( "heart1_cutout.png" ) );
-		mHeartTexture = gl::Texture2d::create( heartCutout );
-	}
+	auto heartCutout = loadImage( loadAsset( "heart1_cutout.png" ) );
+	mHeartTexture = gl::Texture2d::create( heartCutout );
+
 	mTextRibbon = new TextRibbon();
 
 	// Popular images stream
@@ -389,7 +387,7 @@ void SosoValentinesApp::draw()
 {
 	gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
 	gl::enableAlphaBlending( PREMULT );
-
+	gl::color(Color( 1.0f, 1.0f, 1.0f ));
 	if( mBgTexture && isDrawingOriginalImage ) {
 		gl::draw( mBgTexture, Rectf( mBgTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
 	}
@@ -424,6 +422,7 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 {
 	gl::ScopedModelMatrix scopedMat;
 	gl::translate( getWindowCenter() );
+
 	// texture global rotation
 	if (!isDisablingGlobalRotation) {
 		gl::rotate( mMirrorRot );
@@ -433,8 +432,10 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 		if (tri_index < 6){
 			(*vec)[tri_index].draw();
 			// debug
+			gl::pushModelMatrix();
 			gl::color(Color(1.0f, 0, 0));
 			gl::drawSolidCircle((*vec)[tri_index].mStartPt, 5.0f);
+			gl::popModelMatrix();
 		}
 		else {
 			for( int i = 0; i < 6; i++ ) {

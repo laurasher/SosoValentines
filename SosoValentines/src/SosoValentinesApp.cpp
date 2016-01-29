@@ -178,14 +178,10 @@ void SosoValentinesApp::defineMirrorGrid()
     // amtX and amtY controls the circling texture over the original image
     int amtX = 0;
     int amtY = 0;
-    
-    if (isDrawingFirstHexagon) {
-        amtX = ceil((((getWindowWidth()*1) - .5) / (1.5*(tri_width))) + 0.5f );
-        amtY = ceil((getWindowHeight()*1) / (tri_height) + 0.5f );
-    } else {
-        amtX = ceil((((getWindowWidth()*3) - .5) / (1.5*(tri_width))) + 0.5f );
-        amtY = ceil((getWindowHeight()*3) / (tri_height) + 0.5f );
-    }
+
+		amtX = ceil((((getWindowWidth()*1) - .5) / (1.5*(tri_width))) + 0.5f );
+		amtY = ceil((getWindowHeight()*1) / (tri_height) + 0.5f );
+
     const float w = ((amtX*1.5) + .5) * tri_width;
 	const float xOffset = -(w-getWindowWidth())/2;
 	
@@ -482,17 +478,20 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 			gl::color(Color(1.0f, 0, 0));
 			gl::drawSolidCircle((*vec)[tri_index].mStartPt, 5.0f);
 			gl::popModelMatrix();
+
+			//cout << "alpha" << (*vec)[tri_index].mAlpha <<endl;
 		}
 		else {
 			for( int i = 0; i < 6; i++ ) {
 				(*vec)[i].draw();
+				//cout << "alpha" << (*vec)[tri_index].mAlpha <<endl;
 			}
 		}
 	}
 	else {
-			for( int i = 0; i < vec->size(); i++ ) {
-					(*vec)[i].draw();
-			}
+		for( int i = 0; i < vec->size(); i++ ) {
+				(*vec)[i].draw();
+		}
 	}
 }
 

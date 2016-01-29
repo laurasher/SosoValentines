@@ -23,6 +23,7 @@ class TrianglePiece {
 	bool		isOut() const;
 	bool		isIn() const;
 	ci::vec2		mStartPt; // moved from protected for debugging
+	ci::Anim<float> mAlpha;
 
   protected:
 	void		setVisible( bool vis );
@@ -31,9 +32,7 @@ class TrianglePiece {
 	ci::gl::TextureRef	mTempTex, mDrawTex;
 	
 	ci::vec2		mVertices[3], mTexVertices[3];
-	
 	float			mRotation;
-	ci::Anim<float> mAlpha;
 	ci::vec2		mScale;
 	
 	bool			mVisible, mReadyToDraw;

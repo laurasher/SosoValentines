@@ -81,7 +81,9 @@ private:
 
 void SosoValentinesApp::prepareSettings( Settings *settings )
 {
-	settings->setWindowSize( 612, 612 );
+	settings->setWindowSize( 1280, 800 );
+	cout <<  "window size is " <<getWindowSize();
+	
 #if ! defined( CINDER_COCOA_TOUCH )
 	//settings->setResizable( false );
 #endif
@@ -90,6 +92,9 @@ void SosoValentinesApp::prepareSettings( Settings *settings )
 
 void SosoValentinesApp::setup()
 {
+	setWindowSize( 1280, 800 );
+	setFrameRate( 60 );
+
 	mPhase = 1;
 	mFirstRun = true;
 	mLoadingTexture = false;
@@ -187,7 +192,7 @@ void SosoValentinesApp::defineMirrorGrid()
 	int amtY = (int)(numTriangles * (float)(getWindowHeight())/(float)(getWindowWidth()) * (diagonal/getWindowWidth()));
 	const float xOffset = (-1) * getWindowWidth()/2;
 	const float yOffset = (-1) * getWindowHeight()/2;
-	
+
 	// creates a series of hexagons composed of 6 triangles each
 	if (!isRotatingHexagon) {
 		for( int i = 0; i < amtX; i++ ) {

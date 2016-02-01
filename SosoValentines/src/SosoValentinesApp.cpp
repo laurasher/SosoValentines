@@ -75,7 +75,9 @@ private:
 	bool												isDisablingGlobalRotation;
 	bool												isRandomizingHexInitalization;	// this affects the initial size, position
 	bool												isRotatingHexagon;							//	rotate the hexagon 30 degrees. Need to change the triangle coordinates, scale (reflection), grid, and alpha
+	bool												isUsingBoxTexture;							//use the diamond box opacity texture
 	int													tri_index;											// which of the triangles to show of the first hexagon
+
 	vec2 start;
 };
 
@@ -102,14 +104,15 @@ void SosoValentinesApp::setup()
 	mPhaseChangeCalled = false;
 	tri_index = 0;
 
-	ui::initialize();
 	if(isInDebugMode){
+		ui::initialize();
 		isDrawingHeartCutout = false;
 		isDrawingOriginalImage = false;
 		isDrawingFirstHexagon = false;
 		isDisablingGlobalRotation = true;
 		isRandomizingHexInitalization = false;
 		isRotatingHexagon = true;
+		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;
 	} else {
 		isDrawingHeartCutout = true;
@@ -118,6 +121,7 @@ void SosoValentinesApp::setup()
 		isDisablingGlobalRotation = false;
 		isRandomizingHexInitalization = true;
 		isRotatingHexagon = true;
+		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;
 	}
 
@@ -152,7 +156,8 @@ void SosoValentinesApp::continueCycle()
 void SosoValentinesApp::defineMirrorGrid()
 {
 	const int r = 1; // don't change this because this normalizes each triangle
-	const int numTriangles = 25;
+	const int numTriangles = 50;	// 50 to match heart_cutout_50.png. When doing so make sure to change to float startY = (tri_width * 1.5 * j) - (tri_width /2);
+
 	// this controls the initial position of the kaleidoscope
 	float tri_scale = 0.0f;
 
@@ -183,7 +188,6 @@ void SosoValentinesApp::defineMirrorGrid()
 	const float tri_width = distance( pt1, pt2 ) * tri_scale;
 	const float tri_height = std::sqrt((tri_width*tri_width) - ((tri_width/2) * (tri_width/2)));
     
-    cout << "tri height " << tri_height;
 	// amtX and amtY controls the circling texture over the original image
 	//	int	amtX = ceil((((getWindowWidth()*2) - .5) / (1.5*(tri_width))) + 0.5f );
 	//	int amtY = ceil((getWindowHeight()*2) / (tri_height) + 0.5f );
@@ -212,9 +216,14 @@ void SosoValentinesApp::defineMirrorGrid()
 					
 					// assign transparency for the sides of the cube
 					float alpha = 0.0f;
-					if (k == 0 || k == 1) {alpha = 0.4f;}
-					else if (k == 2 || k == 5) {alpha = 0.7f;}
-					else {alpha = 1.0f;}
+					if (!isUsingBoxTexture) {
+						alpha = 1.0f;
+					}
+					else {
+						if (k == 0 || k == 1) {alpha = 0.4f;}
+						else if (k == 2 || k == 5) {alpha = 0.7f;}
+						else {alpha = 1.0f;}
+					}
 
 					// rotate the whole triangle -120 degrees CC so the hexagon will have the the vertex at top
 					// the scale flips the location of the odd number triangles
@@ -226,7 +235,7 @@ void SosoValentinesApp::defineMirrorGrid()
 		}
 	} else {
 		for( int j = 0; j < amtY; j++ ) {
-			float startY = ((tri_width) * 1.5 * j) + ( tri_width * (1/2));
+			float startY = (tri_width * 1.5 * j) - (tri_width /2);	// shift tri_width/2 up so that the top of the first cube matches the top
 			startY += yOffset;
 			for( int i = 0; i < amtX; i++ ) {
 				float startX = (j%2==0) ? (tri_height*2*i) : (tri_height*2*i - tri_height);
@@ -241,10 +250,14 @@ void SosoValentinesApp::defineMirrorGrid()
 
 					// assign transparency for the sides of the cube
 					float alpha = 0.0f;
-					if (k == 2 || k == 3) {alpha = 0.4f;}
-					else if (k == 1 || k == 4) {alpha = 0.7f;}
-					else {alpha = 1.0f;}
-
+					if (!isUsingBoxTexture) {
+						alpha = 1.0f;
+					}
+					else {
+						if (k == 2 || k == 3) {alpha = 0.4f;}
+						else if (k == 1 || k == 4) {alpha = 0.7f;}
+						else {alpha = 1.0f;}
+					}
 					// rotate the whole triangle -120 degrees CC so the hexagon will have the the vertex at top
 					// the scale flips the location of the odd number triangles
 					TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k, scale, alpha);
@@ -388,6 +401,7 @@ void SosoValentinesApp::update()
 			ui::Checkbox("Disable global rotation", &isDisablingGlobalRotation);
 			ui::Checkbox("Randomize the hexagon initialization", &isRandomizingHexInitalization);
 			ui::Checkbox("Rotate the hexagon by 30 degrees", &isRotatingHexagon);
+			ui::Checkbox("Use the box texture", &isUsingBoxTexture);
 			ui::Checkbox("Twinkle with opacity", &isTwinklingWithOpacity);
 		}
 	}

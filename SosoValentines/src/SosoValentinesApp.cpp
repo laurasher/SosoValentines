@@ -121,7 +121,7 @@ void SosoValentinesApp::setup()
 		isTwinklingWithOpacity = true;
 	}
 
-	auto heartCutout = loadImage( loadAsset( "heart1_cutout.png" ) );
+	auto heartCutout = loadImage( loadAsset( "heart_cutout.png" ) );
 	mHeartTexture = gl::Texture2d::create( heartCutout );
 
 	mTextRibbon = new TextRibbon();
@@ -152,7 +152,7 @@ void SosoValentinesApp::continueCycle()
 void SosoValentinesApp::defineMirrorGrid()
 {
 	const int r = 1; // don't change this because this normalizes each triangle
-	const int numTriangles = 30;
+	const int numTriangles = 25;
 	// this controls the initial position of the kaleidoscope
 	float tri_scale = 0.0f;
 
@@ -162,7 +162,7 @@ void SosoValentinesApp::defineMirrorGrid()
 	else {
 		tri_scale = (float)( getWindowWidth() / numTriangles );
 	}
-
+    
 	// delete any previous pieces and clear the old vector
 	mTriPieces.clear();
 	
@@ -182,7 +182,8 @@ void SosoValentinesApp::defineMirrorGrid()
 
 	const float tri_width = distance( pt1, pt2 ) * tri_scale;
 	const float tri_height = std::sqrt((tri_width*tri_width) - ((tri_width/2) * (tri_width/2)));
-
+    
+    cout << "tri height " << tri_height;
 	// amtX and amtY controls the circling texture over the original image
 	//	int	amtX = ceil((((getWindowWidth()*2) - .5) / (1.5*(tri_width))) + 0.5f );
 	//	int amtY = ceil((getWindowHeight()*2) / (tri_height) + 0.5f );

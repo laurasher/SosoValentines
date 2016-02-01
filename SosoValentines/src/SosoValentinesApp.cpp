@@ -86,7 +86,6 @@ void SosoValentinesApp::setup()
 {
 	setWindowSize( 1080, 1080 ); // 1080 x 1080 is Instagram's current resolution
 	setFrameRate( 60 );
-
 	mPhase = 1;
 	mFirstRun = true;
 	mLoadingTexture = false;
@@ -157,7 +156,7 @@ void SosoValentinesApp::defineMirrorGrid()
 		tri_scale = (float)randInt(50, 100);
 	}
 	else {
-		tri_scale = (float)( getWindowWidth() / numTriangles );
+		tri_scale = ((float)getWindowWidth()) / ((float)(numTriangles * r * sin(M_PI / 3)));
 	}
     
 	// delete any previous pieces and clear the old vector
@@ -185,17 +184,27 @@ void SosoValentinesApp::defineMirrorGrid()
 	//	int amtY = ceil((getWindowHeight()*2) / (tri_height) + 0.5f );
 	float diagonal = getWindowWidth(); //make this =1. If we will be rotating+ shifting the grid, apply a factor > 1
 	//float diagonal = sqrt((getWindowWidth() * getWindowWidth()) + (getWindowHeight() * getWindowHeight()));
-	int amtX = numTriangles * (diagonal/getWindowWidth()); // draw some extra so we have enough for when it's rotating
-	int amtY = (int)(numTriangles * (float)(getWindowHeight())/(float)(getWindowWidth()) * (diagonal/getWindowWidth()));
-	const float xOffset = (-1) * getWindowWidth()/2;
-	const float yOffset = (-1) * getWindowHeight()/2;
+	int amtX;
+	int amtY;
+
+	if (!isDisablingGlobalRotation) { //need those extra texures and we should set the rotation to start from the center
+		amtX = numTriangles * (diagonal/getWindowWidth()); // draw some extra so we have enough for when it's rotating
+		amtY = (int)(numTriangles * (float)(getWindowHeight())/(float)(getWindowWidth()) * (diagonal/getWindowWidth()));
+	} else {
+		amtX = numTriangles / 2 + 4; // need to divide by 2 because hex width = 2 * triangles. add some extra to fill the whole page
+		amtY = numTriangles / 2 + 4; // because it's a square
+	}
+
+	// set the coordinate back to have top left corner as the origin
+	const float xOffset = ((-1) * getWindowWidth()/2);
+	const float yOffset = (-1) * getWindowHeight()/2 - tri_width;
 
 	// creates a series of hexagons composed of 6 triangles each
 	if (!isRotatingHexagon) {
-		for( int i = 0; i < amtX; i++ ) {
+		for( int i = 0; i <= amtX; i++ ) {
 			float startX = ((tri_width) * 1.5 * i);
 			startX += xOffset;
-			for( int j = 0; j < amtY; j++ ) {
+			for( int j = 0; j <= amtY; j++ ) {
 				float startY = (i%2==0) ? (tri_height*2*j) - (tri_height) : tri_height*2*j;
 				startY += yOffset;
 				
@@ -220,14 +229,15 @@ void SosoValentinesApp::defineMirrorGrid()
 					// rotate the whole triangle -120 degrees CC so the hexagon will have the the vertex at top
 					// the scale flips the location of the odd number triangles
 					TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k, scale, alpha);
-					//cout << "scale for triangle " << tri_index << " is " << scale <<endl;
 					mTriPieces.push_back(tri);
 				}
 			}
 		}
 	} else {
+		// hex vertex at the top
 		for( int j = 0; j < amtY; j++ ) {
-			float startY = (tri_width * 1.5 * j) - (tri_width /2);	// shift tri_width/2 up so that the top of the first cube matches the top
+			//float startY = (tri_width * 1.5 * j) - (tri_width /2);	// shift tri_width/2 up so that the top of the first cube matches the top
+			float startY = (tri_width * 1.5 * j);
 			startY += yOffset;
 			for( int i = 0; i < amtX; i++ ) {
 				float startX = (j%2==0) ? (tri_height*2*i) : (tri_height*2*i - tri_height);
@@ -239,7 +249,6 @@ void SosoValentinesApp::defineMirrorGrid()
 
 					vec2 scale = vec2( tri_scale, scaleX * tri_scale );
 					start = vec2(startX, startY );
-
 					// assign transparency for the sides of the cube
 					float alpha = 0.0f;
 					if (!isUsingBoxTexture) {
@@ -253,7 +262,6 @@ void SosoValentinesApp::defineMirrorGrid()
 					// rotate the whole triangle -120 degrees CC so the hexagon will have the the vertex at top
 					// the scale flips the location of the odd number triangles
 					TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k, scale, alpha);
-					//cout << "scale for triangle " << tri_index << " is " << scale <<endl;
 					mTriPieces.push_back(tri);
 				}
 			}
@@ -359,6 +367,7 @@ void SosoValentinesApp::resetSample()
 
 void SosoValentinesApp::update()
 {
+	//cout << "window size " << getWindowSize() << endl;
 	// if mCurInstagram is undefined, then don't do anything else since there's nothing else to do
 	if( mCurInstagram.isNull() ) {
 		newInstagram();
@@ -385,7 +394,7 @@ void SosoValentinesApp::update()
 			ui::Checkbox("Draw original image in the background", &isDrawingOriginalImage);
 			ui::Checkbox("Only draw the nth hexagon", &isDrawingOneHexagon);
 			if (isDrawingOneHexagon) {
-				ui::SliderInt("n", &nthHexagon, 0, 100); // only first 100 because it's for debugging purpose only
+				ui::SliderInt("n", &nthHexagon, 0, 25); // only first 25 because it's for debugging purpose only
 				ui::SliderInt( "triangle index (6 = all)", &tri_index, 0, 6 ); // 6 if drawing all triangles
 			}
 		}
@@ -493,7 +502,7 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 			gl::color(Color(1.0f, 0, 0));
 			gl::drawSolidCircle((*vec)[tri_index].mStartPt, 5.0f);
 			gl::popModelMatrix();
-
+			cout << "center " << (*vec)[0].mStartPt << endl;
 			} else {
 			// draw the full hex for tri_index = 6 * i
 			for( int i = (nthHexagon * 6) ; i < (6 * (nthHexagon + 1)); i++ ) {

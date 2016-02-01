@@ -415,14 +415,14 @@ void SosoValentinesApp::update()
 
 void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 {
-	if( ! mMirrorTexture )
-		return;
+	if( ! mMirrorTexture ) return;
 	
 	vec2 mSamplePt1( -0.5, -(sin(M_PI/3)/3) );
 	vec2 mSamplePt2( mSamplePt1.x + 1, mSamplePt1.y);
 	vec2 mSamplePt3( mSamplePt1.x + (cos(M_PI/3)), mSamplePt1.y + (sin(M_PI/3)));
 
 	mat3 mtrx( 1.0f );
+
 	// this part controls the sampling
 	mtrx = glm::translate( mtrx, mSamplePt.value() );
 	mtrx = glm::scale( mtrx, vec2( mSampleSize ) );
@@ -473,7 +473,7 @@ void SosoValentinesApp::draw()
 {
 	gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
 	gl::enableAlphaBlending( PREMULT );
-	gl::color(Color( 1.0f, 1.0f, 1.0f ));
+
 	if( mBgTexture && isDrawingOriginalImage ) {
 		gl::draw( mBgTexture, Rectf( mBgTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
 	}

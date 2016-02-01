@@ -15,8 +15,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-static const int MIRROR_DUR = 5;	// Duration of the mirror/kaleidoscope animation
-static const int STILL_DUR = 0;		// Duration of the still image
+static const int MIRROR_DUR = 10;	// Duration of the mirror/kaleidoscope animation
+static const int STILL_DUR = 5;		// Duration of the still image
 static const string TAG = "";		// Instagram tag to search for
 
 // Instagram Client Id - DO NOT USE THIS ONE!!! 
@@ -71,30 +71,20 @@ private:
 	bool                        isInDebugMode = true;
 	bool                        isDrawingHeartCutout;   // turn heart cutout on/off
 	bool                        isDrawingOriginalImage; // show original image
-	bool												isDrawingFirstHexagon ;	// show just the first hexagon in 1 * 1 grid texture rectangle
+	bool												isDrawingOneHexagon ;	// show just the first hexagon in 1 * 1 grid texture rectangle
 	bool												isDisablingGlobalRotation;
 	bool												isRandomizingHexInitalization;	// this affects the initial size, position
 	bool												isRotatingHexagon;							//	rotate the hexagon 30 degrees. Need to change the triangle coordinates, scale (reflection), grid, and alpha
 	bool												isUsingBoxTexture;							//use the diamond box opacity texture
 	int													tri_index;											// which of the triangles to show of the first hexagon
+	int													nthHexagon;
 
 	vec2 start;
 };
 
-void SosoValentinesApp::prepareSettings( Settings *settings )
-{
-	settings->setWindowSize( 1280, 800 );
-	cout <<  "window size is " <<getWindowSize();
-	
-#if ! defined( CINDER_COCOA_TOUCH )
-	//settings->setResizable( false );
-#endif
-	settings->setFrameRate( 60 );
-}
-
 void SosoValentinesApp::setup()
 {
-	setWindowSize( 1280, 800 );
+	setWindowSize( 1080, 1080 ); // 1080 x 1080 is Instagram's current resolution
 	setFrameRate( 60 );
 
 	mPhase = 1;
@@ -103,21 +93,23 @@ void SosoValentinesApp::setup()
 	mTextureLoaded = false;
 	mPhaseChangeCalled = false;
 	tri_index = 0;
+	nthHexagon = 0;
 
 	if(isInDebugMode){
 		ui::initialize();
 		isDrawingHeartCutout = false;
 		isDrawingOriginalImage = false;
-		isDrawingFirstHexagon = false;
+		isDrawingOneHexagon = false;
 		isDisablingGlobalRotation = true;
 		isRandomizingHexInitalization = false;
 		isRotatingHexagon = true;
 		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;
+
 	} else {
 		isDrawingHeartCutout = true;
 		isDrawingOriginalImage = false;
-		isDrawingFirstHexagon = false;
+		isDrawingOneHexagon = false;
 		isDisablingGlobalRotation = false;
 		isRandomizingHexInitalization = true;
 		isRotatingHexagon = true;
@@ -125,7 +117,7 @@ void SosoValentinesApp::setup()
 		isTwinklingWithOpacity = true;
 	}
 
-	auto heartCutout = loadImage( loadAsset( "heart_cutout.png" ) );
+	auto heartCutout = loadImage( loadAsset( "heart_cutout_50.png" ) );
 	mHeartTexture = gl::Texture2d::create( heartCutout );
 
 	mTextRibbon = new TextRibbon();
@@ -156,7 +148,7 @@ void SosoValentinesApp::continueCycle()
 void SosoValentinesApp::defineMirrorGrid()
 {
 	const int r = 1; // don't change this because this normalizes each triangle
-	const int numTriangles = 50;	// 50 to match heart_cutout_50.png. When doing so make sure to change to float startY = (tri_width * 1.5 * j) - (tri_width /2);
+	const int numTriangles = 15;	// 50 to match heart_cutout_50.png. When doing so make sure to change to float startY = (tri_width * 1.5 * j) - (tri_width /2);
 
 	// this controls the initial position of the kaleidoscope
 	float tri_scale = 0.0f;
@@ -391,8 +383,9 @@ void SosoValentinesApp::update()
 
 		if (ui::CollapsingHeader("Debug", nullptr, true, true)) {
 			ui::Checkbox("Draw original image in the background", &isDrawingOriginalImage);
-			ui::Checkbox("Only draw the first hexagon", &isDrawingFirstHexagon);
-			if (isDrawingFirstHexagon) {
+			ui::Checkbox("Only draw the nth hexagon", &isDrawingOneHexagon);
+			if (isDrawingOneHexagon) {
+				ui::SliderInt("n", &nthHexagon, 0, 100); // only first 100 because it's for debugging purpose only
 				ui::SliderInt( "triangle index (6 = all)", &tri_index, 0, 6 ); // 6 if drawing all triangles
 			}
 		}
@@ -491,24 +484,22 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 	if (!isDisablingGlobalRotation) {
 		gl::rotate( mMirrorRot );
 	}
-
-	if ( isDrawingFirstHexagon ) {
-		if (tri_index < 6){
-			(*vec)[tri_index].draw();
-			// debug
+	if ( isDrawingOneHexagon ) {
+		if ( tri_index < 6 ){
+			//draw the triangle piece at index tri_index of the nth hexagon
+			(*vec)[ (nthHexagon * 6 ) + tri_index ].draw();
+			// draw the center dot of the first hexagon
 			gl::pushModelMatrix();
 			gl::color(Color(1.0f, 0, 0));
 			gl::drawSolidCircle((*vec)[tri_index].mStartPt, 5.0f);
 			gl::popModelMatrix();
 
-			//cout << "alpha" << (*vec)[tri_index].mAlpha <<endl;
-		}
-		else {
-			for( int i = 0; i < 6; i++ ) {
+			} else {
+			// draw the full hex for tri_index = 6 * i
+			for( int i = (nthHexagon * 6) ; i < (6 * (nthHexagon + 1)); i++ ) {
 				(*vec)[i].draw();
-				//cout << "alpha" << (*vec)[tri_index].mAlpha <<endl;
 			}
-		}
+		}	// end of isDrawingOneHexagon
 	}
 	else {
 		for( int i = 0; i < vec->size(); i++ ) {

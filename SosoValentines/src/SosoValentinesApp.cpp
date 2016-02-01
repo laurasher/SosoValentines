@@ -29,7 +29,6 @@ static const bool PREMULT = false;
 class SosoValentinesApp : public App {
 private:
 	void	setup();
-	void	prepareSettings( Settings *settings );
 	void	update();
 	void	draw();
 	
@@ -86,6 +85,7 @@ void SosoValentinesApp::setup()
 {
 	setWindowSize( 1080, 1080 ); // 1080 x 1080 is Instagram's current resolution
 	setFrameRate( 60 );
+
 	mPhase = 1;
 	mFirstRun = true;
 	mLoadingTexture = false;
@@ -97,7 +97,7 @@ void SosoValentinesApp::setup()
 	if(isInDebugMode){
 		ui::initialize();
 		isDrawingHeartCutout = false;
-		isDrawingOriginalImage = false;
+		isDrawingOriginalImage = true;
 		isDrawingOneHexagon = false;
 		isDisablingGlobalRotation = true;
 		isRandomizingHexInitalization = false;
@@ -107,7 +107,7 @@ void SosoValentinesApp::setup()
 
 	} else {
 		isDrawingHeartCutout = true;
-		isDrawingOriginalImage = false;
+		isDrawingOriginalImage = true;
 		isDrawingOneHexagon = false;
 		isDisablingGlobalRotation = false;
 		isRandomizingHexInitalization = true;
@@ -124,7 +124,7 @@ void SosoValentinesApp::setup()
 	// Popular images stream
 	//mInstaStream = make_shared<InstagramStream>( CLIENT_ID );
 	// Image stream of a particular tag
-	mInstaStream = make_shared<InstagramStream>( "valentines", CLIENT_ID );
+	mInstaStream = make_shared<InstagramStream>( "sosolimited", CLIENT_ID );
 	// Image stream in a particular area
 	// mInstaStream = make_shared<InstagramStream>( vec2(40.720467,-74.00603), 5000, CLIENT_ID );
     
@@ -300,6 +300,7 @@ void SosoValentinesApp::changePhase( int newPhase )
 		// Still Image Mode
 		case 1:
 			// transition all of the mirror pieces out
+			// setTransitionOut (setTransition) has timeline too inside TrianglePiece.cpp
 			for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
 				(*piece).setTransitionOut(.25);
 			}
@@ -340,14 +341,25 @@ void SosoValentinesApp::imageLoaded()
 	
 	// we don't want to wait on the first go around
 	int delayOffset = STILL_DUR;
+	int delayMirror = MIRROR_DUR;
 	if( mFirstRun ) {
 		mFirstRun = false;
 		delayOffset = 0;
+		delayMirror = 0;
 	}
-	
+
 	// This defines the length of time that we're in each phase
-	timeline().add( [&] { changePhase(0); }, timeline().getCurrentTime() + delayOffset);
-	timeline().add( [&] { changePhase(1); }, timeline().getCurrentTime() + delayOffset + MIRROR_DUR);
+	timeline().add( [&] { changePhase(1); }, timeline().getCurrentTime() + delayOffset + delayMirror);	//show image first
+
+	cout << "time after still image mode is " <<timeline().getCurrentTime() << endl;
+	//cout << "Been in mirror mode for " << MirrorModeTimer.getSeconds() << " s" <<endl;
+	//MirrorModeTimer.stop();
+	//cout << "Begin still image mode" <<endl;
+	//StillImageModeTimer.start();
+	timeline().add( [&] { changePhase(0); }, timeline().getCurrentTime() + delayOffset ); // show mirror
+	cout << "time after mirror mode is " <<timeline().getCurrentTime() << endl;
+	//cout << "Been in still image mode for " << StillImageModeTimer.getSeconds() << " s" <<endl;
+	//StillImageModeTimer.stop();
 }
 
 void SosoValentinesApp::resetSample()
@@ -371,7 +383,6 @@ void SosoValentinesApp::resetSample()
 
 void SosoValentinesApp::update()
 {
-	//cout << "window size " << getWindowSize() << endl;
 	// if mCurInstagram is undefined, then don't do anything else since there's nothing else to do
 	if( mCurInstagram.isNull() ) {
 		newInstagram();
@@ -390,8 +401,8 @@ void SosoValentinesApp::update()
 			updateMirrors( &mTriPieces );
 	}
 
+	// draw debug GUI
 	if (isInDebugMode){
-		// draw debug GUI
 		ui::ScopedWindow window( "Settings" );
 
 		if (ui::CollapsingHeader("Debug", nullptr, true, true)) {
@@ -416,7 +427,7 @@ void SosoValentinesApp::update()
 void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 {
 	if( ! mMirrorTexture ) return;
-	
+
 	vec2 mSamplePt1( -0.5, -(sin(M_PI/3)/3) );
 	vec2 mSamplePt2( mSamplePt1.x + 1, mSamplePt1.y);
 	vec2 mSamplePt3( mSamplePt1.x + (cos(M_PI/3)), mSamplePt1.y + (sin(M_PI/3)));
@@ -501,11 +512,12 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 		if ( tri_index < 6 ){
 			//draw the triangle piece at index tri_index of the nth hexagon
 			(*vec)[ (nthHexagon * 6 ) + tri_index ].draw();
-			// draw the center dot of the first hexagon
-			gl::pushModelMatrix();
+			// draw the center dot of the hexagon
+			gl::pushMatrices();
 			gl::color(Color(1.0f, 0, 0));
 			gl::drawSolidCircle((*vec)[tri_index].mStartPt, 5.0f);
-			gl::popModelMatrix();
+			gl::popMatrices();
+
 			cout << "center " << (*vec)[0].mStartPt << endl;
 			} else {
 			// draw the full hex for tri_index = 6 * i

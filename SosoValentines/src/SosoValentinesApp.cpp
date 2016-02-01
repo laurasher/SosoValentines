@@ -156,7 +156,11 @@ void SosoValentinesApp::defineMirrorGrid()
 		tri_scale = (float)randInt(50, 100);
 	}
 	else {
-		tri_scale = ((float)getWindowWidth()) / ((float)(numTriangles * r * sin(M_PI / 3)));
+		if (!isRotatingHexagon) {
+			tri_scale = ((float)getWindowWidth()) / ((float)(numTriangles));
+		} else {
+			tri_scale = ((float)getWindowWidth()) / ((float)(numTriangles * r * sin(M_PI / 3)));
+		}
 	}
     
 	// delete any previous pieces and clear the old vector
@@ -196,8 +200,8 @@ void SosoValentinesApp::defineMirrorGrid()
 	}
 
 	// set the coordinate back to have top left corner as the origin
-	const float xOffset = ((-1) * getWindowWidth()/2);
-	const float yOffset = (-1) * getWindowHeight()/2 - tri_width;
+	const float xOffset = (-1) * getWindowWidth()/2;
+	const float yOffset = (-1) * getWindowHeight()/2 - (tri_width/2);
 
 	// creates a series of hexagons composed of 6 triangles each
 	if (!isRotatingHexagon) {

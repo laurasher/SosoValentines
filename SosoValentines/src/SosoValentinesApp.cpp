@@ -15,8 +15,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-static const int MIRROR_DUR = 5;	// Duration of the mirror/kaleidoscope animation
-static const int STILL_DUR = 0;		// Duration of the still image
+static const int MIRROR_DUR = 10;	// Duration of the mirror/kaleidoscope animation
+static const int STILL_DUR = 5;		// Duration of the still image
 static const string TAG = "";		// Instagram tag to search for
 
 // Instagram Client Id - DO NOT USE THIS ONE!!! 
@@ -27,7 +27,7 @@ static const string CLIENT_ID = "def20410b5134f7d9b828668775aee4a";
 static const bool PREMULT = false;
 
 class SosoValentinesApp : public App {
-  private:
+private:
 	void	setup();
 	void	prepareSettings( Settings *settings );
 	void	update();
@@ -71,47 +71,53 @@ class SosoValentinesApp : public App {
 	bool                        isInDebugMode = true;
 	bool                        isDrawingHeartCutout;   // turn heart cutout on/off
 	bool                        isDrawingOriginalImage; // show original image
-	bool												isDrawingFirstHexagon ;	// show just the first hexagon in 1 * 1 grid texture rectangle
+	bool												isDrawingOneHexagon ;	// show just the first hexagon in 1 * 1 grid texture rectangle
 	bool												isDisablingGlobalRotation;
-	bool												isRandomizingHexInitalization; //this affects the initial size, position
+	bool												isRandomizingHexInitalization;	// this affects the initial size, position
+	bool												isRotatingHexagon;							//	rotate the hexagon 30 degrees. Need to change the triangle coordinates, scale (reflection), grid, and alpha
+	bool												isUsingBoxTexture;							//use the diamond box opacity texture
 	int													tri_index;											// which of the triangles to show of the first hexagon
+	int													nthHexagon;
+
 	vec2 start;
 };
 
-void SosoValentinesApp::prepareSettings( Settings *settings )
-{
-	settings->setWindowSize( 612, 612 );
-#if ! defined( CINDER_COCOA_TOUCH )
-	//settings->setResizable( false );
-#endif
-	settings->setFrameRate( 60 );
-}
-
 void SosoValentinesApp::setup()
 {
+	setWindowSize( 1080, 1080 ); // 1080 x 1080 is Instagram's current resolution
+	setFrameRate( 60 );
+
 	mPhase = 1;
 	mFirstRun = true;
 	mLoadingTexture = false;
 	mTextureLoaded = false;
 	mPhaseChangeCalled = false;
 	tri_index = 0;
+	nthHexagon = 0;
 
 	if(isInDebugMode){
 		ui::initialize();
 		isDrawingHeartCutout = false;
 		isDrawingOriginalImage = false;
-		isDrawingFirstHexagon = true;
+		isDrawingOneHexagon = false;
 		isDisablingGlobalRotation = true;
 		isRandomizingHexInitalization = false;
+		isRotatingHexagon = true;
+		isUsingBoxTexture = true;
+		isTwinklingWithOpacity = true;
+
 	} else {
 		isDrawingHeartCutout = true;
 		isDrawingOriginalImage = false;
-		isDrawingFirstHexagon = false;
+		isDrawingOneHexagon = false;
 		isDisablingGlobalRotation = false;
 		isRandomizingHexInitalization = true;
+		isRotatingHexagon = true;
+		isUsingBoxTexture = true;
+		isTwinklingWithOpacity = true;
 	}
 
-	auto heartCutout = loadImage( loadAsset( "heart1_cutout.png" ) );
+	auto heartCutout = loadImage( loadAsset( "heart_cutout_50.png" ) );
 	mHeartTexture = gl::Texture2d::create( heartCutout );
 
 	mTextRibbon = new TextRibbon();
@@ -142,6 +148,8 @@ void SosoValentinesApp::continueCycle()
 void SosoValentinesApp::defineMirrorGrid()
 {
 	const int r = 1; // don't change this because this normalizes each triangle
+	const int numTriangles = 15;	// 50 to match heart_cutout_50.png. When doing so make sure to change to float startY = (tri_width * 1.5 * j) - (tri_width /2);
+
 	// this controls the initial position of the kaleidoscope
 	float tri_scale = 0.0f;
 
@@ -149,62 +157,105 @@ void SosoValentinesApp::defineMirrorGrid()
 		tri_scale = (float)randInt(50, 100);
 	}
 	else {
-		tri_scale = 50;
+		tri_scale = (float)( getWindowWidth() / numTriangles );
 	}
-
+    
 	// delete any previous pieces and clear the old vector
 	mTriPieces.clear();
 	
 	vec2 pt1(0.0, 0.0);
-	vec2 pt2(r, 0.0);
-	vec2 pt3((cos(M_PI/3) * r), (sin(M_PI/3) * r));
-    
+	vec2 pt2(0.0, 0.0);
+	vec2 pt3(0.0, 0.0);
+
+	if( !isRotatingHexagon ) {
+		pt1 = vec2(0.0, 0.0);
+		pt2 = vec2(r, 0.0);
+		pt3 = vec2((cos(M_PI/3) * r), (sin(M_PI/3) * r));
+	} else {
+		pt1 = vec2(0.0, 0.0);
+		pt2 = vec2((sin(M_PI/3) * r),(cos(M_PI/3) * r));
+		pt3 = vec2((sin(M_PI/3) * r),(cos(M_PI/3) * r * (-1)));
+	}
+
 	const float tri_width = distance( pt1, pt2 ) * tri_scale;
 	const float tri_height = std::sqrt((tri_width*tri_width) - ((tri_width/2) * (tri_width/2)));
-
-	
-    // amtX and amtY controls the circling texture over the original image
-    int amtX = 0;
-    int amtY = 0;
     
-    if (isDrawingFirstHexagon) {
-        amtX = ceil((((getWindowWidth()*1) - .5) / (1.5*(tri_width))) + 0.5f );
-        amtY = ceil((getWindowHeight()*1) / (tri_height) + 0.5f );
-    } else {
-        amtX = ceil((((getWindowWidth()*3) - .5) / (1.5*(tri_width))) + 0.5f );
-        amtY = ceil((getWindowHeight()*3) / (tri_height) + 0.5f );
-    }
-    const float w = ((amtX*1.5) + .5) * tri_width;
-	const float xOffset = -(w-getWindowWidth())/2;
-	
-	const float yOffset = -((amtY*(tri_height) - getWindowHeight())/2);
-	
+	// amtX and amtY controls the circling texture over the original image
+	//	int	amtX = ceil((((getWindowWidth()*2) - .5) / (1.5*(tri_width))) + 0.5f );
+	//	int amtY = ceil((getWindowHeight()*2) / (tri_height) + 0.5f );
+	float diagonal = getWindowWidth(); //make this =1. If we will be rotating+ shifting the grid, apply a factor > 1
+	//float diagonal = sqrt((getWindowWidth() * getWindowWidth()) + (getWindowHeight() * getWindowHeight()));
+	int amtX = numTriangles * (diagonal/getWindowWidth()); // draw some extra so we have enough for when it's rotating
+	int amtY = (int)(numTriangles * (float)(getWindowHeight())/(float)(getWindowWidth()) * (diagonal/getWindowWidth()));
+	const float xOffset = (-1) * getWindowWidth()/2;
+	const float yOffset = (-1) * getWindowHeight()/2;
+
 	// creates a series of hexagons composed of 6 triangles each
-	for( int i = 0; i < amtX; i++ ) {
-		float startX = ((tri_width) * 1.5 * i);
-		startX += xOffset;
+	if (!isRotatingHexagon) {
+		for( int i = 0; i < amtX; i++ ) {
+			float startX = ((tri_width) * 1.5 * i);
+			startX += xOffset;
+			for( int j = 0; j < amtY; j++ ) {
+				float startY = (i%2==0) ? (tri_height*2*j) - (tri_height) : tri_height*2*j;
+				startY += yOffset;
+				
+				for( int k = 0; k < 6; k++ ) {
+					// because every other pieces is a mirror of the one next to it, every other has to be reversed on the x scale
+					int scaleX = (k%2==0) ? 1 : -1;
+
+					vec2 scale = vec2( scaleX * tri_scale, tri_scale );
+					start = vec2(startX, startY );
+					
+					// assign transparency for the sides of the cube
+					float alpha = 0.0f;
+					if (!isUsingBoxTexture) {
+						alpha = 1.0f;
+					}
+					else {
+						if (k == 0 || k == 1) {alpha = 0.4f;}
+						else if (k == 2 || k == 5) {alpha = 0.7f;}
+						else {alpha = 1.0f;}
+					}
+
+					// rotate the whole triangle -120 degrees CC so the hexagon will have the the vertex at top
+					// the scale flips the location of the odd number triangles
+					TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k, scale, alpha);
+					//cout << "scale for triangle " << tri_index << " is " << scale <<endl;
+					mTriPieces.push_back(tri);
+				}
+			}
+		}
+	} else {
 		for( int j = 0; j < amtY; j++ ) {
-			float startY = (i%2==0) ? (tri_height*2*j) - (tri_height) : tri_height*2*j;
+			float startY = (tri_width * 1.5 * j) - (tri_width /2);	// shift tri_width/2 up so that the top of the first cube matches the top
 			startY += yOffset;
-			
-			for( int k = 0; k < 6; k++ ) {
-				// because every other pieces is a mirror of the one next to it, every other has to be reversed on the x scale
-				int scaleX = (k%2==0) ? 1 : -1;
-				vec2 scale( scaleX * tri_scale, tri_scale );
-				
-				start = vec2(startX, startY );
-				
-				// assign transparency for the sides of the cube
-				float alpha = 0.0f;
-				if (k == 0 || k == 1) {alpha = 0.4f;}
-				else if (k == 2 || k == 5) {alpha = 0.7f;}
-				else {alpha = 1.0f;}
-				
-				// rotate the whole triangle -120 degrees CC so the hexagon will have the the vertex at top
-				// the scale flips the location of the odd number triangles
-				TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k, scale, alpha);
-				//cout << "scale for triangle " << tri_index << " is " << scale <<endl;
-				mTriPieces.push_back(tri);
+			for( int i = 0; i < amtX; i++ ) {
+				float startX = (j%2==0) ? (tri_height*2*i) : (tri_height*2*i - tri_height);
+				startX += xOffset;
+
+				for( int k = 0; k < 6; k++ ) {
+					// because every other pieces is a mirror of the one next to it, every other has to be reversed on the x scale
+					int scaleX = (k%2==0) ? 1 : -1;
+
+					vec2 scale = vec2( tri_scale, scaleX * tri_scale );
+					start = vec2(startX, startY );
+
+					// assign transparency for the sides of the cube
+					float alpha = 0.0f;
+					if (!isUsingBoxTexture) {
+						alpha = 1.0f;
+					}
+					else {
+						if (k == 2 || k == 3) {alpha = 0.4f;}
+						else if (k == 1 || k == 4) {alpha = 0.7f;}
+						else {alpha = 1.0f;}
+					}
+					// rotate the whole triangle -120 degrees CC so the hexagon will have the the vertex at top
+					// the scale flips the location of the odd number triangles
+					TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k, scale, alpha);
+					//cout << "scale for triangle " << tri_index << " is " << scale <<endl;
+					mTriPieces.push_back(tri);
+				}
 			}
 		}
 	}
@@ -325,6 +376,28 @@ void SosoValentinesApp::update()
 			imageLoaded();
 			updateMirrors( &mTriPieces );
 	}
+
+	if (isInDebugMode){
+		// draw debug GUI
+		ui::ScopedWindow window( "Settings" );
+
+		if (ui::CollapsingHeader("Debug", nullptr, true, true)) {
+			ui::Checkbox("Draw original image in the background", &isDrawingOriginalImage);
+			ui::Checkbox("Only draw the nth hexagon", &isDrawingOneHexagon);
+			if (isDrawingOneHexagon) {
+				ui::SliderInt("n", &nthHexagon, 0, 100); // only first 100 because it's for debugging purpose only
+				ui::SliderInt( "triangle index (6 = all)", &tri_index, 0, 6 ); // 6 if drawing all triangles
+			}
+		}
+		if (ui::CollapsingHeader("Animation", nullptr, true, true)){
+			ui::Checkbox("Show heart cutout", &isDrawingHeartCutout);
+			ui::Checkbox("Disable global rotation", &isDisablingGlobalRotation);
+			ui::Checkbox("Randomize the hexagon initialization", &isRandomizingHexInitalization);
+			ui::Checkbox("Rotate the hexagon by 30 degrees", &isRotatingHexagon);
+			ui::Checkbox("Use the box texture", &isUsingBoxTexture);
+			ui::Checkbox("Twinkle with opacity", &isTwinklingWithOpacity);
+		}
+	}
 }
 
 void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
@@ -335,7 +408,7 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 	vec2 mSamplePt1( -0.5, -(sin(M_PI/3)/3) );
 	vec2 mSamplePt2( mSamplePt1.x + 1, mSamplePt1.y);
 	vec2 mSamplePt3( mSamplePt1.x + (cos(M_PI/3)), mSamplePt1.y + (sin(M_PI/3)));
-	
+
 	mat3 mtrx( 1.0f );
 	// this part controls the sampling
 	mtrx = glm::translate( mtrx, mSamplePt.value() );
@@ -400,53 +473,38 @@ void SosoValentinesApp::draw()
 			gl::draw( mHeartTexture, Rectf( mHeartTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
 	}
 	mTextRibbon->draw();
-
-	if (isInDebugMode){
-		// draw debug GUI
-		ui::Begin("Debug Settings");
-
-		ui::Checkbox("Show heart cutout", &isDrawingHeartCutout);
-		ui::Checkbox("Draw original image in the background", &isDrawingOriginalImage);
-		ui::Checkbox("Only draw the first hexagon", &isDrawingFirstHexagon);
-		if (isDrawingFirstHexagon) {
-			ui::SliderInt( "triangle index (6 = all)", &tri_index, 0, 6 ); // 6 if drawing all triangles
-		}
-		ui::Checkbox("Diable global rotation", &isDisablingGlobalRotation);
-		ui::Checkbox("Randomize the hexagon initialization", &isRandomizingHexInitalization);
-
-		ui::End();
-	}
 }
 
 void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 {
 	gl::ScopedModelMatrix scopedMat;
-	gl::translate( getWindowCenter() );
+	gl::translate( getWindowCenter() ); // draws the texture in the middle of the screen
 
 	// texture global rotation
 	if (!isDisablingGlobalRotation) {
 		gl::rotate( mMirrorRot );
 	}
-
-	if ( isDrawingFirstHexagon ) {
-		if (tri_index < 6){
-			(*vec)[tri_index].draw();
-			// debug
+	if ( isDrawingOneHexagon ) {
+		if ( tri_index < 6 ){
+			//draw the triangle piece at index tri_index of the nth hexagon
+			(*vec)[ (nthHexagon * 6 ) + tri_index ].draw();
+			// draw the center dot of the first hexagon
 			gl::pushModelMatrix();
 			gl::color(Color(1.0f, 0, 0));
 			gl::drawSolidCircle((*vec)[tri_index].mStartPt, 5.0f);
 			gl::popModelMatrix();
-		}
-		else {
-			for( int i = 0; i < 6; i++ ) {
+
+			} else {
+			// draw the full hex for tri_index = 6 * i
+			for( int i = (nthHexagon * 6) ; i < (6 * (nthHexagon + 1)); i++ ) {
 				(*vec)[i].draw();
 			}
-		}
+		}	// end of isDrawingOneHexagon
 	}
 	else {
-			for( int i = 0; i < vec->size(); i++ ) {
-					(*vec)[i].draw();
-			}
+		for( int i = 0; i < vec->size(); i++ ) {
+				(*vec)[i].draw();
+		}
 	}
 }
 

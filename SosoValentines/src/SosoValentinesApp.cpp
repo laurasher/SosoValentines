@@ -124,7 +124,7 @@ void SosoValentinesApp::setup()
 	// Popular images stream
 	//mInstaStream = make_shared<InstagramStream>( CLIENT_ID );
 	// Image stream of a particular tag
-	mInstaStream = make_shared<InstagramStream>( "sosolimited", CLIENT_ID );
+	mInstaStream = make_shared<InstagramStream>( "valentines", CLIENT_ID );
 	// Image stream in a particular area
 	// mInstaStream = make_shared<InstagramStream>( vec2(40.720467,-74.00603), 5000, CLIENT_ID );
     

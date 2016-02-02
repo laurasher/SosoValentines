@@ -19,20 +19,20 @@ class TextRibbon {
 	void	update( std::string tag, std::string user );
 	void	draw();
 	void	ribbonOut(float delay);
-	void			ribbonIn(float delay);
+	void	ribbonIn(float delay);
 	
   private:
-	void			makeText();
-	void			drawTextShape();
+	void  makeText();
+	void	drawTextShape();
 	
-	std::string			mTag, mUser;
+	std::string		mTag, mUser;
 	ci::vec2			mTextPos, mRibbonSize;
 	ci::Font			mUserFont, mTagFont;
-	ci::ColorA			mCol, mTextCol;
+	ci::ColorA		mCol, mTextCol;
 	
 	ci::gl::TextureRef	mUserTex, mTagTex;
-	ci::TextBox			mTagBox, mUserBox;
+	ci::TextBox         mTagBox, mUserBox;
 	
-	ci::Anim<ci::vec2> mCurPos;
-	ci::Anim<float>		mCurAlpha;
+	ci::Anim<ci::vec2>  mCurPos;
+	ci::Anim<float>     mCurAlpha;
 };

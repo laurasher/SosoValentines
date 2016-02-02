@@ -65,6 +65,7 @@ private:
 	bool												mPiecesIn;				// whether all of the mirror pieces are showing or not
 	bool												mPhaseChangeCalled;		// if the app has been told to change phases or not
 	bool												mFirstRun;				// if the app is on its first cycle
+  bool                        mDrawingMirrorTex;  // boolean used to determine when to call updateMirrors
 
 	// helpful for debug
 	bool                        isInDebugMode = true;
@@ -91,6 +92,7 @@ void SosoValentinesApp::setup()
 	mLoadingTexture = false;
 	mTextureLoaded = false;
 	mPhaseChangeCalled = false;
+  mDrawingMirrorTex = false;
 	tri_index = 0;
 	nthHexagon = 0;
 
@@ -147,7 +149,7 @@ void SosoValentinesApp::continueCycle()
 void SosoValentinesApp::defineMirrorGrid()
 {
 	const int r = 1; // don't change this because this normalizes each triangle
-	const int numTriangles = 15;	// 50 to match heart_cutout_50.png. When doing so make sure to change to float startY = (tri_width * 1.5 * j) - (tri_width /2);
+	const int numTriangles = 18;	// 50 to match heart_cutout_50.png. When doing so make sure to change to float startY = (tri_width * 1.5 * j) - (tri_width /2);
 
 	// this controls the initial position of the kaleidoscope
 	float tri_scale = 0.0f;
@@ -182,8 +184,9 @@ void SosoValentinesApp::defineMirrorGrid()
 
 	const float tri_width = distance( pt1, pt2 ) * tri_scale;
 	const float tri_height = std::sqrt((tri_width*tri_width) - ((tri_width/2) * (tri_width/2)));
-    
-	// amtX and amtY controls the circling texture over the original image
+    // cout << tri_height *2;
+	
+    // amtX and amtY controls the circling texture over the original image
 	//	int	amtX = ceil((((getWindowWidth()*2) - .5) / (1.5*(tri_width))) + 0.5f );
 	//	int amtY = ceil((getWindowHeight()*2) / (tri_height) + 0.5f );
 	float diagonal = getWindowWidth(); //make this =1. If we will be rotating+ shifting the grid, apply a factor > 1
@@ -287,10 +290,14 @@ void SosoValentinesApp::changePhase( int newPhase )
 	switch( mPhase ) {
 		// Mirror Mode
 		case 0: {
-			// transition all of the mirror pieces in
-			transitionMirrorIn( &mTriPieces );
-			resetSample(); 
-			
+      mDrawingMirrorTex = true;
+      
+      // transition all of the mirror pieces in
+      cout << "switched to mirror mode at " <<timeline().getCurrentTime() << "s" << endl;
+      
+      transitionMirrorIn( &mTriPieces );
+      resetSample(); 
+      
 			mMirrorRot = randFloat(M_PI, M_PI * 2);
 			float newRot = mMirrorRot + randFloat(M_PI, M_PI/4);
 			timeline().apply(&mMirrorRot, newRot, MIRROR_DUR, EaseInOutQuad());
@@ -299,9 +306,14 @@ void SosoValentinesApp::changePhase( int newPhase )
 		break;
 		// Still Image Mode
 		case 1:
-			// transition all of the mirror pieces out
+      mDrawingMirrorTex = false; // setting this false freezes after the first loop
+      
+      // transition all of the mirror pieces out
 			// setTransitionOut (setTransition) has timeline too inside TrianglePiece.cpp
-			for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
+			cout << "switched to still image mode at " <<timeline().getCurrentTime() << "s" << endl;
+      
+      if ( mFirstRun == true) return;
+      for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
 				(*piece).setTransitionOut(.25);
 			}
 		break;
@@ -327,39 +339,33 @@ void SosoValentinesApp::checkImageLoaded()
 
 void SosoValentinesApp::transitionMirrorIn( vector<TrianglePiece> *vec )
 {
-	for( int i = 0; i < vec->size(); i++ ) {
-		float delay = randFloat( 0.1f, 0.5f );
-		(*vec)[i].reset( delay, mMirrorTexture );
+  cout << "transitionMirrorIn" <<endl;
+  for( int i = 0; i < vec->size(); i++ ) {
+		//float delay = randFloat( 0.1f, 0.5f );
+    float delay = 0.5f;
+    
+    (*vec)[i].reset( delay, mMirrorTexture );
 	}
-//	mTextRibbon->ribbonOut(0);
-	mTextRibbon->ribbonIn(0);
+  mTextRibbon->ribbonOut(0);
+	//mTextRibbon->ribbonIn(0);
+  cout << "drawing ribbon" << endl;
 }
 
 void SosoValentinesApp::imageLoaded()
 {
 	mPhaseChangeCalled = true;
-	
+  mDrawingMirrorTex =  false;
 	// we don't want to wait on the first go around
 	int delayOffset = STILL_DUR;
-	int delayMirror = MIRROR_DUR;
 	if( mFirstRun ) {
 		mFirstRun = false;
-		delayOffset = 0;
-		delayMirror = 0;
+		// delayOffset = 0;
 	}
 
 	// This defines the length of time that we're in each phase
-	timeline().add( [&] { changePhase(1); }, timeline().getCurrentTime() + delayOffset + delayMirror);	//show image first
-
-	cout << "time after still image mode is " <<timeline().getCurrentTime() << endl;
-	//cout << "Been in mirror mode for " << MirrorModeTimer.getSeconds() << " s" <<endl;
-	//MirrorModeTimer.stop();
-	//cout << "Begin still image mode" <<endl;
-	//StillImageModeTimer.start();
-	timeline().add( [&] { changePhase(0); }, timeline().getCurrentTime() + delayOffset ); // show mirror
-	cout << "time after mirror mode is " <<timeline().getCurrentTime() << endl;
-	//cout << "Been in still image mode for " << StillImageModeTimer.getSeconds() << " s" <<endl;
-	//StillImageModeTimer.stop();
+	timeline().add( [&] { changePhase(0); }, timeline().getCurrentTime() + delayOffset );	// switch to mirror mode after this time
+	timeline().add( [&] { changePhase(1); }, timeline().getCurrentTime() + delayOffset + MIRROR_DUR ); // switch to the still image mode
+	
 }
 
 void SosoValentinesApp::resetSample()
@@ -372,18 +378,18 @@ void SosoValentinesApp::resetSample()
 	vec2 newPos;
 	int count = 0;
 	// Try to find a good sample location thats within the window's frame.
-	// Give up if we try and settle after a bunch of times, no big deal.
+	// Give up if we try and settle after 150 times, no big deal.
 	do {
 		newPos.x = randFloat(0, getWindowWidth() - mSampleSize/2);
 		newPos.y = randFloat(0, getWindowHeight() - mSampleSize/2);
 		count++;
 	} while(count < 150	&& ((mSamplePt.value().x - newPos.x) < 100 || (mSamplePt.value().y - newPos.y) < 100));
-	timeline().apply(&mSamplePt, newPos, MIRROR_DUR - 1, EaseInOutQuad()).delay(.5);
+	timeline().apply(&mSamplePt, newPos, STILL_DUR - 1, EaseInOutQuad()).delay(.5);
 }
 
 void SosoValentinesApp::update()
 {
-	// if mCurInstagram is undefined, then don't do anything else since there's nothing else to do
+  // if mCurInstagram is undefined, then don't do anything else since there's nothing else to do
 	if( mCurInstagram.isNull() ) {
 		newInstagram();
 		return;
@@ -391,14 +397,14 @@ void SosoValentinesApp::update()
 	
 	// if the new texture is loading, but hasn't loaded yet, check again
 	if( ! mTextureLoaded ) {
-		checkImageLoaded();
+		checkImageLoaded(); // image is loaded, texture is made for triangles
 	}
 	else {
 		// we want to call this only once the image has been loaded
 		// if the texture has been loaded and the phase hasn't been called to change yet...
 		if( ! mPhaseChangeCalled )
-			imageLoaded();
-			updateMirrors( &mTriPieces );
+			imageLoaded(); // switch between mirror and still image modes.this switches mPhaseChangeCalled to true
+			if (mDrawingMirrorTex) updateMirrors( &mTriPieces ); // update sample each frame update if in the mirror mode
 	}
 
 	// draw debug GUI
@@ -434,7 +440,7 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 
 	mat3 mtrx( 1.0f );
 
-	// this part controls the sampling
+	// this part controls the sampling motion
 	mtrx = glm::translate( mtrx, mSamplePt.value() );
 	mtrx = glm::scale( mtrx, vec2( mSampleSize ) );
 	mtrx = glm::rotate( mtrx, float((getElapsedFrames()*4)/2*M_PI) );
@@ -485,11 +491,12 @@ void SosoValentinesApp::draw()
 	gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
 	gl::enableAlphaBlending( PREMULT );
 
+  // draw original image
 	if( mBgTexture && isDrawingOriginalImage ) {
 		gl::draw( mBgTexture, Rectf( mBgTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
 	}
 
-	drawMirrors( &mTriPieces );
+	drawMirrors( &mTriPieces ); // draw mirror texture on top
 	
 	// heart cutout should always be on top (under the text)
 	if (isDrawingHeartCutout)
@@ -513,12 +520,12 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 			//draw the triangle piece at index tri_index of the nth hexagon
 			(*vec)[ (nthHexagon * 6 ) + tri_index ].draw();
 			// draw the center dot of the hexagon
-			gl::pushMatrices();
+			gl::pushModelMatrix();
 			gl::color(Color(1.0f, 0, 0));
 			gl::drawSolidCircle((*vec)[tri_index].mStartPt, 5.0f);
-			gl::popMatrices();
+			gl::popModelMatrix();
 
-			cout << "center " << (*vec)[0].mStartPt << endl;
+			// cout << "center " << (*vec)[0].mStartPt << endl;
 			} else {
 			// draw the full hex for tri_index = 6 * i
 			for( int i = (nthHexagon * 6) ; i < (6 * (nthHexagon + 1)); i++ ) {

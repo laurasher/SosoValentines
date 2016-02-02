@@ -45,6 +45,8 @@ private:
 	void	mirrorOut();
 	void	mirrorIn();
 	void	imageLoaded();
+	void	mouseDown(MouseEvent event);
+	bool  inTriangleCheck(ci::vec2 mVertices[3], ci::vec2 mousePos);
 	
 	gl::TextureRef					mNewTex;				// the loaded texture
 	gl::TextureRef					mBgTexture;			// texture for the still image
@@ -80,6 +82,7 @@ private:
 	int													nthHexagon;
 
 	vec2 start;
+	vec2 mousePos;
 };
 
 void SosoValentinesApp::setup()
@@ -557,6 +560,10 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 				(*vec)[i].draw();
 		}
 	}
+}
+
+void SosoValentinesApp::mouseDown(MouseEvent event){
+	mousePos = event.getPos();
 }
 
 CINDER_APP( SosoValentinesApp, RendererGl( RendererGl::Options().msaa( 16 ) ) )

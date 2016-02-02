@@ -46,6 +46,8 @@ private:
 	void	mirrorOut();
 	void	mirrorIn();
 	void	imageLoaded();
+	void	mouseDown(MouseEvent event);
+	bool  inTriangleCheck(ci::vec2 mVertices[3], ci::vec2 mousePos);
 	
 	gl::TextureRef					mNewTex;				// the loaded texture
 	gl::TextureRef					mBgTexture;			// texture for the still image
@@ -76,10 +78,12 @@ private:
 	bool												isRandomizingHexInitalization;	// this affects the initial size, position
 	bool												isRotatingHexagon;							//	rotate the hexagon 30 degrees. Need to change the triangle coordinates, scale (reflection), grid, and alpha
 	bool												isUsingBoxTexture;							//use the diamond box opacity texture
+	bool												isMousing;
 	int													tri_index;											// which of the triangles to show of the first hexagon
 	int													nthHexagon;
 
 	vec2 start;
+	vec2 mousePos;
 };
 
 void SosoValentinesApp::setup()
@@ -104,6 +108,7 @@ void SosoValentinesApp::setup()
 		isRotatingHexagon = true;
 		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;
+		isMousing = false;
 
 	} else {
 		isDrawingHeartCutout = true;
@@ -114,6 +119,7 @@ void SosoValentinesApp::setup()
 		isRotatingHexagon = true;
 		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;
+		isMousing = true;
 	}
 
 	auto heartCutout = loadImage( loadAsset( "heart_cutout_50.png" ) );
@@ -352,11 +358,18 @@ void SosoValentinesApp::imageLoaded()
 
 void SosoValentinesApp::resetSample()
 {
+	if(isMousing){
+			mSampleSize = randInt(100, 300);
+			mSamplePt.value().y = mousePos.y;
+			mSamplePt.value().x = mousePos.x;
+		return;
+	}
 	// reset sample pos
 	mSampleSize = randInt(100, 300);
 	mSamplePt.value().y = randFloat(0, getWindowWidth() - mSampleSize);
 	mSamplePt.value().x = randFloat(0, getWindowHeight() - mSampleSize);
-	
+
+
 	vec2 newPos;
 	int count = 0;
 	// Try to find a good sample location thats within the window's frame.
@@ -409,6 +422,12 @@ void SosoValentinesApp::update()
 			ui::Checkbox("Rotate the hexagon by 30 degrees", &isRotatingHexagon);
 			ui::Checkbox("Use the box texture", &isUsingBoxTexture);
 			ui::Checkbox("Twinkle with opacity", &isTwinklingWithOpacity);
+			ui::Checkbox("Mouse interaction", &isMousing);
+			if(isMousing){
+				ui::SliderFloat("sample size", &mSampleSize, 50.0, 300.0); //sample size
+				ui::SliderFloat("sample point x", &mSamplePt.value().x, 0, getWindowWidth());
+				ui::SliderFloat("sample point y", &mSamplePt.value().y, 0, getWindowHeight());
+			}
 		}
 	}
 }
@@ -519,6 +538,33 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 				(*vec)[i].draw();
 		}
 	}
+}
+
+void SosoValentinesApp::mouseDown(MouseEvent event){
+	mousePos = event.getPos();
+}
+
+bool SosoValentinesApp::inTriangleCheck(ci::vec2 mVertices[3], ci::vec2 mousePos){
+	float x_p1 = mVertices[0].x;
+	float x_p2 = mVertices[1].x;
+	float x_p3 = mVertices[2].x;
+	float x_m = mousePos.x;
+
+	float y_p1 = mVertices[0].y;
+	float y_p2 = mVertices[1].y;
+	float y_p3 = mVertices[2].y;
+	float y_m = mousePos.y;
+
+	int a = ( (y_p2-y_p3)*(x_m-x_p3) + (x_p3-x_p2)*(y_m-y_p3) )/( (y_p2-y_p3)*(x_p1-x_p3) + (x_p3-x_p2)*(y_p1-y_p3) );
+	int b = ( (y_p3-y_p1)*(x_m-x_p3) + (x_p1-x_p3)*(y_m-y_p3) )/( (y_p2-y_p3)*(x_p1-x_p3) + (x_p3-x_p2)*(y_p1-y_p3) );
+	int c = 1-a-b;
+
+	// Apply test
+	if( (a<=1 && a>=0) && (b<=1 && b>=0) && (c<=1 && c>=0) )
+		return true;
+	else
+		return false;
+	
 }
 
 CINDER_APP( SosoValentinesApp, RendererGl( RendererGl::Options().msaa( 16 ) ) )

@@ -109,7 +109,7 @@ void SosoValentinesApp::setup()
 		isRotatingHexagon = true;
 		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;
-		isMousing = true;
+		isMousing = false;
 
 	} else {
 		isDrawingHeartCutout = true;
@@ -120,6 +120,7 @@ void SosoValentinesApp::setup()
 		isRotatingHexagon = true;
 		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;
+		isMousing = true;
 	}
 
 	auto heartCutout = loadImage( loadAsset( "heart_cutout_18.png" ) );
@@ -378,11 +379,18 @@ void SosoValentinesApp::imageLoaded()
 
 void SosoValentinesApp::resetSample()
 {
+	if(isMousing){
+			mSampleSize = randInt(100, 300);
+			mSamplePt.value().y = mousePos.y;
+			mSamplePt.value().x = mousePos.x;
+		return;
+	}
 	// reset sample pos
 	mSampleSize = randInt(100, 300);
 	mSamplePt.value().y = randFloat(0, getWindowWidth() - mSampleSize);
 	mSamplePt.value().x = randFloat(0, getWindowHeight() - mSampleSize);
-	
+
+
 	vec2 newPos;
 	int count = 0;
 	// Try to find a good sample location thats within the window's frame.
@@ -435,6 +443,11 @@ void SosoValentinesApp::update()
 			ui::Checkbox("Use the box texture", &isUsingBoxTexture);
 			ui::Checkbox("Twinkle with opacity", &isTwinklingWithOpacity);
 			ui::Checkbox("Mouse interaction", &isMousing);
+			if(isMousing){
+				ui::SliderFloat("sample size", &mSampleSize, 50.0, 300.0); //sample size
+				ui::SliderFloat("sample point x", &mSamplePt.value().x, 0, getWindowWidth());
+				ui::SliderFloat("sample point y", &mSamplePt.value().y, 0, getWindowHeight());
+			}
 		}
 	}
 }

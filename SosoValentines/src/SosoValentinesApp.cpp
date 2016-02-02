@@ -531,4 +531,27 @@ void SosoValentinesApp::mouseDown(MouseEvent event){
 	mousePos = event.getPos();
 }
 
+bool SosoValentinesApp::inTriangleCheck(ci::vec2 mVertices[3], ci::vec2 mousePos){
+	float x_p1 = mVertices[0].x;
+	float x_p2 = mVertices[1].x;
+	float x_p3 = mVertices[2].x;
+	float x_m = mousePos.x;
+
+	float y_p1 = mVertices[0].y;
+	float y_p2 = mVertices[1].y;
+	float y_p3 = mVertices[2].y;
+	float y_m = mousePos.y;
+
+	int a = ( (y_p2-y_p3)*(x_m-x_p3) + (x_p3-x_p2)*(y_m-y_p3) )/( (y_p2-y_p3)*(x_p1-x_p3) + (x_p3-x_p2)*(y_p1-y_p3) );
+	int b = ( (y_p3-y_p1)*(x_m-x_p3) + (x_p1-x_p3)*(y_m-y_p3) )/( (y_p2-y_p3)*(x_p1-x_p3) + (x_p3-x_p2)*(y_p1-y_p3) );
+	int c = 1-a-b;
+
+	// Apply test
+	if( (a<=1 && a>=0) && (b<=1 && b>=0) && (c<=1 && c>=0) )
+		return true;
+	else
+		return false;
+	
+}
+
 CINDER_APP( SosoValentinesApp, RendererGl( RendererGl::Options().msaa( 16 ) ) )

@@ -75,6 +75,7 @@ private:
 	bool												isRandomizingHexInitalization;	// this affects the initial size, position
 	bool												isRotatingHexagon;							//	rotate the hexagon 30 degrees. Need to change the triangle coordinates, scale (reflection), grid, and alpha
 	bool												isUsingBoxTexture;							//use the diamond box opacity texture
+	bool												isMousing;
 	int													tri_index;											// which of the triangles to show of the first hexagon
 	int													nthHexagon;
 
@@ -105,6 +106,7 @@ void SosoValentinesApp::setup()
 		isRotatingHexagon = true;
 		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;
+		isMousing = true;
 
 	} else {
 		isDrawingHeartCutout = true;
@@ -429,6 +431,7 @@ void SosoValentinesApp::update()
 			ui::Checkbox("Rotate the hexagon by 30 degrees", &isRotatingHexagon);
 			ui::Checkbox("Use the box texture", &isUsingBoxTexture);
 			ui::Checkbox("Twinkle with opacity", &isTwinklingWithOpacity);
+			ui::Checkbox("Mouse interaction", &isMousing);
 		}
 	}
 }

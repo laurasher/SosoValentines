@@ -115,7 +115,7 @@ void SosoValentinesApp::setup()
 		isRotatingHexagon = true;
 		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;
-		isMousing = true;
+		isMousing = false;
 
 	} else {
 		isDrawingHeartCutout = true;
@@ -126,7 +126,7 @@ void SosoValentinesApp::setup()
 		isRotatingHexagon = true;
 		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;
-		isMousing = false;
+		isMousing = true;
 	}
 
 	auto heartCutout = loadImage( loadAsset( "heart_cutout_18.png" ) );

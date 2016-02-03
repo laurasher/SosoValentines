@@ -107,7 +107,7 @@ void SosoValentinesApp::setup()
 
 	if(isInDebugMode){
 		ui::initialize();
-		isDrawingHeartCutout = false;
+		isDrawingHeartCutout = true;
 		isDrawingOriginalImage = true;
 		isDrawingOneHexagon = false;
 		isDisablingGlobalRotation = true;
@@ -118,7 +118,7 @@ void SosoValentinesApp::setup()
 		isMousing = false;
 
 	} else {
-		isDrawingHeartCutout = true;
+		isDrawingHeartCutout = false;
 		isDrawingOriginalImage = true;
 		isDrawingOneHexagon = false;
 		isDisablingGlobalRotation = false;
@@ -562,7 +562,7 @@ void SosoValentinesApp::draw()
 	}
 
 	if (mDrawingMirrorTex) {
-		cout << "drawing mirrors" << endl;
+//		cout << "drawing mirrors" << endl;
 		drawMirrors( &mTriPieces );
 	}
 

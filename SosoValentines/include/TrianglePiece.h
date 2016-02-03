@@ -25,6 +25,8 @@ class TrianglePiece {
 	bool		isOut() const;
 	bool		isIn() const;
   bool    mVisible;
+	bool		hasTransitionedIn;
+	
 	ci::vec2		mStartPt; // moved from protected for debugging
 	ci::Anim<float> mAlpha;
 

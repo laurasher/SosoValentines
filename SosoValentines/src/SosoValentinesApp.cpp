@@ -15,8 +15,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-static const int MIRROR_DUR = 10;	// Duration of the mirror/kaleidoscope animation
-static const int STILL_DUR = 5;		// Duration of the still image
+static const int MIRROR_DUR = 5;	// Duration of the mirror/kaleidoscope animation
+static const int STILL_DUR = 2;		// Duration of the still image
 static const string TAG = "";		// Instagram tag to search for
 
 // Instagram Client Id - DO NOT USE THIS ONE!!! 
@@ -66,7 +66,7 @@ private:
 	bool												mPhaseChangeCalled;		// if the app has been told to change phases or not
   bool                        mDrawingMirrorTex;  // boolean used to determine when to call updateMirrors
   bool                        mFirstRun;				// if the app is on its first cycle
-	// helpful for debug
+		// helpful for debug
 	bool                        isInDebugMode = true;
 	bool                        isDrawingHeartCutout;   // turn heart cutout on/off
 	bool                        isDrawingOriginalImage; // show original image
@@ -293,7 +293,7 @@ void SosoValentinesApp::changePhase( int newPhase )
       mDrawingMirrorTex = true;
       // transition all of the mirror pieces in
       cout << "switched to mirror mode at " <<timeline().getCurrentTime() << "s" << endl;
-      
+
       // rotation during the mirror mode
 			mMirrorRot = randFloat(M_PI, M_PI * 2);
 			float newRot = mMirrorRot + randFloat(M_PI, M_PI/4);
@@ -303,20 +303,19 @@ void SosoValentinesApp::changePhase( int newPhase )
 		break;
 		// Still Image Mode
     case 1:
-       mDrawingMirrorTex = false;
+			if (mFirstRun) {
+				mFirstRun = false;
+			}
+
+			mDrawingMirrorTex = false;
 			// transition all of the mirror pieces out
 			// setTransitionOut (setTransition) has timeline too inside TrianglePiece.cpp
 			cout << "switched to still image mode at " <<timeline().getCurrentTime() << "s" << endl;
       
-			if (mFirstRun) {
-				mFirstRun = false;
-      } else {
-        for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
-          (*piece).setTransitionOut(.25);
-        }
-      }
-      transitionMirrorIn( &mTriPieces );
-      resetSample();
+			// start the transitioning process before swi
+			transitionMirrorIn( &mTriPieces );
+			resetSample();
+
 		break;
 	}
 }
@@ -343,13 +342,15 @@ void SosoValentinesApp::checkImageLoaded()
 
 void SosoValentinesApp::transitionMirrorIn( vector<TrianglePiece> *vec )
 {
-  cout << "transitionMirrorIn" <<endl;
-  for( int i = 0; i < vec->size(); i++ ) {
+	cout << "transitionMirrorIn" << endl;
+	for( int i = 0; i < vec->size(); i++ ) {
 		//float delay = randFloat( 0.1f, 0.5f );
     float delay = 0.5f;
     
     (*vec)[i].reset( delay, mMirrorTexture );
+		(*vec)[i].hasTransitionedIn = true;
 	}
+
   mTextRibbon->ribbonOut(0);
 	//mTextRibbon->ribbonIn(0);
   //cout << "drawing ribbon" << endl;
@@ -407,7 +408,7 @@ void SosoValentinesApp::update()
 		// if the texture has been loaded and the phase hasn't been called to change yet...
 		if( ! mPhaseChangeCalled )
 			imageLoaded(); // switch between mirror and still image modes. also initiates the first call to phase change
-			updateMirrors( &mTriPieces ); // update sample each frame update if in the mirror mode
+			if (mDrawingMirrorTex) updateMirrors( &mTriPieces ); // update sample each frame update if in the mirror mode
 	}
 
 	// draw debug GUI
@@ -462,7 +463,9 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 	for( int i = 0; i < vec->size(); i++ ) {
 		(*vec)[i].update( mMirrorTexture, mSamplePt1, mSamplePt2, mSamplePt3 );
 		if( (*vec)[i].isOut() ) outCount++;
-		if( (*vec)[i].isIn() ) inCount++;
+		if( (*vec)[i].isIn() ) {
+			inCount++;
+		}
 	}
 	cout << "INCOUNT" << inCount << ", OUTCOUNT " << outCount  << ", mPiecesIn " << mPiecesIn<< endl;
   //cout << "size " << mTriPieces.size() <<endl;
@@ -476,6 +479,11 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 	if( inCount > 0 && inCount == mTriPieces.size() && ! mPiecesIn ) {
 		mPiecesIn = true;
 		mirrorIn();
+		for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
+			(*piece).setTransitionOut(.25);
+		}
+
+
 	}
 }
 
@@ -504,7 +512,7 @@ void SosoValentinesApp::draw()
 	}
 
 	if (mDrawingMirrorTex) {
-		cout << "drawing mirrors" << endl;
+		//cout << "drawing mirrors" << endl;
 		drawMirrors( &mTriPieces );
 	}
 

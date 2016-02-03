@@ -118,7 +118,7 @@ void SosoValentinesApp::setup()
 		isTwinklingWithOpacity = true;
 	}
 
-	auto heartCutout = loadImage( loadAsset( "heart_cutout_50.png" ) );
+	auto heartCutout = loadImage( loadAsset( "heart_cutout_18.png" ) );
 	mHeartTexture = gl::Texture2d::create( heartCutout );
 
 	mTextRibbon = new TextRibbon();
@@ -143,6 +143,7 @@ void SosoValentinesApp::continueCycle()
 	defineMirrorGrid();						// redefine the kaleidoscope grid
 	mTextureLoaded = false;				// This will trigger checking if an image has loaded in the update function
 	newInstagram();								// grab the next instagram item
+	mDrawingMirrorTex = false;		// reset the mirror drawing
 }
 
 // Creates the grid of kaleidoscope mirrored triangles
@@ -306,15 +307,19 @@ void SosoValentinesApp::changePhase( int newPhase )
 		break;
 		// Still Image Mode
 		case 1:
-      mDrawingMirrorTex = false; // setting this false freezes after the first loop
-      
-      // transition all of the mirror pieces out
+      mDrawingMirrorTex = false;
+			// transition all of the mirror pieces out
 			// setTransitionOut (setTransition) has timeline too inside TrianglePiece.cpp
 			cout << "switched to still image mode at " <<timeline().getCurrentTime() << "s" << endl;
       
-      if ( mFirstRun == true) return;
-      for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
-				(*piece).setTransitionOut(.25);
+			if (mFirstRun) {
+				mFirstRun = false;
+				return; // nothing to transition out at first
+			}
+			else {
+				for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
+					(*piece).setTransitionOut(.25);
+				}
 			}
 		break;
 	}
@@ -332,8 +337,11 @@ void SosoValentinesApp::checkImageLoaded()
 	// THE IMAGE HAS BEEN LOADED 
 	mLoadingTexture = false;
 	mTextureLoaded = true;
-	
+	cout << "image loaded" << endl;
+
+	// assign the new textures
 	mNewTex = tex;
+	mBgTexture = mNewTex;
 	mMirrorTexture = mNewTex;
 }
 
@@ -348,7 +356,7 @@ void SosoValentinesApp::transitionMirrorIn( vector<TrianglePiece> *vec )
 	}
   mTextRibbon->ribbonOut(0);
 	//mTextRibbon->ribbonIn(0);
-  cout << "drawing ribbon" << endl;
+  //cout << "drawing ribbon" << endl;
 }
 
 void SosoValentinesApp::imageLoaded()
@@ -356,16 +364,15 @@ void SosoValentinesApp::imageLoaded()
 	mPhaseChangeCalled = true;
   mDrawingMirrorTex =  false;
 	// we don't want to wait on the first go around
-	int delayOffset = STILL_DUR;
+	int delayOffset = MIRROR_DUR;
 	if( mFirstRun ) {
-		mFirstRun = false;
-		// delayOffset = 0;
+		// mFirstRun = false;
+		delayOffset = 0;
 	}
 
 	// This defines the length of time that we're in each phase
-	timeline().add( [&] { changePhase(0); }, timeline().getCurrentTime() + delayOffset );	// switch to mirror mode after this time
-	timeline().add( [&] { changePhase(1); }, timeline().getCurrentTime() + delayOffset + MIRROR_DUR ); // switch to the still image mode
-	
+	timeline().add( [&] { changePhase(1); }, timeline().getCurrentTime() + delayOffset );	// still mode first
+	timeline().add( [&] { changePhase(0); }, timeline().getCurrentTime() + delayOffset + STILL_DUR ); // then mirror mode after STILL_DUR
 }
 
 void SosoValentinesApp::resetSample()
@@ -403,7 +410,7 @@ void SosoValentinesApp::update()
 		// we want to call this only once the image has been loaded
 		// if the texture has been loaded and the phase hasn't been called to change yet...
 		if( ! mPhaseChangeCalled )
-			imageLoaded(); // switch between mirror and still image modes.this switches mPhaseChangeCalled to true
+			imageLoaded(); // switch between mirror and still image modes. also initiates the first call to phase change
 			if (mDrawingMirrorTex) updateMirrors( &mTriPieces ); // update sample each frame update if in the mirror mode
 	}
 
@@ -461,10 +468,13 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 		if( (*vec)[i].isOut() ) outCount++;
 		if( (*vec)[i].isIn() ) inCount++;
 	}
-	
+
+	cout << "INCOUNT" << inCount << ", OUTCOUNT " << outCount << endl;
+
 	// if all are out, then make a new mirror grid
 	if( outCount > 0 && outCount == mTriPieces.size() ) {
 		mirrorOut();
+
 	}
 	
 	// if all the pieces are in
@@ -476,11 +486,13 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 
 void SosoValentinesApp::mirrorOut()
 {
+	cout << "mirror out" << endl;
 	continueCycle();
 }
 
 void SosoValentinesApp::mirrorIn()
 {
+	cout << "mirror in" << endl;
 	// redefine the bg texture
 	mBgTexture = mNewTex;
 	mTextRibbon->update( TAG, mCurInstagram.getUser() );
@@ -496,8 +508,11 @@ void SosoValentinesApp::draw()
 		gl::draw( mBgTexture, Rectf( mBgTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
 	}
 
-	drawMirrors( &mTriPieces ); // draw mirror texture on top
-	
+	if (mDrawingMirrorTex) {
+		cout << "drawing mirrors" << endl;
+		drawMirrors( &mTriPieces );
+	}
+
 	// heart cutout should always be on top (under the text)
 	if (isDrawingHeartCutout)
 	{

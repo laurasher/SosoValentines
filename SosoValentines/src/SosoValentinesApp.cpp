@@ -64,9 +64,8 @@ private:
 	Anim<float>									mMirrorRot;				// rotation of the canvas in kaleidoscope mode
 	bool												mPiecesIn;				// whether all of the mirror pieces are showing or not
 	bool												mPhaseChangeCalled;		// if the app has been told to change phases or not
-	bool												mFirstRun;				// if the app is on its first cycle
   bool                        mDrawingMirrorTex;  // boolean used to determine when to call updateMirrors
-
+  bool                        mFirstRun;				// if the app is on its first cycle
 	// helpful for debug
 	bool                        isInDebugMode = true;
 	bool                        isDrawingHeartCutout;   // turn heart cutout on/off
@@ -299,6 +298,7 @@ void SosoValentinesApp::changePhase( int newPhase )
       transitionMirrorIn( &mTriPieces );
       resetSample(); 
       
+      // rotation during the
 			mMirrorRot = randFloat(M_PI, M_PI * 2);
 			float newRot = mMirrorRot + randFloat(M_PI, M_PI/4);
 			timeline().apply(&mMirrorRot, newRot, MIRROR_DUR, EaseInOutQuad());
@@ -314,13 +314,15 @@ void SosoValentinesApp::changePhase( int newPhase )
       
 			if (mFirstRun) {
 				mFirstRun = false;
-				return; // nothing to transition out at first
-			}
-			else {
-				for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
-					(*piece).setTransitionOut(.25);
-				}
-			}
+        for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
+          (*piece).mVisible = true;
+        }
+  		}
+      
+      for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
+        (*piece).setTransitionOut(.25);
+      }
+
 		break;
 	}
 }
@@ -474,7 +476,6 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 	// if all are out, then make a new mirror grid
 	if( outCount > 0 && outCount == mTriPieces.size() ) {
 		mirrorOut();
-
 	}
 	
 	// if all the pieces are in

@@ -81,6 +81,7 @@ private:
 	bool												isMousing;
 	int													tri_index;											// which of the triangles to show of the first hexagon
 	int													nthHexagon;
+	TextLayout									layout;
 
 	vec2 start;
 
@@ -306,6 +307,12 @@ void SosoValentinesApp::changePhase( int newPhase )
       
 	// if mousepos and drag does not equal 0, begin trans in
 	//		if ( mousePos.x!=0 && mousePoints.size()!=0 )
+	/*if(isMousing){
+				if ( mousePos.x!=0 ){
+					transitionMirrorIn( &mTriPieces );
+				}
+			} else{
+*/
 	cout << "switched to mirror mode at " <<timeline().getCurrentTime() << "s" << endl;
 
       // rotation during the mirror mode
@@ -329,6 +336,13 @@ void SosoValentinesApp::changePhase( int newPhase )
 			// start the transitioning process before swi
 			transitionMirrorIn( &mTriPieces );
 			resetSample();
+/*
+			if(isMousing){
+			// set mouse linked sample size and position back to 0
+			mousePos.x = 0; mousePos.y = 0; mousePoints.clear();
+				console()<<&mousePoints<<endl;
+			}
+*/
 
 // set mouse linked sample size and position back to 0
 

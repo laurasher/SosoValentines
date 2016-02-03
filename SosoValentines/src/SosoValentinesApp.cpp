@@ -46,6 +46,7 @@ private:
 	void	mirrorIn();
 	void	imageLoaded();
 	void	mouseDown(MouseEvent event);
+	void	mouseDrag(MouseEvent event);
 	bool  inTriangleCheck(ci::vec2 mVertices[3], ci::vec2 mousePos);
 	
 	gl::TextureRef					mNewTex;				// the loaded texture
@@ -82,7 +83,11 @@ private:
 	int													nthHexagon;
 
 	vec2 start;
+
+	// mouse vars
 	vec2 mousePos;
+	std::vector<vec2> mousePoints;
+
 };
 
 void SosoValentinesApp::setup()
@@ -298,7 +303,10 @@ void SosoValentinesApp::changePhase( int newPhase )
 		case 0: {
       mDrawingMirrorTex = true;
       // transition all of the mirror pieces in
-      cout << "switched to mirror mode at " <<timeline().getCurrentTime() << "s" << endl;
+      
+	// if mousepos and drag does not equal 0, begin trans in
+	//		if ( mousePos.x!=0 && mousePoints.size()!=0 )
+	cout << "switched to mirror mode at " <<timeline().getCurrentTime() << "s" << endl;
 
       // rotation during the mirror mode
 			mMirrorRot = randFloat(M_PI, M_PI * 2);
@@ -321,6 +329,8 @@ void SosoValentinesApp::changePhase( int newPhase )
 			// start the transitioning process before swi
 			transitionMirrorIn( &mTriPieces );
 			resetSample();
+
+// set mouse linked sample size and position back to 0
 
 		break;
 	}
@@ -447,6 +457,7 @@ void SosoValentinesApp::update()
 				ui::SliderFloat("sample size", &mSampleSize, 50.0, 300.0); //sample size
 				ui::SliderFloat("sample point x", &mSamplePt.value().x, 0, getWindowWidth());
 				ui::SliderFloat("sample point y", &mSamplePt.value().y, 0, getWindowHeight());
+
 			}
 		}
 	}
@@ -573,6 +584,13 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 				(*vec)[i].draw();
 		}
 	}
+}
+
+// mouse functions
+void SosoValentinesApp::mouseDrag(MouseEvent event)
+{
+	// Store the current mouse position in the list.
+	mousePoints.push_back( event.getPos() );
 }
 
 void SosoValentinesApp::mouseDown(MouseEvent event){

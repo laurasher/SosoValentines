@@ -291,7 +291,6 @@ void SosoValentinesApp::changePhase( int newPhase )
 		// Mirror Mode
 		case 0: {
       mDrawingMirrorTex = true;
-      
       // transition all of the mirror pieces in
       cout << "switched to mirror mode at " <<timeline().getCurrentTime() << "s" << endl;
       
@@ -300,24 +299,24 @@ void SosoValentinesApp::changePhase( int newPhase )
 			float newRot = mMirrorRot + randFloat(M_PI, M_PI/4);
 			timeline().apply(&mMirrorRot, newRot, MIRROR_DUR, EaseInOutQuad());
 			mPiecesIn = false;
-      
-      for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
-        (*piece).setTransitionOut(.25);
-      }
     }
 		break;
 		// Still Image Mode
-		case 1:
-      mDrawingMirrorTex = false;
+    case 1:
+       mDrawingMirrorTex = false;
 			// transition all of the mirror pieces out
 			// setTransitionOut (setTransition) has timeline too inside TrianglePiece.cpp
 			cout << "switched to still image mode at " <<timeline().getCurrentTime() << "s" << endl;
       
 			if (mFirstRun) {
 				mFirstRun = false;
-  		}
+      } else {
+        for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
+          (*piece).setTransitionOut(.25);
+        }
+      }
       transitionMirrorIn( &mTriPieces );
-      resetSample(); 
+      resetSample();
 		break;
 	}
 }
@@ -465,8 +464,9 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 		if( (*vec)[i].isOut() ) outCount++;
 		if( (*vec)[i].isIn() ) inCount++;
 	}
-	//cout << "INCOUNT" << inCount << ", OUTCOUNT " << outCount << endl;
-
+	cout << "INCOUNT" << inCount << ", OUTCOUNT " << outCount  << ", mPiecesIn " << mPiecesIn<< endl;
+  //cout << "size " << mTriPieces.size() <<endl;
+  
 	// if all are out, then make a new mirror grid
 	if( outCount > 0 && outCount == mTriPieces.size() ) {
 		mirrorOut();
@@ -482,7 +482,7 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 void SosoValentinesApp::mirrorOut()
 {
 	cout << "mirror out" << endl;
-	continueCycle();
+  continueCycle();
 }
 
 void SosoValentinesApp::mirrorIn()

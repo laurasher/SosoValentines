@@ -115,7 +115,7 @@ void SosoValentinesApp::setup()
 		isRotatingHexagon = true;
 		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;
-		isMousing = false;
+		isMousing = true;
 
 	} else {
 		isDrawingHeartCutout = true;
@@ -126,7 +126,7 @@ void SosoValentinesApp::setup()
 		isRotatingHexagon = true;
 		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;
-		isMousing = true;
+		isMousing = false;
 	}
 
 	auto heartCutout = loadImage( loadAsset( "heart_cutout_18.png" ) );
@@ -137,11 +137,12 @@ void SosoValentinesApp::setup()
 	// Popular images stream
 	//mInstaStream = make_shared<InstagramStream>( CLIENT_ID );
 	// Image stream of a particular tag
-	mInstaStream = make_shared<InstagramStream>( "sosolimited", CLIENT_ID );
-	// Image stream in a particular area
+//	mInstaStream = make_shared<InstagramStream>( "sosolimited", CLIENT_ID );
+	mInstaStream = make_shared<InstagramStream>( "sweetheartscandy", CLIENT_ID );// Image stream in a particular area
 	// mInstaStream = make_shared<InstagramStream>( vec2(40.720467,-74.00603), 5000, CLIENT_ID );
     
 	continueCycle();
+
 }
 
 // This is where the new cycle should be started.
@@ -309,7 +310,15 @@ void SosoValentinesApp::changePhase( int newPhase )
 	//		if ( mousePos.x!=0 && mousePoints.size()!=0 )
 	/*if(isMousing){
 				if ( mousePos.x!=0 ){
+					vec2 mousePosAdd;
+					mousePosAdd.x = mousePos.x+20; mousePosAdd.y = mousePos.y+20;
+
 					transitionMirrorIn( &mTriPieces );
+
+					console()<<mousePoints.size()<<endl;
+					console()<<mousePos<<endl;
+					gl::color( Color::white() );
+					gl::drawLine(mousePos, mousePos);
 				}
 			} else{
 */
@@ -340,7 +349,6 @@ void SosoValentinesApp::changePhase( int newPhase )
 			if(isMousing){
 			// set mouse linked sample size and position back to 0
 			mousePos.x = 0; mousePos.y = 0; mousePoints.clear();
-				console()<<&mousePoints<<endl;
 			}
 */
 

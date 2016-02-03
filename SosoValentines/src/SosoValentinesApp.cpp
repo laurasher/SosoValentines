@@ -295,10 +295,7 @@ void SosoValentinesApp::changePhase( int newPhase )
       // transition all of the mirror pieces in
       cout << "switched to mirror mode at " <<timeline().getCurrentTime() << "s" << endl;
       
-      
-      
-      
-      // rotation during the
+      // rotation during the mirror mode
 			mMirrorRot = randFloat(M_PI, M_PI * 2);
 			float newRot = mMirrorRot + randFloat(M_PI, M_PI/4);
 			timeline().apply(&mMirrorRot, newRot, MIRROR_DUR, EaseInOutQuad());
@@ -307,7 +304,7 @@ void SosoValentinesApp::changePhase( int newPhase )
       for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
         (*piece).setTransitionOut(.25);
       }
-		}
+    }
 		break;
 		// Still Image Mode
 		case 1:
@@ -468,8 +465,7 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 		if( (*vec)[i].isOut() ) outCount++;
 		if( (*vec)[i].isIn() ) inCount++;
 	}
-
-	cout << "INCOUNT" << inCount << ", OUTCOUNT " << outCount << endl;
+	//cout << "INCOUNT" << inCount << ", OUTCOUNT " << outCount << endl;
 
 	// if all are out, then make a new mirror grid
 	if( outCount > 0 && outCount == mTriPieces.size() ) {

@@ -295,14 +295,18 @@ void SosoValentinesApp::changePhase( int newPhase )
       // transition all of the mirror pieces in
       cout << "switched to mirror mode at " <<timeline().getCurrentTime() << "s" << endl;
       
-      transitionMirrorIn( &mTriPieces );
-      resetSample(); 
+      
+      
       
       // rotation during the
 			mMirrorRot = randFloat(M_PI, M_PI * 2);
 			float newRot = mMirrorRot + randFloat(M_PI, M_PI/4);
 			timeline().apply(&mMirrorRot, newRot, MIRROR_DUR, EaseInOutQuad());
 			mPiecesIn = false;
+      
+      for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
+        (*piece).setTransitionOut(.25);
+      }
 		}
 		break;
 		// Still Image Mode
@@ -314,15 +318,9 @@ void SosoValentinesApp::changePhase( int newPhase )
       
 			if (mFirstRun) {
 				mFirstRun = false;
-        for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
-          (*piece).mVisible = true;
-        }
   		}
-      
-      for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
-        (*piece).setTransitionOut(.25);
-      }
-
+      transitionMirrorIn( &mTriPieces );
+      resetSample(); 
 		break;
 	}
 }
@@ -413,7 +411,7 @@ void SosoValentinesApp::update()
 		// if the texture has been loaded and the phase hasn't been called to change yet...
 		if( ! mPhaseChangeCalled )
 			imageLoaded(); // switch between mirror and still image modes. also initiates the first call to phase change
-			if (mDrawingMirrorTex) updateMirrors( &mTriPieces ); // update sample each frame update if in the mirror mode
+			updateMirrors( &mTriPieces ); // update sample each frame update if in the mirror mode
 	}
 
 	// draw debug GUI

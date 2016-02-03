@@ -299,6 +299,7 @@ void SosoValentinesApp::changePhase( int newPhase )
 			float newRot = mMirrorRot + randFloat(M_PI, M_PI/4);
 			timeline().apply(&mMirrorRot, newRot, MIRROR_DUR, EaseInOutQuad());
 			mPiecesIn = false;
+
     }
 		break;
 		// Still Image Mode
@@ -306,7 +307,6 @@ void SosoValentinesApp::changePhase( int newPhase )
 			if (mFirstRun) {
 				mFirstRun = false;
 			}
-
 			mDrawingMirrorTex = false;
 			// transition all of the mirror pieces out
 			// setTransitionOut (setTransition) has timeline too inside TrianglePiece.cpp
@@ -359,7 +359,6 @@ void SosoValentinesApp::transitionMirrorIn( vector<TrianglePiece> *vec )
 void SosoValentinesApp::imageLoaded()
 {
 	mPhaseChangeCalled = true;
-  mDrawingMirrorTex =  false;
 	// we don't want to wait on the first go around
 	int delayOffset = MIRROR_DUR;
 	if( mFirstRun ) {
@@ -368,8 +367,8 @@ void SosoValentinesApp::imageLoaded()
 	}
 
 	// This defines the length of time that we're in each phase
-	timeline().add( [&] { changePhase(1); }, timeline().getCurrentTime() + delayOffset );	// still mode first
-	timeline().add( [&] { changePhase(0); }, timeline().getCurrentTime() + delayOffset + STILL_DUR ); // then mirror mode after STILL_DUR
+	timeline().add( [this] { changePhase(1); }, timeline().getCurrentTime() + delayOffset );	// still mode first
+	timeline().add( [this] { changePhase(0); }, timeline().getCurrentTime() + delayOffset + STILL_DUR ); // then mirror mode after STILL_DUR
 }
 
 void SosoValentinesApp::resetSample()
@@ -467,7 +466,7 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 			inCount++;
 		}
 	}
-	cout << "INCOUNT" << inCount << ", OUTCOUNT " << outCount  << ", mPiecesIn " << mPiecesIn<< endl;
+	//cout << "INCOUNT" << inCount << ", OUTCOUNT " << outCount  << ", mPiecesIn " << mPiecesIn<< endl;
   //cout << "size " << mTriPieces.size() <<endl;
   
 	// if all are out, then make a new mirror grid
@@ -479,11 +478,6 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 	if( inCount > 0 && inCount == mTriPieces.size() && ! mPiecesIn ) {
 		mPiecesIn = true;
 		mirrorIn();
-		for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
-			(*piece).setTransitionOut(.25);
-		}
-
-
 	}
 }
 
@@ -499,6 +493,10 @@ void SosoValentinesApp::mirrorIn()
 	// redefine the bg texture
 	mBgTexture = mNewTex;
 	mTextRibbon->update( TAG, mCurInstagram.getUser() );
+
+	for ( auto &piece: mTriPieces) {
+		piece.setTransitionOut(MIRROR_DUR - 0.5f);
+	}
 }
 
 void SosoValentinesApp::draw()
@@ -512,7 +510,7 @@ void SosoValentinesApp::draw()
 	}
 
 	if (mDrawingMirrorTex) {
-		//cout << "drawing mirrors" << endl;
+		cout << "drawing mirrors" << endl;
 		drawMirrors( &mTriPieces );
 	}
 

@@ -128,7 +128,7 @@ void TrianglePiece::draw()
 bool TrianglePiece::isOut() const
 {
 	// had to round here because every once in a while, it's something like .00001
-	bool out = mTransOut && mAlpha <= 0.6;
+	bool out = mTransOut && mAlpha <= 0.1;
 
 	//cout << "in ISOUT :: mTransout " << mTransOut << " hasTransitionedIn " << hasTransitionedIn << endl;
 
@@ -141,7 +141,7 @@ bool TrianglePiece::isIn() const
 {
 	//cout << "mAlpha " << mAlpha << endl;
 	//cout << "triangle piece is in. malpha is " << mAlpha << " and mTransOut is " << mTransOut<<endl;
-	return ( ! mTransOut && mAlpha >= 0.4 ); // 0.4 because the lightest opacity of the box texture
+	return ( ! mTransOut && mAlpha >= 0.9 ); // 0.4 because the lightest opacity of the box texture
 	// cout << "mtransout " << mTransOut  << "& hasTransitionedin " << hasTransitionedIn << endl;
 	//return ( ! mTransOut && hasTransitionedIn );
 	//return ( ! mTransOut );

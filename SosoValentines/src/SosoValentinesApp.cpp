@@ -383,6 +383,7 @@ void SosoValentinesApp::imageLoaded()
 		mFirstRun = false;
 		delayOffset = 0;
 
+
 		// ==> add a logic here to add text!
 
 		

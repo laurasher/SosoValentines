@@ -24,6 +24,9 @@ class TrianglePiece {
 	void		setTransitionOut( float _delay );
 	bool		isOut() const;
 	bool		isIn() const;
+  bool    mVisible;
+	bool		hasTransitionedIn;
+	
 	ci::vec2		mStartPt; // moved from protected for debugging
 	ci::Anim<float> mAlpha;
 
@@ -37,6 +40,6 @@ class TrianglePiece {
 	float			mRotation;
 	ci::vec2		mScale;
 	
-	bool			mVisible, mReadyToDraw;
+	bool			mReadyToDraw;
 	bool			mTransOut;
 };

@@ -549,7 +549,7 @@ void SosoValentinesApp::mirrorIn()
 
 void SosoValentinesApp::draw()
 {
-	gl::clear( Color( 0.0f, 0.0f, 0.0f ) );
+	gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
 	gl::enableAlphaBlending( PREMULT );
 
   // draw original image

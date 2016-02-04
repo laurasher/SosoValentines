@@ -22,7 +22,6 @@ class TextRibbon {
 	
   private:
 	void  makeText();
-	void	drawTextShape();
 	
 	std::string		mTag, mUser, mTrimTag;
 	ci::vec2			mTextPos, mRibbonSize;

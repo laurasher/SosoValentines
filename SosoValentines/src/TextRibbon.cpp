@@ -110,39 +110,13 @@ void TextRibbon::makeText()
 //	mTextPos = vec2(0, getWindowHeight() - mRibbonSize.y - 500);
 }
 
-// Draws the solid shape behind the text
-void TextRibbon::drawTextShape()
-{
-	int boxH = (int)mRibbonSize.y;
-	int boxW = (int)mRibbonSize.x;
-
-	float farPt = sin((M_PI/3)*2) * boxH;
-	float offsetX = mCurPos.value().x;
-	float offsetY = mCurPos.value().y;
-
-	gl::color( mCol.r, mCol.g, mCol.b, mCurAlpha );
-	gl::VertBatch vb( GL_TRIANGLE_STRIP );
-	vb.color( mCol.r, mCol.g, mCol.b, mCurAlpha );
-	vb.vertex( offsetX + 0,				offsetY + 0 );
-	vb.vertex( offsetX + 0,				offsetY + boxH );
-	vb.vertex( offsetX + boxW,			offsetY + 0 );
-	vb.vertex( offsetX + boxW + farPt,	offsetY + boxH );
-	vb.draw();
-	/*	glEnableClientState( GL_VERTEX_ARRAY );
-	 glVertexPointer( 2, GL_FLOAT, 0, &points[0].x );
-	 glDrawArrays( GL_TRIANGLE_STRIP, 0, 4 );
-	 glDisableClientState( GL_VERTEX_ARRAY );
-	 gl::color( 1, 1, 1, 1 );*/
-}
 
 void TextRibbon::draw()
 {
 	gl::ScopedModelMatrix scopedMat;
 	gl::ScopedColor scopedColor;
 	gl::translate(mTextPos);
-  
-	//drawTextShape();
-	
+  	
 	float spacing = 0;
 	gl::color( 1, 1, 1, mCurAlpha );
 

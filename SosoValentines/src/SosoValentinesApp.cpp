@@ -200,8 +200,8 @@ void SosoValentinesApp::defineMirrorGrid()
 	}
 
 	// set the coordinate back to have top left corner as the origin
-	const float xOffset = (-1) * getWindowWidth()/2;
-	const float yOffset = (-1) * getWindowHeight()/2 - (tri_width/2);
+	const float xOffset = (-1) * getWindowWidth()/2 - tri_height;
+	const float yOffset = (-1) * getWindowHeight()/2;
 
 	// creates a series of hexagons composed of 6 triangles each
 	if (!isRotatingHexagon) {

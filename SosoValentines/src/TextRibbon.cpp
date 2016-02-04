@@ -147,7 +147,12 @@ void TextRibbon::draw()
 	gl::color( 1, 1, 1, mCurAlpha );
 
 	// background image
-	gl::draw( text_background_tex, Rectf( text_background_tex->getBounds() ).getCenteredFit( getWindowBounds(), false ) );
+	auto rect = Rectf( text_background_tex->getBounds() ).getCenteredFit( getWindowBounds(), false );
+	//rect.offset(vec2(0.0f, -69.282f * 1.5));
+	rect.offset(vec2(0.0f, -60.0f * 0.33));
+
+	gl::draw( text_background_tex, rect );
+	//gl::draw( text_background_tex, Rectf( text_background_tex->getBounds() ).getCenteredFit( getWindowBounds(), false ) );
 	//gl::draw( text_background_tex, Rectf( text_background_tex->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
 // testing
 

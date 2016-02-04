@@ -218,7 +218,7 @@ void SosoValentinesApp::defineMirrorGrid()
 
 	const float tri_width = distance( pt1, pt2 ) * tri_scale;
 	const float tri_height = std::sqrt((tri_width*tri_width) - ((tri_width/2) * (tri_width/2)));
-    // cout << tri_height *2;
+	// cout << tri_width;
 	
     // amtX and amtY controls the circling texture over the original image
 	//	int	amtX = ceil((((getWindowWidth()*2) - .5) / (1.5*(tri_width))) + 0.5f );

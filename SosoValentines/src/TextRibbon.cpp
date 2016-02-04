@@ -22,13 +22,16 @@ using namespace ci;
 using namespace ci::app;
 
 TextRibbon::TextRibbon()
-	: mCol(Color::black()), mTextCol(Color::white())
+	: mCol(Color::black()), mTextCol(Color::black())
 {
 	mUserFont = Font( loadResource( RES_OPEN_SANS ), 16 );
 	mTagFont = Font( loadResource( RES_KREON_BOLD ), 16 );
+
+	auto text_bg_img = loadImage( loadAsset("text_background.png") );
+	text_background_tex = gl::Texture2d::create(text_bg_img);
 }
 
-void TextRibbon::update( string tag, string user )
+void TextRibbon::update( string tag, string user, string searchTag )
 {
 	mTag = (tag!="") ? "#" + tag : "";
 	mUser = user;
@@ -73,10 +76,10 @@ void TextRibbon::makeText()
 	mUserBox.setColor(ColorA(mTextCol.r, mTextCol.g, mTextCol.b, 1));
 	mUserBox.setBackgroundColor( ColorA( 0, 0, 0, 0) );
 	mUserTex = gl::Texture::create( mUserBox.render() );
-	
-	float ribbonWidth = mTagBox.measure().x + mUserBox.measure().x + 30;
-	mRibbonSize = vec2(ribbonWidth, 50);
-	mTextPos = vec2(0, getWindowHeight() - mRibbonSize.y - 20);
+//	
+//	float ribbonWidth = mTagBox.measure().x + mUserBox.measure().x + 30;
+//	mRibbonSize = vec2(ribbonWidth, 50);
+//	mTextPos = vec2(0, getWindowHeight() - mRibbonSize.y - 20);
 }
 
 // Draws the solid shape behind the text
@@ -110,16 +113,20 @@ void TextRibbon::draw()
 	gl::ScopedColor scopedColor;
 	gl::translate(mTextPos);
   
-	drawTextShape();
+	//drawTextShape();
 	
 	float spacing = 0;
 	gl::color( 1, 1, 1, mCurAlpha );
-	
+
+	// background image
+	gl::draw( text_background_tex, Rectf( text_background_tex->getBounds() ).getCenteredFit( getWindowBounds(), false ) );
+	//gl::draw( text_background_tex, Rectf( text_background_tex->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
+// testing
 	// Now draw the text textures:
 	// check it the texture exists and if mTagBox has a height (meaning that there's something in that texture)
 	if( mTagTex && mTagBox.measure().y > 0 ) {
 		spacing = 5;
-		gl::draw( mTagTex, vec2(mCurPos.value().x + TEXT_PADDING_X, (mRibbonSize.y - mTagBox.measure().y)/2) );
+				gl::draw( mTagTex, vec2(mCurPos.value().x + TEXT_PADDING_X, (mRibbonSize.y - mTagBox.measure().y)/2) );
 	}
 	
 	if( mUserTex )

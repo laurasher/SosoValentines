@@ -16,7 +16,7 @@ using namespace ci::app;
 using namespace std;
 
 static const int MIRROR_DUR = 10;	// Duration of the mirror/kaleidoscope animation
-static const int STILL_DUR = 5;		// Duration of the still image
+static const int STILL_DUR = 3;		// Duration of the still image
 static const string TAG = "";		// Instagram tag to search for
 
 // Instagram Client Id - DO NOT USE THIS ONE!!! 
@@ -108,7 +108,7 @@ void SosoValentinesApp::setup()
 
 	if(isInDebugMode){
 		ui::initialize();
-		isDrawingHeartCutout = false;
+		isDrawingHeartCutout = true;
 		isDrawingOriginalImage = true;
 		isDrawingOneHexagon = false;
 		isDisablingGlobalRotation = true;
@@ -385,7 +385,7 @@ void SosoValentinesApp::imageLoaded()
 
 
 		// ==> add a logic here to add text!
-
+		
 		
 	}
 

@@ -537,7 +537,7 @@ void SosoValentinesApp::mirrorIn()
 	//cout << "mirror in" << endl;
 	// redefine the bg texture
 	mBgTexture = mNewTex;
-	mTextRibbon->update( TAG, mCurInstagram.getUser(), searchTag );
+	mTextRibbon->update( TAG, mCurInstagram.getUser(), searchTag, getWindowWidth(), getWindowHeight() );
 
 	for ( auto &piece: mTriPieces) {
 		piece.setTransitionOut(MIRROR_DUR - 0.5f);

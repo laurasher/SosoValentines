@@ -16,24 +16,25 @@
 #include "TextRibbon.h"
 #include "Resources.h"
 
-static const int TEXT_PADDING_X = 15;
+static const int WINDOW_WIDTH = 1080;
 
 using namespace std;
 using namespace ci;
 using namespace ci::app;
 
-int textBoxWidth = 750;
+
+
 
 TextRibbon::TextRibbon()
 : mCol(Color::black()), mTextCol(Color::white())
 {
-	mUserFont = Font( loadResource( RES_KREON_BOLD ), 30 );
+	mUserFont = Font( loadResource( RES_KREON_BOLD ), 35 );
 	//		mUserFont = Font( loadResource( BOLD ), 30 );
-	//	mTagFont = Font( loadResource( CURSIVE ), 40 );
-	mTagFont = Font( loadResource( RES_OPEN_SANS ), 20 );
+		mTagFont = Font( loadResource( LOVELICA ), 40 );
+//	mTagFont = Font( loadResource( RES_OPEN_SANS ), 20 );
 }
 
-void TextRibbon::update( string tag, string user, string mSearchTag )
+void TextRibbon::update( string tag, string user, string mSearchTag, int mWindowWidth, int mWindowHeight )
 {
 	//	mTag = (tag!="") ? "#" + tag : "";
 	//clear previous user text
@@ -89,13 +90,13 @@ void TextRibbon::makeText()
 	// Create the texture for the text
 	if( ! mTag.empty() ) {
 
-		mTagBox = TextBox().alignment(TextBox::CENTER).font(mTagFont).size(ivec2( textBoxWidth , TextBox::GROW)).text(mTag);
+		mTagBox = TextBox().alignment(TextBox::CENTER).font(mTagFont).size(ivec2( WINDOW_WIDTH , TextBox::GROW)).text(mTag);
 		mTagBox.setColor(ColorA(mTextCol.r, mTextCol.g, mTextCol.b, 1));
 		mTagBox.setBackgroundColor(ColorA(0, 0, 0, 0));
 		mTagTex = gl::Texture::create( mTagBox.render() );
 	}
 
-	mUserBox = TextBox().alignment( TextBox::CENTER ).font( mUserFont ).size( ivec2( textBoxWidth, TextBox::GROW ) ).text( mUser );
+	mUserBox = TextBox().alignment( TextBox::CENTER ).font( mUserFont ).size( ivec2( WINDOW_WIDTH-20, TextBox::GROW ) ).text( mUser );
 
 	mUserBox.setColor(ColorA(mTextCol.r, mTextCol.g, mTextCol.b, 1));
 	mUserBox.setBackgroundColor( ColorA( 0, 0, 0, 0) );
@@ -144,13 +145,15 @@ void TextRibbon::draw()
 
 	// Now draw the text textures:
 	// check it the texture exists and if mTagBox has a height (meaning that there's something in that texture)
+	if( mUserTex ){
+		gl::draw( mUserTex, vec2( (0) , ((mUserBox.measure().y)/2)-150) );
+	}
+
 	if( mTagTex && mTagBox.measure().y > 0 ) {
 		spacing = 5;
-		gl::draw( mTagTex, vec2(mCurPos.value().x + TEXT_PADDING_X, (mRibbonSize.y - mTagBox.measure().y)/2) );
+		gl::draw( mTagTex, vec2( (0) , ((mTagBox.measure().y)/2)+ (mUserBox.measure().y)-30  ));
 
 	}
 
-	if( mUserTex )
-		gl::draw( mUserTex, vec2(mCurPos.value().x + TEXT_PADDING_X + mTagBox.measure().x + spacing, (mRibbonSize.y - mUserBox.measure().y)/2) );
 	
 }

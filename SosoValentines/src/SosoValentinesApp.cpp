@@ -15,8 +15,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-static const int MIRROR_DUR = 10;	// Duration of the mirror/kaleidoscope animation
-static const int STILL_DUR = 5;		// Duration of the still image
+static const int MIRROR_DUR = 5;	// Duration of the mirror/kaleidoscope animation
+static const int STILL_DUR = 2;		// Duration of the still image
 static const string TAG = "";		// Instagram tag to search for
 
 // Instagram Client Id - DO NOT USE THIS ONE!!! 
@@ -97,7 +97,7 @@ void SosoValentinesApp::setup()
 	if(isInDebugMode){
 		ui::initialize();
 		isDrawingHeartCutout = false;
-		isDrawingOriginalImage = false;
+		isDrawingOriginalImage = true;
 		isDrawingOneHexagon = false;
 		isDisablingGlobalRotation = true;
 		isRandomizingHexInitalization = false;
@@ -107,7 +107,7 @@ void SosoValentinesApp::setup()
 
 	} else {
 		isDrawingHeartCutout = true;
-		isDrawingOriginalImage = false;
+		isDrawingOriginalImage = true;
 		isDrawingOneHexagon = false;
 		isDisablingGlobalRotation = false;
 		isRandomizingHexInitalization = true;
@@ -116,7 +116,7 @@ void SosoValentinesApp::setup()
 		isTwinklingWithOpacity = true;
 	}
 
-	auto heartCutout = loadImage( loadAsset( "heart_cutout_50.png" ) );
+	auto heartCutout = loadImage( loadAsset( "heart_cutout_18_new.png" ) );
 	mHeartTexture = gl::Texture2d::create( heartCutout );
 
 	mTextRibbon = new TextRibbon();
@@ -124,7 +124,7 @@ void SosoValentinesApp::setup()
 	// Popular images stream
 	//mInstaStream = make_shared<InstagramStream>( CLIENT_ID );
 	// Image stream of a particular tag
-	mInstaStream = make_shared<InstagramStream>( "valentines", CLIENT_ID );
+	mInstaStream = make_shared<InstagramStream>( "sosolimited", CLIENT_ID );
 	// Image stream in a particular area
 	// mInstaStream = make_shared<InstagramStream>( vec2(40.720467,-74.00603), 5000, CLIENT_ID );
     

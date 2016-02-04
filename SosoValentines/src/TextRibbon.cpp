@@ -159,7 +159,13 @@ void TextRibbon::draw()
 	// Now draw the text textures:
 	// check it the texture exists and if mTagBox has a height (meaning that there's something in that texture)
 	if( mUserTex ){
-		gl::draw( mUserTex, vec2( (0) , ((mUserBox.measure().y)/2)-150) );
+		auto textRect = Rectf( mUserTex->getBounds() ).getCenteredFit( getWindowBounds(), false );
+		//rect.offset(vec2(0.0f, -69.282f * 1.5));
+		textRect.offset(vec2(0.0f, -60.0f * 0.33 + (-60*1)));
+
+		gl::draw( mUserTex, textRect );
+
+		//gl::draw( mUserTex, vec2( (0) , ((mUserBox.measure().y)/2)-150) );
 	}
 
 	if( mTagTex && mTagBox.measure().y > 0 ) {
@@ -167,8 +173,8 @@ void TextRibbon::draw()
 		//gl::draw( mTagTex, vec2( (0) , ((mTagBox.measure().y)/2)+ (mUserBox.measure().y)-30  ));
 		auto textRect = Rectf( mTagTex->getBounds() ).getCenteredFit( getWindowBounds(), false );
 		//rect.offset(vec2(0.0f, -69.282f * 1.5));
-		textRect.offset(vec2(0.0f, -60.0f * 0.33));
-
+		//textRect.offset(vec2(0.0f, -60.0f * 0.33));
+		textRect.offset(vec2(0.0f, 60.0f ));
 		gl::draw( mTagTex, textRect );
 	}
 }

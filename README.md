@@ -22,3 +22,5 @@ https://vimeo.com/77076336
 
 Our notes:
 https://docs.google.com/document/d/16IoIvLEJGawTt1Ar1azhUnGLecLHhKkJtQzGy3LO5is/edit
+
+https://docs.google.com/document/d/1vBBh9Iz4lwFxgaf8EUhjv9UBTVhp2jSj5CH7L7pN-uQ/edit?ts=56b232b5

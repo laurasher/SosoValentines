@@ -10,6 +10,7 @@
 #include "TrianglePiece.h"
 #include "InstagramStream.h"
 #include "TextRibbon.h"
+#include "Resources.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -90,6 +91,14 @@ private:
 	// mouse vars
 	vec2 mousePos;
 	std::vector<vec2> mousePoints;
+
+	//title
+	void								makeText();
+	std::string					title;
+	ci::Font						titleFont = Font( loadResource( LOVELICA ), 40 );
+	ci::ColorA					mTextCol = (Color::white());
+	ci::gl::TextureRef	titleTex;
+	ci::TextBox         titleBox;
 
 };
 
@@ -383,6 +392,26 @@ void SosoValentinesApp::transitionMirrorIn( float delay, vector<TrianglePiece> *
   //cout << "drawing ribbon" << endl;
 }
 
+
+void SosoValentinesApp::makeText()
+{
+		// reset the textures
+		titleTex.reset();
+		title = "Aiko and Laura present Soso Valentines";
+		// Create the texture for the text
+		if( ! title.empty() ) {
+
+
+			titleBox.setColor(ColorA(mTextCol.r, mTextCol.g, mTextCol.b, 1));
+			titleBox.setBackgroundColor( ColorA( 0, 0, 0, 0) );
+
+			titleBox = TextBox().alignment(TextBox::CENTER).font(titleFont).size(ivec2( 1080 , TextBox::GROW)).text(title);
+			titleBox.setColor(ColorA(mTextCol.r, mTextCol.g, mTextCol.b, 1));
+			titleBox.setBackgroundColor(ColorA(0, 0, 0, 0));
+			titleTex = gl::Texture::create( titleBox.render() );
+		}
+}
+
 void SosoValentinesApp::imageLoaded()
 {
 	mPhaseChangeCalled = true;
@@ -394,7 +423,18 @@ void SosoValentinesApp::imageLoaded()
 
 
 		// ==> add a logic here to add text!
+			/*gl::ScopedModelMatrix scopedMat;
+			gl::ScopedColor scopedColor;
 
+			//	drawTextShape();
+
+			gl::color( 1, 1, 1, 1 );
+			console()<<"drawing title"<<endl;
+			makeText();
+			gl::draw( titleTex, vec2(0,((titleBox.measure().y)/2)-150));
+			 */
+
+			mTextRibbon->update( "tag","AIKO AND LAURA PRESENT", "SosoValentines", 1 );
 		
 	}
 
@@ -537,7 +577,7 @@ void SosoValentinesApp::mirrorIn()
 	//cout << "mirror in" << endl;
 	// redefine the bg texture
 	mBgTexture = mNewTex;
-	mTextRibbon->update( TAG, mCurInstagram.getUser(), searchTag, getWindowWidth(), getWindowHeight() );
+	mTextRibbon->update( TAG, mCurInstagram.getUser(), searchTag, 0 );
 
 	for ( auto &piece: mTriPieces) {
 		piece.setTransitionOut(MIRROR_DUR - 0.5f);
@@ -546,7 +586,7 @@ void SosoValentinesApp::mirrorIn()
 
 void SosoValentinesApp::draw()
 {
-	gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
+	gl::clear( Color( 0.0f, 0.0f, 0.0f ) );
 	gl::enableAlphaBlending( PREMULT );
 
   // draw original image

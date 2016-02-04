@@ -34,7 +34,7 @@ TextRibbon::TextRibbon()
 	//	mTagFont = Font( loadResource( RES_OPEN_SANS ), 20 );
 }
 
-void TextRibbon::update( string tag, string user, string mSearchTag, int mWindowWidth, int mWindowHeight )
+void TextRibbon::update( string tag, string user, string mSearchTag, int title )
 {
 	//	mTag = (tag!="") ? "#" + tag : "";
 	//clear previous user text
@@ -142,18 +142,18 @@ void TextRibbon::draw()
 
 	float spacing = 0;
 	gl::color( 1, 1, 1, mCurAlpha );
+//	if(title==0){
+		// Now draw the text textures:
+		// check it the texture exists and if mTagBox has a height (meaning that there's something in that texture)
+		if( mUserTex ){
+			gl::draw( mUserTex, vec2( (0) , ((mUserBox.measure().y)/2)-150) );
+		}
 
-	// Now draw the text textures:
-	// check it the texture exists and if mTagBox has a height (meaning that there's something in that texture)
-	if( mUserTex ){
-		gl::draw( mUserTex, vec2( (0) , ((mUserBox.measure().y)/2)-150) );
-	}
-
-	if( mTagTex && mTagBox.measure().y > 0 ) {
-		spacing = 5;
-		gl::draw( mTagTex, vec2( (0) , ((mTagBox.measure().y)/2)+ (mUserBox.measure().y)-30  ));
+		if( mTagTex && mTagBox.measure().y > 0 ) {
+			spacing = 5;
+			gl::draw( mTagTex, vec2( (0) , ((mTagBox.measure().y)/2)+ (mUserBox.measure().y)-30  ));
 		
+		}
 	}
 	
-	
-}
+//}

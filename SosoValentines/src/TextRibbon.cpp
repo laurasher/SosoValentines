@@ -159,6 +159,7 @@ void TextRibbon::draw()
 
 	if( mTagTex && mTagBox.measure().y > 0 ) {
 		spacing = 5;
-		gl::draw( mTagTex, Rectf( mTagTex->getBounds() ).getCenteredFit( getWindowBounds(), false ) )
+		//gl::draw( mTagTex, vec2( (0) , ((mTagBox.measure().y)/2)+ (mUserBox.measure().y)-30  ));
+		gl::draw( mTagTex, Rectf( mTagTex->getBounds() ).getCenteredFit( getWindowBounds(), false ) );
 	}
 }

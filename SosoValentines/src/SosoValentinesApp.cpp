@@ -380,7 +380,6 @@ void SosoValentinesApp::transitionMirrorIn( float delay, vector<TrianglePiece> *
 	}
 
   mTextRibbon->ribbonIn(0);
-	//mTextRibbon->ribbonIn(0);
   //cout << "drawing ribbon" << endl;
 }
 

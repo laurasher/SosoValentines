@@ -39,7 +39,6 @@ TextRibbon::TextRibbon()
 
 void TextRibbon::update( string user, string mSearchTag )
 {
-	//	mTag = (tag!="") ? "#" + tag : "";
 	//clear previous user text
 	mTrimTag.clear();
 	mTag = "#" + mSearchTag;

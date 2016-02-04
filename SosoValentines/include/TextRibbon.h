@@ -15,7 +15,7 @@
 class TextRibbon {	  
   public:
 	TextRibbon();
-	void	update( std::string user, std::string mSearchTag );
+	void	update( std::string user, std::string mSearchTag);
 	void	draw();
 	void	ribbonOut(float delay);
 	void	ribbonIn(float delay);

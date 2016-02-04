@@ -83,7 +83,7 @@ private:
 	bool												isMousing;
 	int													tri_index;											// which of the triangles to show of the first hexagon
 	int													nthHexagon;
-	TextLayout									layout;
+	std::string									searchTag;
 
 	vec2 start;
 
@@ -136,13 +136,16 @@ void SosoValentinesApp::setup()
 
 	mTextRibbon = new TextRibbon();
 
-	// Popular images stream
-	//mInstaStream = make_shared<InstagramStream>( CLIENT_ID );
-	// Image stream of a particular tag
-//	mInstaStream = make_shared<InstagramStream>( "sosolimited", CLIENT_ID );
-	mInstaStream = make_shared<InstagramStream>( "sweetheartscandy", CLIENT_ID );// Image stream in a particular area
-	// mInstaStream = make_shared<InstagramStream>( vec2(40.720467,-74.00603), 5000, CLIENT_ID );
-    
+// Instagram stream
+
+	if(globalCount%2 == 0){
+//		mInstaStream = make_shared<InstagramStream>( "sweetheartscandy", CLIENT_ID );// Image stream in a particular area
+		searchTag = "sweetheartscandy";
+	} else {
+//		mInstaStream = make_shared<InstagramStream>( "valentinesday", CLIENT_ID );// Image stream in a particular area
+		searchTag = "valentinesday";
+	}
+	mInstaStream = make_shared<InstagramStream>( searchTag, CLIENT_ID );// Image stream in a particular area
 	continueCycle();
 
 }
@@ -410,7 +413,7 @@ void SosoValentinesApp::imageLoaded()
 	timeline().add( [this] { changePhase(1); }, timeline().getCurrentTime() + delayOffset );	// still mode first
 	timeline().add( [this] { changePhase(0); }, timeline().getCurrentTime() + delayOffset + STILL_DUR ); // then mirror mode after STILL_DUR
 	globalCount++;
-}
+		}
 
 void SosoValentinesApp::resetSample()
 {

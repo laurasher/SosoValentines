@@ -27,8 +27,10 @@ static const string CLIENT_ID = "def20410b5134f7d9b828668775aee4a";
 static const bool PREMULT = false;
 
 int globalCount = 0;
+std::string									searchTag;
 
 class SosoValentinesApp : public App {
+
 private:
 	void	setup();
 	void	update();
@@ -83,7 +85,6 @@ private:
 	bool												isMousing;
 	int													tri_index;											// which of the triangles to show of the first hexagon
 	int													nthHexagon;
-	std::string									searchTag;
 
 	vec2 start;
 
@@ -140,10 +141,10 @@ void SosoValentinesApp::setup()
 
 	if(globalCount%2 == 0){
 //		mInstaStream = make_shared<InstagramStream>( "sweetheartscandy", CLIENT_ID );// Image stream in a particular area
-		searchTag = "sweetheartscandy";
+		searchTag = "Sweetheartscandy";
 	} else {
 //		mInstaStream = make_shared<InstagramStream>( "valentinesday", CLIENT_ID );// Image stream in a particular area
-		searchTag = "valentinesday";
+		searchTag = "Valentinesday";
 	}
 	mInstaStream = make_shared<InstagramStream>( searchTag, CLIENT_ID );// Image stream in a particular area
 	continueCycle();
@@ -550,7 +551,7 @@ void SosoValentinesApp::mirrorIn()
 	cout << "mirror in" << endl;
 	// redefine the bg texture
 	mBgTexture = mNewTex;
-	mTextRibbon->update( TAG, mCurInstagram.getUser() );
+	mTextRibbon->update( TAG, mCurInstagram.getUser(), searchTag );
 
 	for ( auto &piece: mTriPieces) {
 		piece.setTransitionOut(MIRROR_DUR - 0.5f);

@@ -10,6 +10,7 @@
 #include "TrianglePiece.h"
 #include "InstagramStream.h"
 #include "TextRibbon.h"
+#include "Resources.h"
 
 using namespace ci;
 using namespace ci::app;
@@ -394,6 +395,8 @@ void SosoValentinesApp::imageLoaded()
 
 
 		// ==> add a logic here to add text!
+
+			mTextRibbon->update( "tag","AIKO AND LAURA PRESENT", "SosoValentines", 1 );
 		
 		
 	}
@@ -537,7 +540,7 @@ void SosoValentinesApp::mirrorIn()
 	//cout << "mirror in" << endl;
 	// redefine the bg texture
 	mBgTexture = mNewTex;
-	mTextRibbon->update( TAG, mCurInstagram.getUser(), searchTag, getWindowWidth(), getWindowHeight() );
+	mTextRibbon->update( TAG, mCurInstagram.getUser(), searchTag, 0 );
 
 	for ( auto &piece: mTriPieces) {
 		piece.setTransitionOut(MIRROR_DUR - 0.5f);
@@ -546,7 +549,7 @@ void SosoValentinesApp::mirrorIn()
 
 void SosoValentinesApp::draw()
 {
-	gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
+	gl::clear( Color( 0.0f, 0.0f, 0.0f ) );
 	gl::enableAlphaBlending( PREMULT );
 
   // draw original image

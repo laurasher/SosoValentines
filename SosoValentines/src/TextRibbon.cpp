@@ -37,7 +37,7 @@ TextRibbon::TextRibbon()
 	text_background_tex = gl::Texture2d::create(text_bg_img);
 }
 
-void TextRibbon::update( string tag, string user, string mSearchTag, int mWindowWidth, int mWindowHeight )
+void TextRibbon::update( string tag, string user, string mSearchTag, int title )
 {
 	//	mTag = (tag!="") ? "#" + tag : "";
 	//clear previous user text
@@ -105,9 +105,9 @@ void TextRibbon::makeText()
 	mUserBox.setBackgroundColor( ColorA( 0, 0, 0, 0) );
 	mUserTex = gl::Texture::create( mUserBox.render() );
 
-//	float ribbonWidth = mTagBox.measure().x + mUserBox.measure().x + 30;
-//	mRibbonSize = vec2(ribbonWidth, 100);
-//	mTextPos = vec2(0, getWindowHeight() - mRibbonSize.y - 500);
+	float ribbonWidth = mTagBox.measure().x + mUserBox.measure().x + 30;
+	mRibbonSize = vec2(ribbonWidth, 100);
+	mTextPos = vec2(0, getWindowHeight() - mRibbonSize.y - 500);
 }
 
 // Draws the solid shape behind the text

@@ -30,8 +30,8 @@ TextRibbon::TextRibbon()
 {
 	mUserFont = Font( loadResource( RES_KREON_BOLD ), 35 );
 	//		mUserFont = Font( loadResource( BOLD ), 30 );
-		mTagFont = Font( loadResource( LOVELICA ), 40 );
-//	mTagFont = Font( loadResource( RES_OPEN_SANS ), 20 );
+	mTagFont = Font( loadResource( LOVELICA ), 40 );
+	//	mTagFont = Font( loadResource( RES_OPEN_SANS ), 20 );
 }
 
 void TextRibbon::update( string tag, string user, string mSearchTag, int mWindowWidth, int mWindowHeight )
@@ -152,8 +152,8 @@ void TextRibbon::draw()
 	if( mTagTex && mTagBox.measure().y > 0 ) {
 		spacing = 5;
 		gl::draw( mTagTex, vec2( (0) , ((mTagBox.measure().y)/2)+ (mUserBox.measure().y)-30  ));
-
+		
 	}
-
+	
 	
 }

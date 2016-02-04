@@ -15,8 +15,8 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-static const int MIRROR_DUR = 5;	// Duration of the mirror/kaleidoscope animation
-static const int STILL_DUR = 2;		// Duration of the still image
+static const int MIRROR_DUR = 10;	// Duration of the mirror/kaleidoscope animation
+static const int STILL_DUR = 5;		// Duration of the still image
 static const string TAG = "";		// Instagram tag to search for
 
 // Instagram Client Id - DO NOT USE THIS ONE!!! 
@@ -37,7 +37,7 @@ private:
 	void	drawMirrors(vector<TrianglePiece> *vec);
 	void	checkImageLoaded();
 	void	defineMirrorGrid();
-	void	transitionMirrorIn(vector<TrianglePiece> *vec);
+	void	transitionMirrorIn(float delay, vector<TrianglePiece> *vec);
 	
 	void	changePhase(int newPhase);
 	void	resetSample();
@@ -218,21 +218,10 @@ void SosoValentinesApp::defineMirrorGrid()
 
 					vec2 scale = vec2( scaleX * tri_scale, tri_scale );
 					start = vec2(startX, startY );
-					
-					// assign transparency for the sides of the cube
-					float alpha = 0.0f;
-					if (!isUsingBoxTexture) {
-						alpha = 1.0f;
-					}
-					else {
-						if (k == 0 || k == 1) {alpha = 0.4f;}
-						else if (k == 2 || k == 5) {alpha = 0.7f;}
-						else {alpha = 1.0f;}
-					}
 
 					// rotate the whole triangle -120 degrees CC so the hexagon will have the the vertex at top
 					// the scale flips the location of the odd number triangles
-					TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k, scale, alpha);
+					TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k, scale, 0.0f); // triangles are transparent in the beginning
 					mTriPieces.push_back(tri);
 				}
 			}
@@ -253,19 +242,9 @@ void SosoValentinesApp::defineMirrorGrid()
 
 					vec2 scale = vec2( tri_scale, scaleX * tri_scale );
 					start = vec2(startX, startY );
-					// assign transparency for the sides of the cube
-					float alpha = 0.0f;
-					if (!isUsingBoxTexture) {
-						alpha = 1.0f;
-					}
-					else {
-						if (k == 2 || k == 3) {alpha = 0.4f;}
-						else if (k == 1 || k == 4) {alpha = 0.7f;}
-						else {alpha = 1.0f;}
-					}
 					// rotate the whole triangle -120 degrees CC so the hexagon will have the the vertex at top
 					// the scale flips the location of the odd number triangles
-					TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k, scale, alpha);
+					TrianglePiece tri = TrianglePiece(vec2(startX, startY), pt1, pt2, pt3, M_PI / 3 * k, scale, 0.0f); // in the beginning the triangles are drawn with 0 opacity
 					mTriPieces.push_back(tri);
 				}
 			}
@@ -288,7 +267,7 @@ void SosoValentinesApp::changePhase( int newPhase )
 		// Mirror Mode
 		case 0: {
 			// transition all of the mirror pieces in
-			transitionMirrorIn( &mTriPieces );
+			transitionMirrorIn( randFloat( 0.2f, 0.5f ), &mTriPieces );
 			resetSample(); 
 			
 			mMirrorRot = randFloat(M_PI, M_PI * 2);
@@ -324,10 +303,9 @@ void SosoValentinesApp::checkImageLoaded()
 	mMirrorTexture = mNewTex;
 }
 
-void SosoValentinesApp::transitionMirrorIn( vector<TrianglePiece> *vec )
+void SosoValentinesApp::transitionMirrorIn( float delay, vector<TrianglePiece> *vec )
 {
 	for( int i = 0; i < vec->size(); i++ ) {
-		float delay = randFloat( 0.1f, 0.5f );
 		(*vec)[i].reset( delay, mMirrorTexture );
 	}
 //	mTextRibbon->ribbonOut(0);

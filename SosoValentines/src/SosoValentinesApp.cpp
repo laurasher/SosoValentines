@@ -116,7 +116,7 @@ void SosoValentinesApp::setup()
 		isTwinklingWithOpacity = true;
 	}
 
-	auto heartCutout = loadImage( loadAsset( "heart_cutout_18_new.png" ) );
+	auto heartCutout = loadImage( loadAsset( "heart_cutout_18_new_1080.png" ) );
 	mHeartTexture = gl::Texture2d::create( heartCutout );
 
 	mTextRibbon = new TextRibbon();
@@ -147,7 +147,7 @@ void SosoValentinesApp::continueCycle()
 void SosoValentinesApp::defineMirrorGrid()
 {
 	const int r = 1; // don't change this because this normalizes each triangle
-	const int numTriangles = 15;	// 50 to match heart_cutout_50.png. When doing so make sure to change to float startY = (tri_width * 1.5 * j) - (tri_width /2);
+	const int numTriangles = 18;	// 50 to match heart_cutout_50.png. When doing so make sure to change to float startY = (tri_width * 1.5 * j) - (tri_width /2);
 
 	// this controls the initial position of the kaleidoscope
 	float tri_scale = 0.0f;

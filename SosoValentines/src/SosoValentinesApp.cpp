@@ -10,6 +10,7 @@
 #include "TrianglePiece.h"
 #include "InstagramStream.h"
 #include "TextRibbon.h"
+#include "Resources.h"
 
 using namespace ci;
 using namespace ci::app;

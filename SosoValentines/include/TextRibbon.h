@@ -22,7 +22,7 @@ class TextRibbon {
 	
   private:
 	void  makeText();
-	
+
 	std::string		mTag, mUser, mTrimTag;
 	ci::vec2			mTextPos, mRibbonSize;
 	ci::Font			mUserFont, mTagFont;

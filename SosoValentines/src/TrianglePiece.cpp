@@ -48,9 +48,6 @@ void TrianglePiece::setTransition( float _delay )
 		mTransOut = true;
 		mDrawTex = mTempTex;
 		app::timeline().apply( &mAlpha, 0.0f, randFloat(0.2f, 0.5f), EaseInQuint()).delay(_delay);	// make sure it's long enough
-		if (mAlpha > 0.0f) {
-			mAlpha = 0.0f;
-		}
 
 		//cout << "mAlpha " << mAlpha << endl;
 		//setTransitionOut(5.0f - 0.5f);

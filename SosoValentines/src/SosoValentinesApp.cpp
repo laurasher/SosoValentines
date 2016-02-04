@@ -26,10 +26,13 @@ static const string CLIENT_ID = "def20410b5134f7d9b828668775aee4a";
 
 static const bool PREMULT = false;
 
+int globalCount = 0;
+std::string									searchTag;
+
 class SosoValentinesApp : public App {
+
 private:
 	void	setup();
-	void	prepareSettings( Settings *settings );
 	void	update();
 	void	draw();
 	
@@ -46,6 +49,9 @@ private:
 	void	mirrorOut();
 	void	mirrorIn();
 	void	imageLoaded();
+	void	mouseDown(MouseEvent event);
+	void	mouseDrag(MouseEvent event);
+	bool  inTriangleCheck(ci::vec2 mVertices[3], ci::vec2 mousePos);
 	
 	gl::TextureRef					mNewTex;				// the loaded texture
 	gl::TextureRef					mBgTexture;			// texture for the still image
@@ -65,10 +71,9 @@ private:
 	Anim<float>									mMirrorRot;				// rotation of the canvas in kaleidoscope mode
 	bool												mPiecesIn;				// whether all of the mirror pieces are showing or not
 	bool												mPhaseChangeCalled;		// if the app has been told to change phases or not
-	bool												mFirstRun;				// if the app is on its first cycle
-
-	// helpful for debug
-	bool                        isInDebugMode = false;
+  bool                        mFirstRun;				// if the app is on its first cycle
+		// helpful for debug
+	bool                        isInDebugMode = true;
 	bool                        isDrawingHeartCutout;   // turn heart cutout on/off
 	bool                        isDrawingOriginalImage; // show original image
 	bool												isDrawingOneHexagon ;	// show just the first hexagon in 1 * 1 grid texture rectangle
@@ -76,16 +81,23 @@ private:
 	bool												isRandomizingHexInitalization;	// this affects the initial size, position
 	bool												isRotatingHexagon;							//	rotate the hexagon 30 degrees. Need to change the triangle coordinates, scale (reflection), grid, and alpha
 	bool												isUsingBoxTexture;							//use the diamond box opacity texture
+	bool												isMousing;
 	int													tri_index;											// which of the triangles to show of the first hexagon
 	int													nthHexagon;
 
 	vec2 start;
+
+	// mouse vars
+	vec2 mousePos;
+	std::vector<vec2> mousePoints;
+
 };
 
 void SosoValentinesApp::setup()
 {
 	setWindowSize( 1080, 1080 ); // 1080 x 1080 is Instagram's current resolution
 	setFrameRate( 60 );
+
 	mPhase = 1;
 	mFirstRun = true;
 	mLoadingTexture = false;
@@ -104,6 +116,7 @@ void SosoValentinesApp::setup()
 		isRotatingHexagon = true;
 		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;
+		isMousing = false;
 
 	} else {
 		isDrawingHeartCutout = true;
@@ -114,6 +127,7 @@ void SosoValentinesApp::setup()
 		isRotatingHexagon = true;
 		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;
+		isMousing = true;
 	}
 
 	auto heartCutout = loadImage( loadAsset( "heart_cutout_18_new_1080.png" ) );
@@ -124,10 +138,22 @@ void SosoValentinesApp::setup()
 	// Popular images stream
 	//mInstaStream = make_shared<InstagramStream>( CLIENT_ID );
 	// Image stream of a particular tag
-	mInstaStream = make_shared<InstagramStream>( "sosolimited", CLIENT_ID );
-	// Image stream in a particular area
+	if (isInDebugMode) {
+		mInstaStream = make_shared<InstagramStream>( "sosolimited", CLIENT_ID );
+	}
+		// Image stream in a particular area
 	// mInstaStream = make_shared<InstagramStream>( vec2(40.720467,-74.00603), 5000, CLIENT_ID );
-    
+	else {
+		// Instagram stream
+		if(globalCount%2 == 0){
+		//		mInstaStream = make_shared<InstagramStream>( "sweetheartscandy", CLIENT_ID );// Image stream in a particular area
+			searchTag = "Sweetheartscandy";
+		} else {
+	//		mInstaStream = make_shared<InstagramStream>( "valentinesday", CLIENT_ID );// Image stream in a particular area
+			searchTag = "Valentinesday";
+		}
+		mInstaStream = make_shared<InstagramStream>( searchTag, CLIENT_ID );// Image stream in a particular area
+	}
 	continueCycle();
 }
 
@@ -182,8 +208,9 @@ void SosoValentinesApp::defineMirrorGrid()
 
 	const float tri_width = distance( pt1, pt2 ) * tri_scale;
 	const float tri_height = std::sqrt((tri_width*tri_width) - ((tri_width/2) * (tri_width/2)));
-    
-	// amtX and amtY controls the circling texture over the original image
+    // cout << tri_height *2;
+	
+    // amtX and amtY controls the circling texture over the original image
 	//	int	amtX = ceil((((getWindowWidth()*2) - .5) / (1.5*(tri_width))) + 0.5f );
 	//	int amtY = ceil((getWindowHeight()*2) / (tri_height) + 0.5f );
 	float diagonal = getWindowWidth(); //make this =1. If we will be rotating+ shifting the grid, apply a factor > 1
@@ -266,23 +293,53 @@ void SosoValentinesApp::changePhase( int newPhase )
 	switch( mPhase ) {
 		// Mirror Mode
 		case 0: {
+			//cout << "switched to mirror mode at " <<timeline().getCurrentTime() << "s" << endl;
 			// transition all of the mirror pieces in
 			transitionMirrorIn( randFloat( 0.2f, 0.5f ), &mTriPieces );
 			resetSample(); 
-			
+
+			// if mousepos and drag does not equal 0, begin trans in
+			//		if ( mousePos.x!=0 && mousePoints.size()!=0 )
+			/*if(isMousing){
+						if ( mousePos.x!=0 ){
+							vec2 mousePosAdd;
+							mousePosAdd.x = mousePos.x+20; mousePosAdd.y = mousePos.y+20;
+
+							transitionMirrorIn( &mTriPieces );
+
+							console()<<mousePoints.size()<<endl;
+							console()<<mousePos<<endl;
+							gl::color( Color::white() );
+							gl::drawLine(mousePos, mousePos);
+						}
+					} else{
+		*/
+
+      // rotation during the mirror mode
 			mMirrorRot = randFloat(M_PI, M_PI * 2);
 			float newRot = mMirrorRot + randFloat(M_PI, M_PI/4);
 			timeline().apply(&mMirrorRot, newRot, MIRROR_DUR, EaseInOutQuad());
 			mPiecesIn = false;
-		}
+    }
 		break;
 		// Still Image Mode
 		case 1:
+			// cout << "switched to still image mode at " <<timeline().getCurrentTime() << "s" << endl;
 			// transition all of the mirror pieces out
 			for( vector<TrianglePiece>::iterator piece = mTriPieces.begin(); piece != mTriPieces.end(); ++piece ){
 				(*piece).setTransitionOut(.25);
-			}
+		}
 		break;
+
+/*
+			if(isMousing){
+			// set mouse linked sample size and position back to 0
+			mousePos.x = 0; mousePos.y = 0; mousePoints.clear();
+			}
+*/
+
+// set mouse linked sample size and position back to 0
+
 	}
 }
 
@@ -298,24 +355,28 @@ void SosoValentinesApp::checkImageLoaded()
 	// THE IMAGE HAS BEEN LOADED 
 	mLoadingTexture = false;
 	mTextureLoaded = true;
-	
+	//cout << "image loaded" << endl;
+
+	// assign the new textures
 	mNewTex = tex;
 	mMirrorTexture = mNewTex;
 }
 
 void SosoValentinesApp::transitionMirrorIn( float delay, vector<TrianglePiece> *vec )
 {
+	//cout << "transitionMirrorIn" << endl;
 	for( int i = 0; i < vec->size(); i++ ) {
 		(*vec)[i].reset( delay, mMirrorTexture );
 	}
-//	mTextRibbon->ribbonOut(0);
-	mTextRibbon->ribbonIn(0);
+
+  mTextRibbon->ribbonIn(0);
+	//mTextRibbon->ribbonIn(0);
+  //cout << "drawing ribbon" << endl;
 }
 
 void SosoValentinesApp::imageLoaded()
 {
 	mPhaseChangeCalled = true;
-	
 	// we don't want to wait on the first go around
 	int delayOffset = STILL_DUR;
 	if( mFirstRun ) {
@@ -326,35 +387,42 @@ void SosoValentinesApp::imageLoaded()
 
 		
 	}
-	
+
 	// This defines the length of time that we're in each phase
-	timeline().add( [&] { changePhase(0); }, timeline().getCurrentTime() + delayOffset);
-	timeline().add( [&] { changePhase(1); }, timeline().getCurrentTime() + delayOffset + MIRROR_DUR);
+	timeline().add( [this] { changePhase(0); }, timeline().getCurrentTime() + delayOffset );	// still mode first
+	timeline().add( [this] { changePhase(1); }, timeline().getCurrentTime() + delayOffset + MIRROR_DUR ); // then mirror mode after STILL_DUR
+	globalCount++;
 }
 
 void SosoValentinesApp::resetSample()
 {
+	if(isMousing){
+			mSampleSize = randInt(100, 300);
+			mSamplePt.value().y = mousePos.y;
+			mSamplePt.value().x = mousePos.x;
+		return;
+	}
 	// reset sample pos
 	mSampleSize = randInt(100, 300);
 	mSamplePt.value().y = randFloat(0, getWindowWidth() - mSampleSize);
 	mSamplePt.value().x = randFloat(0, getWindowHeight() - mSampleSize);
-	
+
+
 	vec2 newPos;
 	int count = 0;
 	// Try to find a good sample location thats within the window's frame.
-	// Give up if we try and settle after a bunch of times, no big deal.
+	// Give up if we try and settle after 150 times, no big deal.
 	do {
 		newPos.x = randFloat(0, getWindowWidth() - mSampleSize/2);
 		newPos.y = randFloat(0, getWindowHeight() - mSampleSize/2);
 		count++;
 	} while(count < 150	&& ((mSamplePt.value().x - newPos.x) < 100 || (mSamplePt.value().y - newPos.y) < 100));
-	timeline().apply(&mSamplePt, newPos, MIRROR_DUR - 1, EaseInOutQuad()).delay(.5);
+	timeline().apply(&mSamplePt, newPos, STILL_DUR - 1, EaseInOutQuad()).delay(.5);
 }
 
 void SosoValentinesApp::update()
 {
-	//cout << "window size " << getWindowSize() << endl;
-	// if mCurInstagram is undefined, then don't do anything else since there's nothing else to do
+  // if mCurInstagram is undefined, then don't do anything else since there's nothing else to do
 	if( mCurInstagram.isNull() ) {
 		newInstagram();
 		return;
@@ -362,18 +430,18 @@ void SosoValentinesApp::update()
 	
 	// if the new texture is loading, but hasn't loaded yet, check again
 	if( ! mTextureLoaded ) {
-		checkImageLoaded();
+		checkImageLoaded(); // image is loaded, texture is made for triangles
 	}
 	else {
 		// we want to call this only once the image has been loaded
 		// if the texture has been loaded and the phase hasn't been called to change yet...
 		if( ! mPhaseChangeCalled )
-			imageLoaded();
-			updateMirrors( &mTriPieces );
+			imageLoaded(); // switch between mirror and still image modes. also initiates the first call to phase change
+			updateMirrors( &mTriPieces ); // update sample each frame update if in the mirror mode
 	}
 
+	// draw debug GUI
 	if (isInDebugMode){
-		// draw debug GUI
 		ui::ScopedWindow window( "Settings" );
 
 		if (ui::CollapsingHeader("Debug", nullptr, true, true)) {
@@ -391,6 +459,13 @@ void SosoValentinesApp::update()
 			ui::Checkbox("Rotate the hexagon by 30 degrees", &isRotatingHexagon);
 			ui::Checkbox("Use the box texture", &isUsingBoxTexture);
 			ui::Checkbox("Twinkle with opacity", &isTwinklingWithOpacity);
+			ui::Checkbox("Mouse interaction", &isMousing);
+			if(isMousing){
+				ui::SliderFloat("sample size", &mSampleSize, 50.0, 300.0); //sample size
+				ui::SliderFloat("sample point x", &mSamplePt.value().x, 0, getWindowWidth());
+				ui::SliderFloat("sample point y", &mSamplePt.value().y, 0, getWindowHeight());
+
+			}
 		}
 	}
 }
@@ -398,14 +473,14 @@ void SosoValentinesApp::update()
 void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 {
 	if( ! mMirrorTexture ) return;
-	
+
 	vec2 mSamplePt1( -0.5, -(sin(M_PI/3)/3) );
 	vec2 mSamplePt2( mSamplePt1.x + 1, mSamplePt1.y);
 	vec2 mSamplePt3( mSamplePt1.x + (cos(M_PI/3)), mSamplePt1.y + (sin(M_PI/3)));
 
 	mat3 mtrx( 1.0f );
 
-	// this part controls the sampling
+	// this part controls the sampling motion
 	mtrx = glm::translate( mtrx, mSamplePt.value() );
 	mtrx = glm::scale( mtrx, vec2( mSampleSize ) );
 	mtrx = glm::rotate( mtrx, float((getElapsedFrames()*4)/2*M_PI) );
@@ -426,7 +501,9 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 		if( (*vec)[i].isOut() ) outCount++;
 		if( (*vec)[i].isIn() ) inCount++;
 	}
-	
+	//cout << "INCOUNT" << inCount << ", OUTCOUNT " << outCount  << ", mPiecesIn " << mPiecesIn<< endl;
+  //cout << "size " << mTriPieces.size() <<endl;
+  
 	// if all are out, then make a new mirror grid
 	if( outCount > 0 && outCount == mTriPieces.size() ) {
 		mirrorOut();
@@ -441,14 +518,20 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 
 void SosoValentinesApp::mirrorOut()
 {
-	continueCycle();
+	//cout << "mirror out" << endl;
+  continueCycle();
 }
 
 void SosoValentinesApp::mirrorIn()
 {
+	//cout << "mirror in" << endl;
 	// redefine the bg texture
 	mBgTexture = mNewTex;
-	mTextRibbon->update( TAG, mCurInstagram.getUser() );
+	mTextRibbon->update( TAG, mCurInstagram.getUser(), searchTag );
+
+	for ( auto &piece: mTriPieces) {
+		piece.setTransitionOut(MIRROR_DUR - 0.5f);
+	}
 }
 
 void SosoValentinesApp::draw()
@@ -456,12 +539,14 @@ void SosoValentinesApp::draw()
 	gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
 	gl::enableAlphaBlending( PREMULT );
 
+  // draw original image
 	if( mBgTexture && isDrawingOriginalImage ) {
 		gl::draw( mBgTexture, Rectf( mBgTexture->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
 	}
 
+	// cout << "drawing mirrors" << endl;
 	drawMirrors( &mTriPieces );
-	
+
 	// heart cutout should always be on top (under the text)
 	if (isDrawingHeartCutout)
 	{
@@ -483,12 +568,13 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 		if ( tri_index < 6 ){
 			//draw the triangle piece at index tri_index of the nth hexagon
 			(*vec)[ (nthHexagon * 6 ) + tri_index ].draw();
-			// draw the center dot of the first hexagon
+			// draw the center dot of the hexagon
 			gl::pushModelMatrix();
 			gl::color(Color(1.0f, 0, 0));
 			gl::drawSolidCircle((*vec)[tri_index].mStartPt, 5.0f);
 			gl::popModelMatrix();
-			cout << "center " << (*vec)[0].mStartPt << endl;
+
+			// cout << "center " << (*vec)[0].mStartPt << endl;
 			} else {
 			// draw the full hex for tri_index = 6 * i
 			for( int i = (nthHexagon * 6) ; i < (6 * (nthHexagon + 1)); i++ ) {
@@ -501,6 +587,40 @@ void SosoValentinesApp::drawMirrors( vector<TrianglePiece> *vec )
 				(*vec)[i].draw();
 		}
 	}
+}
+
+// mouse functions
+void SosoValentinesApp::mouseDrag(MouseEvent event)
+{
+	// Store the current mouse position in the list.
+	mousePoints.push_back( event.getPos() );
+}
+
+void SosoValentinesApp::mouseDown(MouseEvent event){
+	mousePos = event.getPos();
+}
+
+bool SosoValentinesApp::inTriangleCheck(ci::vec2 mVertices[3], ci::vec2 mousePos){
+	float x_p1 = mVertices[0].x;
+	float x_p2 = mVertices[1].x;
+	float x_p3 = mVertices[2].x;
+	float x_m = mousePos.x;
+
+	float y_p1 = mVertices[0].y;
+	float y_p2 = mVertices[1].y;
+	float y_p3 = mVertices[2].y;
+	float y_m = mousePos.y;
+
+	int a = ( (y_p2-y_p3)*(x_m-x_p3) + (x_p3-x_p2)*(y_m-y_p3) )/( (y_p2-y_p3)*(x_p1-x_p3) + (x_p3-x_p2)*(y_p1-y_p3) );
+	int b = ( (y_p3-y_p1)*(x_m-x_p3) + (x_p1-x_p3)*(y_m-y_p3) )/( (y_p2-y_p3)*(x_p1-x_p3) + (x_p3-x_p2)*(y_p1-y_p3) );
+	int c = 1-a-b;
+
+	// Apply test
+	if( (a<=1 && a>=0) && (b<=1 && b>=0) && (c<=1 && c>=0) )
+		return true;
+	else
+		return false;
+	
 }
 
 CINDER_APP( SosoValentinesApp, RendererGl( RendererGl::Options().msaa( 16 ) ) )

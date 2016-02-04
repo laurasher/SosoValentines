@@ -68,7 +68,7 @@ private:
 	bool												mFirstRun;				// if the app is on its first cycle
 
 	// helpful for debug
-	bool                        isInDebugMode = true;
+	bool                        isInDebugMode = false;
 	bool                        isDrawingHeartCutout;   // turn heart cutout on/off
 	bool                        isDrawingOriginalImage; // show original image
 	bool												isDrawingOneHexagon ;	// show just the first hexagon in 1 * 1 grid texture rectangle
@@ -109,8 +109,8 @@ void SosoValentinesApp::setup()
 		isDrawingHeartCutout = true;
 		isDrawingOriginalImage = true;
 		isDrawingOneHexagon = false;
-		isDisablingGlobalRotation = false;
-		isRandomizingHexInitalization = true;
+		isDisablingGlobalRotation = true;
+		isRandomizingHexInitalization = false;
 		isRotatingHexagon = true;
 		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;

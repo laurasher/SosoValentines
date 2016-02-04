@@ -19,12 +19,12 @@
 		09E3BCC897A44AC78648D328 /* CinderApp.icns in Resources */ = {isa = PBXBuildFile; fileRef = D26B15BF16844244B7D23112 /* CinderApp.icns */; };
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		A24C9E751C63DB3000072DAE /* TextRibbon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A24C9E731C63DB3000072DAE /* TextRibbon.cpp */; };
 		A264A9211C584EAA00C9455F /* assets in Resources */ = {isa = PBXBuildFile; fileRef = A264A9201C584EAA00C9455F /* assets */; };
 		D4DC85E1B45D431995216AED /* SosoValentinesApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 34E9CC3802E54F28AE0D0D6E /* SosoValentinesApp.cpp */; };
 		E00437551C63B5C1004CB782 /* Lovelica.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E00437541C63B5C1004CB782 /* Lovelica.ttf */; };
 		E00437571C63B857004CB782 /* TrianglePiece.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E00437561C63B857004CB782 /* TrianglePiece.cpp */; };
 		E01A60C11C5980EA00A1EA97 /* InstagramStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E01A60BD1C5980EA00A1EA97 /* InstagramStream.cpp */; };
-		E01A60C31C5980EA00A1EA97 /* TextRibbon.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E01A60BF1C5980EA00A1EA97 /* TextRibbon.cpp */; };
 		E01A60CC1C59828300A1EA97 /* Asap-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E01A60C91C59828300A1EA97 /* Asap-Regular.ttf */; };
 		E01A60CD1C59828300A1EA97 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E01A60CA1C59828300A1EA97 /* Icon.png */; };
 		E01A60CE1C59828300A1EA97 /* Kreon-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E01A60CB1C59828300A1EA97 /* Kreon-Bold.ttf */; };
@@ -51,12 +51,12 @@
 		3B3648C28BC04BA6839A3787 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5323E6B10EAFCA74003A9687 /* CoreVideo.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreVideo.framework; path = /System/Library/Frameworks/CoreVideo.framework; sourceTree = "<absolute>"; };
 		8D1107320486CEB800E47090 /* SosoValentines.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SosoValentines.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		A24C9E731C63DB3000072DAE /* TextRibbon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextRibbon.cpp; path = ../src/TextRibbon.cpp; sourceTree = "<group>"; };
 		A264A9201C584EAA00C9455F /* assets */ = {isa = PBXFileReference; lastKnownFileType = folder; name = assets; path = ../assets; sourceTree = "<group>"; };
 		D26B15BF16844244B7D23112 /* CinderApp.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = CinderApp.icns; path = ../resources/CinderApp.icns; sourceTree = "<group>"; };
 		E00437541C63B5C1004CB782 /* Lovelica.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Lovelica.ttf; path = ../resources/Lovelica.ttf; sourceTree = "<group>"; };
 		E00437561C63B857004CB782 /* TrianglePiece.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TrianglePiece.cpp; path = ../src/TrianglePiece.cpp; sourceTree = "<group>"; };
 		E01A60BD1C5980EA00A1EA97 /* InstagramStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = InstagramStream.cpp; path = ../../lib/Cinder/samples/Kaleidoscope/src/InstagramStream.cpp; sourceTree = "<group>"; };
-		E01A60BF1C5980EA00A1EA97 /* TextRibbon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextRibbon.cpp; path = ../../lib/Cinder/samples/Kaleidoscope/src/TextRibbon.cpp; sourceTree = "<group>"; };
 		E01A60C51C59824500A1EA97 /* InstagramStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstagramStream.h; path = ../include/InstagramStream.h; sourceTree = "<group>"; };
 		E01A60C61C59824500A1EA97 /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = ../include/Resources.h; sourceTree = "<group>"; };
 		E01A60C71C59824500A1EA97 /* TextRibbon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextRibbon.h; path = ../include/TextRibbon.h; sourceTree = "<group>"; };
@@ -103,9 +103,9 @@
 			isa = PBXGroup;
 			children = (
 				E01A60BD1C5980EA00A1EA97 /* InstagramStream.cpp */,
-				E01A60BF1C5980EA00A1EA97 /* TextRibbon.cpp */,
 				E00437561C63B857004CB782 /* TrianglePiece.cpp */,
 				34E9CC3802E54F28AE0D0D6E /* SosoValentinesApp.cpp */,
+				A24C9E731C63DB3000072DAE /* TextRibbon.cpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -271,7 +271,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E01A60C31C5980EA00A1EA97 /* TextRibbon.cpp in Sources */,
+				A24C9E751C63DB3000072DAE /* TextRibbon.cpp in Sources */,
 				E01A60E31C5A8B2D00A1EA97 /* imgui_draw.cpp in Sources */,
 				E01A60C11C5980EA00A1EA97 /* InstagramStream.cpp in Sources */,
 				D4DC85E1B45D431995216AED /* SosoValentinesApp.cpp in Sources */,

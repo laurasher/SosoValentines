@@ -17,7 +17,7 @@ using namespace ci::app;
 using namespace std;
 
 static const int MIRROR_DUR = 10;	// Duration of the mirror/kaleidoscope animation
-static const int STILL_DUR = 5;		// Duration of the still image
+static const int STILL_DUR = 3;		// Duration of the still image
 static const string TAG = "";		// Instagram tag to search for
 
 // Instagram Client Id - DO NOT USE THIS ONE!!! 
@@ -92,14 +92,6 @@ private:
 	vec2 mousePos;
 	std::vector<vec2> mousePoints;
 
-	//title
-	void								makeText();
-	std::string					title;
-	ci::Font						titleFont = Font( loadResource( LOVELICA ), 40 );
-	ci::ColorA					mTextCol = (Color::white());
-	ci::gl::TextureRef	titleTex;
-	ci::TextBox         titleBox;
-
 };
 
 void SosoValentinesApp::setup()
@@ -117,7 +109,7 @@ void SosoValentinesApp::setup()
 
 	if(isInDebugMode){
 		ui::initialize();
-		isDrawingHeartCutout = false;
+		isDrawingHeartCutout = true;
 		isDrawingOriginalImage = true;
 		isDrawingOneHexagon = false;
 		isDisablingGlobalRotation = true;
@@ -392,26 +384,6 @@ void SosoValentinesApp::transitionMirrorIn( float delay, vector<TrianglePiece> *
   //cout << "drawing ribbon" << endl;
 }
 
-
-void SosoValentinesApp::makeText()
-{
-		// reset the textures
-		titleTex.reset();
-		title = "Aiko and Laura present Soso Valentines";
-		// Create the texture for the text
-		if( ! title.empty() ) {
-
-
-			titleBox.setColor(ColorA(mTextCol.r, mTextCol.g, mTextCol.b, 1));
-			titleBox.setBackgroundColor( ColorA( 0, 0, 0, 0) );
-
-			titleBox = TextBox().alignment(TextBox::CENTER).font(titleFont).size(ivec2( 1080 , TextBox::GROW)).text(title);
-			titleBox.setColor(ColorA(mTextCol.r, mTextCol.g, mTextCol.b, 1));
-			titleBox.setBackgroundColor(ColorA(0, 0, 0, 0));
-			titleTex = gl::Texture::create( titleBox.render() );
-		}
-}
-
 void SosoValentinesApp::imageLoaded()
 {
 	mPhaseChangeCalled = true;
@@ -423,18 +395,9 @@ void SosoValentinesApp::imageLoaded()
 
 
 		// ==> add a logic here to add text!
-			/*gl::ScopedModelMatrix scopedMat;
-			gl::ScopedColor scopedColor;
-
-			//	drawTextShape();
-
-			gl::color( 1, 1, 1, 1 );
-			console()<<"drawing title"<<endl;
-			makeText();
-			gl::draw( titleTex, vec2(0,((titleBox.measure().y)/2)-150));
-			 */
 
 			mTextRibbon->update( "tag","AIKO AND LAURA PRESENT", "SosoValentines", 1 );
+		
 		
 	}
 

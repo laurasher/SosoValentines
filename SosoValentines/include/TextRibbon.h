@@ -12,7 +12,6 @@
 #include "cinder/Timeline.h"
 #include "cinder/Text.h"
 
-
 class TextRibbon {	  
   public:
 	TextRibbon();
@@ -35,5 +34,6 @@ class TextRibbon {
 	
 	ci::Anim<ci::vec2>  mCurPos;
 	ci::Anim<float>     mCurAlpha;
-};
 
+	ci::gl::TextureRef					text_background_tex;				// the loaded texture
+};

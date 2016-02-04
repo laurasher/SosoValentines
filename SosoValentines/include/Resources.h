@@ -5,5 +5,5 @@
 #define RES_KREON_BOLD		CINDER_RESOURCE( ../resources/, Kreon-Bold.ttf, 129, TTF )
 #define LOVELICA						CINDER_RESOURCE( ../resources/, Lovelica	.ttf, 128, TTF )
 #define HANDWRITTEN						CINDER_RESOURCE( ../resources/, ColorsOfAutumn.ttf, 128, TTF )
-#define BOLD										CINDER_RESOURCE( ../resources/, NEOTERIC∏ - Bold DEMO VERSION.ttf, 128, TTF )
+//#define BOLD										CINDER_RESOURCE( ../resources/, NEOTERIC∏ - Bold DEMO VERSION.ttf, 128, TTF )
 #define CURSIVE										CINDER_RESOURCE( ../resources/, Stackyard_PERSONAL_USE.ttf, 128, TTF )

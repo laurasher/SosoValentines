@@ -73,7 +73,7 @@ private:
 	bool												mPhaseChangeCalled;		// if the app has been told to change phases or not
   bool                        mFirstRun;				// if the app is on its first cycle
 		// helpful for debug
-	bool                        isInDebugMode = true;
+	bool                        isInDebugMode = false;
 	bool                        isDrawingHeartCutout;   // turn heart cutout on/off
 	bool                        isDrawingOriginalImage; // show original image
 	bool												isDrawingOneHexagon ;	// show just the first hexagon in 1 * 1 grid texture rectangle
@@ -139,7 +139,16 @@ void SosoValentinesApp::setup()
 	//mInstaStream = make_shared<InstagramStream>( CLIENT_ID );
 	// Image stream of a particular tag
 	if (isInDebugMode) {
-		mInstaStream = make_shared<InstagramStream>( "sosolimited", CLIENT_ID );
+//		mInstaStream = make_shared<InstagramStream>( "sosolimited", CLIENT_ID );
+		// Instagram stream
+		if(globalCount%2 == 0){
+			//		mInstaStream = make_shared<InstagramStream>( "sweetheartscandy", CLIENT_ID );// Image stream in a particular area
+			searchTag = "Sweetheartscandy";
+		} else {
+			//		mInstaStream = make_shared<InstagramStream>( "valentinesday", CLIENT_ID );// Image stream in a particular area
+			searchTag = "Valentinesday";
+		}
+		mInstaStream = make_shared<InstagramStream>( searchTag, CLIENT_ID );// Image stream in a particular area
 	}
 		// Image stream in a particular area
 	// mInstaStream = make_shared<InstagramStream>( vec2(40.720467,-74.00603), 5000, CLIENT_ID );

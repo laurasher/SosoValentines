@@ -26,6 +26,8 @@ static const string CLIENT_ID = "def20410b5134f7d9b828668775aee4a";
 
 static const bool PREMULT = false;
 
+int globalCount = 0;
+
 class SosoValentinesApp : public App {
 private:
 	void	setup();
@@ -407,6 +409,7 @@ void SosoValentinesApp::imageLoaded()
 	// This defines the length of time that we're in each phase
 	timeline().add( [this] { changePhase(1); }, timeline().getCurrentTime() + delayOffset );	// still mode first
 	timeline().add( [this] { changePhase(0); }, timeline().getCurrentTime() + delayOffset + STILL_DUR ); // then mirror mode after STILL_DUR
+	globalCount++;
 }
 
 void SosoValentinesApp::resetSample()

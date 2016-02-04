@@ -11,6 +11,8 @@
 #include "cinder/gl/Texture.h"
 #include "cinder/Timeline.h"
 
+static bool isTwinklingWithOpacity;
+
 class TrianglePiece {
   public:
     TrianglePiece( ci::vec2 _startPt, ci::vec2 _pt1, ci::vec2 _pt2, ci::vec2 _pt3, float _rotation, ci::vec2 _scale, ci::Anim<float> _Alpha );
@@ -22,17 +24,17 @@ class TrianglePiece {
 	void		setTransitionOut( float _delay );
 	bool		isOut() const;
 	bool		isIn() const;
-	
+	ci::vec2		mStartPt; // moved from protected for debugging
+	ci::Anim<float> mAlpha;
+
   protected:
 	void		setVisible( bool vis );
 	void		outComplete();
 	
 	ci::gl::TextureRef	mTempTex, mDrawTex;
 	
-	ci::vec2		mStartPt, mVertices[3], mTexVertices[3];
-	
+	ci::vec2		mVertices[3], mTexVertices[3];
 	float			mRotation;
-	ci::Anim<float> mAlpha;
 	ci::vec2		mScale;
 	
 	bool			mVisible, mReadyToDraw;

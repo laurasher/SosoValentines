@@ -380,7 +380,6 @@ void SosoValentinesApp::transitionMirrorIn( float delay, vector<TrianglePiece> *
 	}
 
   mTextRibbon->ribbonIn(0);
-  //cout << "drawing ribbon" << endl;
 }
 
 void SosoValentinesApp::imageLoaded()
@@ -394,9 +393,7 @@ void SosoValentinesApp::imageLoaded()
 
 
 		// ==> add a logic here to add text!
-
-			mTextRibbon->update( "tag","AIKO AND LAURA PRESENT", "SosoValentines", 1 );
-		
+		mTextRibbon->update( "WELCOME TO", "SOSO VALENTINES");
 		
 	}
 
@@ -539,7 +536,7 @@ void SosoValentinesApp::mirrorIn()
 	//cout << "mirror in" << endl;
 	// redefine the bg texture
 	mBgTexture = mNewTex;
-	mTextRibbon->update( TAG, mCurInstagram.getUser(), searchTag, 0 );
+	mTextRibbon->update( mCurInstagram.getUser(), searchTag );
 
 	for ( auto &piece: mTriPieces) {
 		piece.setTransitionOut(MIRROR_DUR - 0.5f);

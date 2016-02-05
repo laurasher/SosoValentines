@@ -22,14 +22,11 @@ using namespace std;
 using namespace ci;
 using namespace ci::app;
 
-
-
-
 TextRibbon::TextRibbon()
 : mCol(Color::black()), mTextCol(Color::black())
 {
-	mUserFont = Font( loadResource( RES_KREON_BOLD ), 35 );
-	//		mUserFont = Font( loadResource( BOLD ), 30 );
+	mUserFont = Font( loadResource( RES_KREON_BOLD ), 25 );
+//			mUserFont = Font( loadResource( BOLD ), 30 );
 	mTagFont = Font( loadResource( LOVELICA ), 40 );
 	//	mTagFont = Font( loadResource( RES_OPEN_SANS ), 20 );
 

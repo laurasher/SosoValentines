@@ -11,7 +11,12 @@ git clone --recursive git@github.com:laurasher/SosoValentines.git
 ```bash
 cd Cinder/xcode
 ./fullbuild.sh
+
+cd ../lib/Cinder/xcode
+./fullbuild.sh
 ```
+
+BUILD CINDER in lib????
 
 Resources
 ---------

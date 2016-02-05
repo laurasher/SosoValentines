@@ -393,7 +393,7 @@ void SosoValentinesApp::imageLoaded()
 
 
 		// ==> add a logic here to add text!
-		
+		mTextRibbon->update( "WELCOME TO", "SOSO VALENTINES");
 		
 	}
 
@@ -536,7 +536,7 @@ void SosoValentinesApp::mirrorIn()
 	//cout << "mirror in" << endl;
 	// redefine the bg texture
 	mBgTexture = mNewTex;
-	mTextRibbon->update( TAG, mCurInstagram.getUser(), searchTag, getWindowWidth(), getWindowHeight() );
+	mTextRibbon->update( mCurInstagram.getUser(), searchTag );
 
 	for ( auto &piece: mTriPieces) {
 		piece.setTransitionOut(MIRROR_DUR - 0.5f);

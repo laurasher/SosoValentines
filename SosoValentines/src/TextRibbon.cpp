@@ -37,7 +37,7 @@ TextRibbon::TextRibbon()
 	text_background_tex = gl::Texture2d::create(text_bg_img);
 }
 
-void TextRibbon::update( string tag, string user, string mSearchTag, int mWindowWidth, int mWindowHeight )
+void TextRibbon::update( string user, string mSearchTag )
 {
 	//	mTag = (tag!="") ? "#" + tag : "";
 	//clear previous user text

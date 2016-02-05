@@ -1,6 +1,3 @@
-#ignoring lib
-lib/*
-lib/Cinder-ImGui/*
 
 # Compiled Object files
 *.slo

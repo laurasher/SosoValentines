@@ -12,7 +12,7 @@ git clone --recursive git@github.com:laurasher/SosoValentines.git
 cd Cinder/xcode
 ./fullbuild.sh
 
-cd ../lib/Cinder/xcode
+cd SosoValentines/lib/Cinder/xcode
 ./fullbuild.sh
 ```
 

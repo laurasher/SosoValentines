@@ -16,7 +16,6 @@ cd ../lib/Cinder/xcode
 ./fullbuild.sh
 ```
 
-BUILD CINDER in lib????
 
 Resources
 ---------

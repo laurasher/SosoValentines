@@ -4,9 +4,6 @@ Aiko and Laura's c++ app!
 
 Building and running
 --------------------
-```bash
-git clone --recursive git@github.com:laurasher/SosoValentines.git
-```
 
 ```bash
 cd Cinder/xcode

@@ -26,20 +26,16 @@ class TrianglePiece {
 	bool		isIn() const;
   bool    mVisible;
 	bool		hasTransitionedIn;
-	
 	ci::vec2		mStartPt; // moved from protected for debugging
 	ci::Anim<float> mAlpha;
 
   protected:
 	void		setVisible( bool vis );
 	void		outComplete();
-	
 	ci::gl::TextureRef	mTempTex, mDrawTex;
-	
 	ci::vec2		mVertices[3], mTexVertices[3];
-	float			mRotation;
+	float				mRotation;
 	ci::vec2		mScale;
-	
-	bool			mReadyToDraw;
-	bool			mTransOut;
+	bool				mReadyToDraw;
+	bool				mTransOut;
 };

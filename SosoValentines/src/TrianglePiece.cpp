@@ -71,7 +71,7 @@ void TrianglePiece::setTransition( float _delay )
 		app::timeline().apply( &mAlpha, alpha, firstTwinkle , EaseInQuint()).delay(0.5f + _delay);
 		// make sure it goes to opacity of 1.0
 		app::timeline().apply( &mAlpha, 1.0f, randFloat(1.0f, 2.0f), EaseInQuint()).delay(0.5f + _delay + firstTwinkle).
-		startFn( [this] { setVisible( true ); } );;
+		startFn( [this] { setVisible( true ); } );
 	}
 }
 

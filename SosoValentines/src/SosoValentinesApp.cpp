@@ -423,7 +423,7 @@ void SosoValentinesApp::resetSample()
 		newPos.y = randFloat(0, getWindowHeight() - mSampleSize/2);
 		count++;
 	} while(count < 150	&& ((mSamplePt.value().x - newPos.x) < 100 || (mSamplePt.value().y - newPos.y) < 100));
-	timeline().apply(&mSamplePt, newPos, STILL_DUR - 1, EaseInOutQuad()).delay(.5);
+	timeline().apply(&mSamplePt, newPos, MIRROR_DUR - 1, EaseInOutQuad()).delay(.5);
 }
 
 void SosoValentinesApp::update()
@@ -533,10 +533,6 @@ void SosoValentinesApp::mirrorIn()
 	// redefine the bg texture
 	mBgTexture = mNewTex;
 	mTextRibbon->update( TAG, mCurInstagram.getUser(), searchTag, getWindowWidth(), getWindowHeight() );
-
-	for ( auto &piece: mTriPieces) {
-		piece.setTransitionOut(MIRROR_DUR - 0.5f);
-	}
 }
 
 void SosoValentinesApp::draw()

@@ -16,8 +16,7 @@ using namespace ci::app;
 using namespace std;
 
 static const int MIRROR_DUR = 10;	// Duration of the mirror/kaleidoscope animation
-static const int STILL_DUR = 3;		// Duration of the still image
-static const string TAG = "";		// Instagram tag to search for
+static const int STILL_DUR = 5;		// Duration of the still image
 
 // Instagram Client Id - DO NOT USE THIS ONE!!! 
 // Replace with your own client ID after registering your
@@ -26,8 +25,9 @@ static const string CLIENT_ID = "def20410b5134f7d9b828668775aee4a";
 
 static const bool PREMULT = false;
 
+static const string TAG = "";		// Instagram tag to search for
 int globalCount = 0;
-std::string									searchTag;
+string	searchTag;
 
 class SosoValentinesApp : public App {
 
@@ -73,14 +73,13 @@ private:
 	bool												mPhaseChangeCalled;		// if the app has been told to change phases or not
   bool                        mFirstRun;				// if the app is on its first cycle
 		// helpful for debug
-	bool                        isInDebugMode = false;
+	bool                        isInDebugMode = true;
 	bool                        isDrawingHeartCutout;   // turn heart cutout on/off
 	bool                        isDrawingOriginalImage; // show original image
 	bool												isDrawingOneHexagon ;	// show just the first hexagon in 1 * 1 grid texture rectangle
 	bool												isDisablingGlobalRotation;
 	bool												isRandomizingHexInitalization;	// this affects the initial size, position
 	bool												isRotatingHexagon;							//	rotate the hexagon 30 degrees. Need to change the triangle coordinates, scale (reflection), grid, and alpha
-	bool												isUsingBoxTexture;							//use the diamond box opacity texture
 	bool												isMousing;
 	int													tri_index;											// which of the triangles to show of the first hexagon
 	int													nthHexagon;
@@ -114,7 +113,6 @@ void SosoValentinesApp::setup()
 		isDisablingGlobalRotation = true;
 		isRandomizingHexInitalization = false;
 		isRotatingHexagon = true;
-		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;
 		isMousing = false;
 
@@ -125,7 +123,6 @@ void SosoValentinesApp::setup()
 		isDisablingGlobalRotation = true;
 		isRandomizingHexInitalization = false;
 		isRotatingHexagon = true;
-		isUsingBoxTexture = true;
 		isTwinklingWithOpacity = true;
 		isMousing = true;
 	}
@@ -143,10 +140,10 @@ void SosoValentinesApp::setup()
 		// Instagram stream
 		if(globalCount%2 == 0){
 			//		mInstaStream = make_shared<InstagramStream>( "sweetheartscandy", CLIENT_ID );// Image stream in a particular area
-			searchTag = "Sweetheartscandy";
+			searchTag = "sosolimited";
 		} else {
 			//		mInstaStream = make_shared<InstagramStream>( "valentinesday", CLIENT_ID );// Image stream in a particular area
-			searchTag = "Valentinesday";
+			searchTag = "sosolimited";
 		}
 		mInstaStream = make_shared<InstagramStream>( searchTag, CLIENT_ID );// Image stream in a particular area
 	}
@@ -466,7 +463,6 @@ void SosoValentinesApp::update()
 			ui::Checkbox("Disable global rotation", &isDisablingGlobalRotation);
 			ui::Checkbox("Randomize the hexagon initialization", &isRandomizingHexInitalization);
 			ui::Checkbox("Rotate the hexagon by 30 degrees", &isRotatingHexagon);
-			ui::Checkbox("Use the box texture", &isUsingBoxTexture);
 			ui::Checkbox("Twinkle with opacity", &isTwinklingWithOpacity);
 			ui::Checkbox("Mouse interaction", &isMousing);
 			if(isMousing){

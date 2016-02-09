@@ -387,11 +387,9 @@ void SosoValentinesApp::imageLoaded()
 	if( mFirstRun ) {
 		mFirstRun = false;
 		delayOffset = 0;
-
-
-		// ==> add a logic here to add text!
 		mTextRibbon->showTitlePage();
-		
+	} else {
+		mTextRibbon->mLogo.reset();
 	}
 
 	// This defines the length of time that we're in each phase

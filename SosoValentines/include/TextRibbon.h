@@ -20,6 +20,7 @@ class TextRibbon {
 	void	draw();
 	void	ribbonOut(float delay);
 	void	ribbonIn(float delay);
+	ci::gl::Texture2dRef	mLogo;
 	
   private:
 	void  makeText();
@@ -31,7 +32,6 @@ class TextRibbon {
 	ci::ColorA		mCol, mTextCol;
 	
 	ci::gl::TextureRef	mUserTex, mTagTex;
-	ci::gl::Texture2dRef	mLogo;
 	ci::TextBox         mTagBox, mUserBox;
 	
 	ci::Anim<ci::vec2>  mCurPos;

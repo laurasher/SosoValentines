@@ -34,7 +34,8 @@ TextRibbon::TextRibbon()
 	text_background_tex = gl::Texture2d::create(text_bg_img);
 }
 
-void TextRibbon::showTitlePage(){
+void TextRibbon::showTitlePage()
+{
 	auto logoImg = loadImage(loadAsset("SosoLogo.png"));
 	mLogo = gl::Texture2d::create(logoImg);
 

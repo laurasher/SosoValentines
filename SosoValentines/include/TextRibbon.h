@@ -15,10 +15,12 @@
 class TextRibbon {	  
   public:
 	TextRibbon();
+	void	showTitlePage();
 	void	update( std::string user, std::string mSearchTag);
 	void	draw();
 	void	ribbonOut(float delay);
 	void	ribbonIn(float delay);
+	ci::gl::Texture2dRef	mLogo;
 	
   private:
 	void  makeText();

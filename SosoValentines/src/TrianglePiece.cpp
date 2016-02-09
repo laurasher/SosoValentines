@@ -31,7 +31,6 @@ TrianglePiece::TrianglePiece( vec2 _startPt, vec2 _pt1, vec2 _pt2, vec2 _pt3, fl
 	mReadyToDraw = false;
 	mVisible = false;
 	mTransOut = false;
-
 }
 
 void TrianglePiece::reset( float _delay, gl::TextureRef tempTex )

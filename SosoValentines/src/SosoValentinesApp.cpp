@@ -16,8 +16,7 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-static const int MIRROR_DUR = 10;	// Duration of the mirror/kaleidoscope animation
-static const int STILL_DUR = 5;		// Duration of the still image
+
 
 // Instagram Client Id - DO NOT USE THIS ONE!!! 
 // Replace with your own client ID after registering your
@@ -29,8 +28,15 @@ static const bool PREMULT = false;
 static const string TAG = "";		// Instagram tag to search for
 int globalCount = 0;
 string	searchTag;
+Font mUserFontM = Font( loadResource( BOLD ), 35 );
+Font mTagFontM = Font( loadResource( BOLD ), 35 );
 
 class SosoValentinesApp : public App {
+public:
+	const int MIRROR_DUR = 10;	// Duration of the mirror/kaleidoscope animation
+	static const int STILL_DUR = 5;		// Duration of the still image
+	float tri_width;
+	float tri_height;
 
 private:
 	void	setup();
@@ -213,8 +219,8 @@ void SosoValentinesApp::defineMirrorGrid()
 		pt3 = vec2((sin(M_PI/3) * r),(cos(M_PI/3) * r * (-1)));
 	}
 
-	const float tri_width = distance( pt1, pt2 ) * tri_scale;
-	const float tri_height = std::sqrt((tri_width*tri_width) - ((tri_width/2) * (tri_width/2)));
+	tri_width = distance( pt1, pt2 ) * tri_scale;
+	tri_height = std::sqrt((tri_width*tri_width) - ((tri_width/2) * (tri_width/2)));
 	// cout << tri_width;
 	
     // amtX and amtY controls the circling texture over the original image
@@ -530,7 +536,7 @@ void SosoValentinesApp::mirrorIn()
 	//cout << "mirror in" << endl;
 	// redefine the bg texture
 	mBgTexture = mNewTex;
-	mTextRibbon->update( mCurInstagram.getUser(), searchTag );
+	mTextRibbon->update( mCurInstagram.getUser(), searchTag, mUserFontM, mTagFontM );
 
 	//mTextRibbon->update( TAG, mCurInstagram.getUser(), searchTag, getWindowWidth(), getWindowHeight() );
 

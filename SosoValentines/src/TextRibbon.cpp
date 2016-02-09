@@ -25,9 +25,10 @@ using namespace ci::app;
 TextRibbon::TextRibbon()
 : mCol(Color::black()), mTextCol(Color::black())
 {
-	mUserFont = Font( loadResource( BOLD ), 35 );
-	//		mUserFont = Font( loadResource( BOLD ), 30 );
-	mTagFont = Font( loadResource( LOVELICA ), 40 );
+	mUserFontM = Font( loadResource( BOLD ), 35 );
+	mUserFontXL = Font( loadResource( BOLD ), 35 );
+	mTagFontM = Font( loadResource( LOVELICA ), 40 );
+	mTagFontXL = Font( loadResource( BOLD ), 90 );
 	//	mTagFont = Font( loadResource( RES_OPEN_SANS ), 20 );
 
 	auto text_bg_img = loadImage( loadAsset("text_background.png") );
@@ -39,10 +40,10 @@ void TextRibbon::showTitlePage()
 	auto logoImg = loadImage(loadAsset("SosoLogo.png"));
 	mLogo = gl::Texture2d::create(logoImg);
 
-	update("", "Valentines Day!");
+	update("", "Valentines Day!", mTagFontM, mTagFontXL);
 }
 
-void TextRibbon::update( string user, string mSearchTag )
+void TextRibbon::update( string user, string mSearchTag, Font mUserFont, Font mTagFont )
 {
 	//clear previous user text
 	mTrimTag.clear();
@@ -73,7 +74,7 @@ void TextRibbon::update( string user, string mSearchTag )
 	mCurPos.value() = vec2(-60, 0);
 	mCurAlpha = 0.0f;
 
-	makeText();
+	makeText( mUserFont, mTagFont );
 
 	ribbonIn( 4.0 );
 }
@@ -92,7 +93,7 @@ void TextRibbon::ribbonOut( float delay )
 	app::timeline().apply( &mCurPos, vec2(-60, 0), 0.4f, EaseInQuint()).delay(delay);
 }
 
-void TextRibbon::makeText()
+void TextRibbon::makeText( Font mUserFont, Font mTagFont )
 {
 	// reset the textures
 	mTagTex.reset();

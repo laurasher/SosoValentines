@@ -390,7 +390,7 @@ void SosoValentinesApp::imageLoaded()
 
 
 		// ==> add a logic here to add text!
-		mTextRibbon->update( "WELCOME TO", "SOSO VALENTINES");
+		mTextRibbon->showTitlePage();
 		
 	}
 

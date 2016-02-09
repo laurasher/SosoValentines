@@ -34,11 +34,22 @@ TextRibbon::TextRibbon()
 	text_background_tex = gl::Texture2d::create(text_bg_img);
 }
 
+void TextRibbon::showTitlePage(){
+	auto logoImg = loadImage(loadAsset("SosoLogo.png"));
+	mLogo = gl::Texture2d::create(logoImg);
+
+	update("", "Valentines Day!");
+}
+
 void TextRibbon::update( string user, string mSearchTag )
 {
 	//clear previous user text
 	mTrimTag.clear();
-	mTag = "#" + mSearchTag;
+	if (user == "") {
+		mTag = mSearchTag; // hack for title page
+	} else {
+		mTag = "#" + mSearchTag;
+	};
 	// trim the fat
 	int i = 0,trimCount=0;
 	while(i<user.length()){
@@ -128,6 +139,14 @@ void TextRibbon::draw()
 
 	// Now draw the text textures:
 	// check it the texture exists and if mTagBox has a height (meaning that there's something in that texture)
+	if ( mLogo ) {
+		auto logoRect = Rectf( mLogo->getBounds() ).getCenteredFit( getWindowBounds(), false );
+		//rect.offset(vec2(0.0f, -69.282f * 1.5));
+		logoRect.offset(vec2(0.0f, -60.0f * 0.33 + (-60*1)));
+
+		gl::draw( mLogo, logoRect );
+	}
+
 	if( mUserTex ){
 		auto textRect = Rectf( mUserTex->getBounds() ).getCenteredFit( getWindowBounds(), false );
 		//rect.offset(vec2(0.0f, -69.282f * 1.5));

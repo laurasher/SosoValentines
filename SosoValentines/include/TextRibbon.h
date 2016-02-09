@@ -15,6 +15,7 @@
 class TextRibbon {	  
   public:
 	TextRibbon();
+	void	showTitlePage();
 	void	update( std::string user, std::string mSearchTag);
 	void	draw();
 	void	ribbonOut(float delay);
@@ -30,6 +31,7 @@ class TextRibbon {
 	ci::ColorA		mCol, mTextCol;
 	
 	ci::gl::TextureRef	mUserTex, mTagTex;
+	ci::gl::Texture2dRef	mLogo;
 	ci::TextBox         mTagBox, mUserBox;
 	
 	ci::Anim<ci::vec2>  mCurPos;

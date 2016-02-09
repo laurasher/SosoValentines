@@ -17,6 +17,7 @@
 #include "Resources.h"
 
 static const int WINDOW_WIDTH = 1080;
+static const int tri_height = 60;
 
 using namespace std;
 using namespace ci;
@@ -90,7 +91,7 @@ void TextRibbon::ribbonOut( float delay )
 {
 	// animate ribbon out
 	app::timeline().apply( &mCurAlpha, 0.0f, 0.4f, EaseInQuint()).delay(delay);
-	app::timeline().apply( &mCurPos, vec2(-60, 0), 0.4f, EaseInQuint()).delay(delay);
+	app::timeline().apply( &mCurPos, vec2((-1) * tri_height, 0), 0.4f, EaseInQuint()).delay(delay);
 }
 
 void TextRibbon::makeText( Font mUserFont, Font mTagFont )
@@ -132,7 +133,7 @@ void TextRibbon::draw()
 	// background image
 	auto rect = Rectf( text_background_tex->getBounds() ).getCenteredFit( getWindowBounds(), false );
 	//rect.offset(vec2(0.0f, -69.282f * 1.5));
-	rect.offset(vec2(0.0f, -60.0f * 0.33));
+	rect.offset(vec2(0.0f, (-1) * tri_height * 0.33));
 
 	gl::draw( text_background_tex, rect );
 	//gl::draw( text_background_tex, Rectf( text_background_tex->getBounds() ).getCenteredFit( getWindowBounds(), false ) );
@@ -144,7 +145,7 @@ void TextRibbon::draw()
 	if ( mLogo ) {
 		auto logoRect = Rectf( mLogo->getBounds() ).getCenteredFit( getWindowBounds(), false );
 		//rect.offset(vec2(0.0f, -69.282f * 1.5));
-		logoRect.offset(vec2(0.0f, -60.0f * 0.33 + (-60*1)));
+		logoRect.offset(vec2(0.0f, (-1) * tri_height * 0.33 + ((-1) * tri_height *1)));
 
 		gl::draw( mLogo, logoRect );
 	}
@@ -152,7 +153,7 @@ void TextRibbon::draw()
 	if( mUserTex ){
 		auto textRect = Rectf( mUserTex->getBounds() ).getCenteredFit( getWindowBounds(), false );
 		//rect.offset(vec2(0.0f, -69.282f * 1.5));
-		textRect.offset(vec2(0.0f, -60.0f * 0.33 + (-60*1)));
+		textRect.offset(vec2(0.0f, (-1) * tri_height * 0.33 + ((-1) * tri_height *1)));
 
 		gl::draw( mUserTex, textRect );
 
@@ -165,7 +166,7 @@ void TextRibbon::draw()
 		auto textRect = Rectf( mTagTex->getBounds() ).getCenteredFit( getWindowBounds(), false );
 		//rect.offset(vec2(0.0f, -69.282f * 1.5));
 		//textRect.offset(vec2(0.0f, -60.0f * 0.33));
-		textRect.offset(vec2(0.0f, 60.0f ));
+		textRect.offset(vec2(0.0f, tri_height ));
 		gl::draw( mTagTex, textRect );
 	}
 }

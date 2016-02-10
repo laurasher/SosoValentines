@@ -32,7 +32,7 @@ TextRibbon::TextRibbon()
 	mTagFontXL = Font( loadResource( ADELLE_SANS_BOLD ), 90 );
 	//	mTagFont = Font( loadResource( RES_OPEN_SANS ), 20 );
 
-	auto text_bg_img = loadImage( loadAsset("text_background_background.png") );
+	auto text_bg_img = loadImage( loadAsset("text_background_dropshadow.png") );
 	text_background_tex = gl::Texture2d::create(text_bg_img);
 }
 

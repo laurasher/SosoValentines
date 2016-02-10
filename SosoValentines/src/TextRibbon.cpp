@@ -18,6 +18,7 @@
 
 static const int WINDOW_WIDTH = 1080;
 static const int tri_height = 60;
+static const int MIRROR_DUR = 10.0f;
 
 using namespace std;
 using namespace ci;
@@ -120,7 +121,6 @@ void TextRibbon::makeText( Font mUserFont, Font mTagFont )
 //	mTextPos = vec2(0, getWindowHeight() - mRibbonSize.y - 500);
 }
 
-
 void TextRibbon::draw()
 {
 	gl::ScopedModelMatrix scopedMat;
@@ -130,15 +130,13 @@ void TextRibbon::draw()
 	float spacing = 0;
 	gl::color( 1, 1, 1, mCurAlpha );
 
-	// background image
-	auto rect = Rectf( text_background_tex->getBounds() ).getCenteredFit( getWindowBounds(), false );
-	//rect.offset(vec2(0.0f, -69.282f * 1.5));
-	rect.offset(vec2(0.0f, (-1) * tri_height * 0.33));
+	if (text_background_tex) {
+		auto rect = Rectf( text_background_tex->getBounds() ).getCenteredFit( getWindowBounds(), false );
+		//rect.offset(vec2(0.0f, -69.282f * 1.5));
+		rect.offset(vec2(0.0f, (-1) * tri_height * 0.33));
 
-	gl::draw( text_background_tex, rect );
-	//gl::draw( text_background_tex, Rectf( text_background_tex->getBounds() ).getCenteredFit( getWindowBounds(), false ) );
-	//gl::draw( text_background_tex, Rectf( text_background_tex->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
-// testing
+		gl::draw( text_background_tex, rect );
+	}
 
 	// Now draw the text textures:
 	// check it the texture exists and if mTagBox has a height (meaning that there's something in that texture)

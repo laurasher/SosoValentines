@@ -394,9 +394,8 @@ void SosoValentinesApp::imageLoaded()
 		mFirstRun = false;
 		delayOffset = 0;
 		mTextRibbon->showTitlePage();
-	} else {
-		mTextRibbon->mLogo.reset();
 	}
+	timeline().add( [this] {mTextRibbon->mLogo.reset();}, MIRROR_DUR/2); // remove the logo after sometime
 
 	// This defines the length of time that we're in each phase
 	timeline().add( [this] { changePhase(0); }, timeline().getCurrentTime() + delayOffset );	// still mode first
@@ -544,7 +543,9 @@ void SosoValentinesApp::mirrorIn()
 
 void SosoValentinesApp::draw()
 {
-	gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
+//	if (mFirstRun) {gl::clear(Color( 0.932f, 0.1176f, 0.388f));}	//hot pink
+//	else { gl::clear(Color( 1.0f, 1.0f, 1.0f )); }
+	gl::clear(Color( 0.932f, 0.1176f, 0.388f));
 	gl::enableAlphaBlending( PREMULT );
 
   // draw original image

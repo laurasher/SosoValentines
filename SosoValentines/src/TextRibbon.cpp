@@ -26,13 +26,13 @@ using namespace ci::app;
 TextRibbon::TextRibbon()
 : mCol(Color::black()), mTextCol(Color::black())
 {
-	mUserFontM = Font( loadResource( ADELLE_SANS_REGULAR ), 35 );
-	mUserFontXL = Font( loadResource( ADELLE_SANS_REGULAR ), 35 );
-	mTagFontM = Font( loadResource( ADELLE_SANS_BOLD ), 40 );
+	mUserFontM = Font( loadResource( ADELLE_SANS_REGULAR ), 30 );
+	mUserFontXL = Font( loadResource( ADELLE_SANS_REGULAR ), 90 );
+	mTagFontM = Font( loadResource( ADELLE_SANS_BOLD ), 30 );
 	mTagFontXL = Font( loadResource( ADELLE_SANS_BOLD ), 90 );
 	//	mTagFont = Font( loadResource( RES_OPEN_SANS ), 20 );
 
-	auto text_bg_img = loadImage( loadAsset("text_background.png") );
+	auto text_bg_img = loadImage( loadAsset("text_background_background.png") );
 	text_background_tex = gl::Texture2d::create(text_bg_img);
 }
 
@@ -163,7 +163,7 @@ void TextRibbon::draw()
 		auto textRect = Rectf( mTagTex->getBounds() ).getCenteredFit( getWindowBounds(), false );
 		//rect.offset(vec2(0.0f, -69.282f * 1.5));
 		//textRect.offset(vec2(0.0f, -60.0f * 0.33));
-		textRect.offset(vec2(0.0f, tri_height ));
+		textRect.offset(vec2(0.0f, 1.0f * tri_height ));
 		gl::draw( mTagTex, textRect );
 	}
 }

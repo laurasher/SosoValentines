@@ -28,8 +28,8 @@ static const bool PREMULT = false;
 static const string TAG = "";		// Instagram tag to search for
 int globalCount = 0;
 string	searchTag;
-Font mUserFontM = Font( loadResource( ADELLE_SANS_REGULAR ), 35 );
-Font mTagFontM = Font( loadResource( ADELLE_SANS_BOLD ), 35 );
+Font mUserFontM = Font( loadResource( ADELLE_SANS_REGULAR ), 30 );
+Font mTagFontM = Font( loadResource( ADELLE_SANS_BOLD ), 30 );
 
 class SosoValentinesApp : public App {
 public:

@@ -25,6 +25,9 @@ static const string CLIENT_ID = "def20410b5134f7d9b828668775aee4a";
 
 static const bool PREMULT = false;
 
+int globalCount = 1;
+std::string									searchTag;
+std::string									last_searchTag;
 static const string TAG = "";		// Instagram tag to search for
 int globalCount = 0;
 string	searchTag;
@@ -140,24 +143,10 @@ void SosoValentinesApp::setup()
 	mTextRibbon = new TextRibbon();
 
 	// Image stream of a particular tag
-	if (isInDebugMode) {
-			// Instagram stream
-			if(globalCount%5 == 0){
-				searchTag = "Sweetheartscandy";
-			} else {
-				searchTag = "Valentinesday";
-			}
-			mInstaStream = make_shared<InstagramStream>( searchTag, CLIENT_ID );
-	} else {
-			// Instagram stream
-			if(globalCount%5 == 0){
-			searchTag = "Sweetheartscandy";
-//				searchTag = "Iheartyou";
-		} else {
-			searchTag = "Valentinesday";
-		}
+
+		searchTag = "Sweetheartscandy";
 		mInstaStream = make_shared<InstagramStream>( searchTag, CLIENT_ID );
-	}
+
 	continueCycle();
 }
 
@@ -424,7 +413,6 @@ void SosoValentinesApp::update()
   // if mCurInstagram is undefined, then don't do anything else since there's nothing else to do
 	if( mCurInstagram.isNull() ) {
 		newInstagram();
-			globalCount++;
 		return;
 	}
 	
@@ -467,18 +455,6 @@ void SosoValentinesApp::update()
 			}
 		}
 	}
-
-/*
-	// Instagram stream
-	if(globalCount%5 == 0){
-		searchTag = "Sweetheartscandy";
-		console()<<globalCount<<endl;
-	} else {
-		searchTag = "Valentinesday";
-//		continueCycle();
-	}
-//	mInstaStream = make_shared<InstagramStream>( searchTag, CLIENT_ID );// Image stream in a particular area
-*/
 }
 
 void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
@@ -529,8 +505,18 @@ void SosoValentinesApp::updateMirrors( vector<TrianglePiece> *vec )
 
 void SosoValentinesApp::mirrorOut()
 {
-	//cout << "mirror out" << endl;
-  continueCycle();
+	 // Instagram stream with different hashtag
+		 if(globalCount%5 == 0){
+			 if(searchTag == "Valentinesday"){
+				 searchTag = "Sweetheartscandy";
+			 } else {
+				 searchTag = "Valentinesday";
+			 }
+			mInstaStream = make_shared<InstagramStream>( searchTag, CLIENT_ID );
+			console()<<globalCount<<endl;
+		 }
+	continueCycle();
+	globalCount++;
 }
 
 void SosoValentinesApp::mirrorIn()

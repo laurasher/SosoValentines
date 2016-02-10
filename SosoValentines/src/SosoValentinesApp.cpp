@@ -16,8 +16,7 @@ using namespace ci;
 using namespace ci::app;
 using namespace std;
 
-static const int MIRROR_DUR = 10;	// Duration of the mirror/kaleidoscope animation
-static const int STILL_DUR = 5;		// Duration of the still image
+
 
 // Instagram Client Id - DO NOT USE THIS ONE!!! 
 // Replace with your own client ID after registering your
@@ -29,8 +28,15 @@ static const bool PREMULT = false;
 static const string TAG = "";		// Instagram tag to search for
 int globalCount = 0;
 string	searchTag;
+Font mUserFontM = Font( loadResource( ADELLE_SANS_REGULAR ), 30 );
+Font mTagFontM = Font( loadResource( ADELLE_SANS_BOLD ), 30 );
 
 class SosoValentinesApp : public App {
+public:
+	const int MIRROR_DUR = 10;	// Duration of the mirror/kaleidoscope animation
+	static const int STILL_DUR = 5;		// Duration of the still image
+	float tri_width;
+	float tri_height;
 
 private:
 	void	setup();
@@ -141,10 +147,10 @@ void SosoValentinesApp::setup()
 		// Instagram stream
 		if(globalCount%2 == 0){
 			//		mInstaStream = make_shared<InstagramStream>( "sweetheartscandy", CLIENT_ID );// Image stream in a particular area
-			searchTag = "sosolimited";
+			searchTag = "Sweetheartscandy";
 		} else {
 			//		mInstaStream = make_shared<InstagramStream>( "valentinesday", CLIENT_ID );// Image stream in a particular area
-			searchTag = "sosolimited";
+			searchTag = "Sweetheartscandy";
 		}
 		mInstaStream = make_shared<InstagramStream>( searchTag, CLIENT_ID );// Image stream in a particular area
 	}
@@ -213,8 +219,8 @@ void SosoValentinesApp::defineMirrorGrid()
 		pt3 = vec2((sin(M_PI/3) * r),(cos(M_PI/3) * r * (-1)));
 	}
 
-	const float tri_width = distance( pt1, pt2 ) * tri_scale;
-	const float tri_height = std::sqrt((tri_width*tri_width) - ((tri_width/2) * (tri_width/2)));
+	tri_width = distance( pt1, pt2 ) * tri_scale;
+	tri_height = std::sqrt((tri_width*tri_width) - ((tri_width/2) * (tri_width/2)));
 	// cout << tri_width;
 	
     // amtX and amtY controls the circling texture over the original image
@@ -388,9 +394,8 @@ void SosoValentinesApp::imageLoaded()
 		mFirstRun = false;
 		delayOffset = 0;
 		mTextRibbon->showTitlePage();
-	} else {
-		mTextRibbon->mLogo.reset();
 	}
+	timeline().add( [this] {mTextRibbon->mLogo.reset();}, MIRROR_DUR/2); // remove the logo after sometime
 
 	// This defines the length of time that we're in each phase
 	timeline().add( [this] { changePhase(0); }, timeline().getCurrentTime() + delayOffset );	// still mode first
@@ -530,7 +535,7 @@ void SosoValentinesApp::mirrorIn()
 	//cout << "mirror in" << endl;
 	// redefine the bg texture
 	mBgTexture = mNewTex;
-	mTextRibbon->update( mCurInstagram.getUser(), searchTag );
+	mTextRibbon->update( mCurInstagram.getUser(), searchTag, mUserFontM, mTagFontM );
 
 	//mTextRibbon->update( TAG, mCurInstagram.getUser(), searchTag, getWindowWidth(), getWindowHeight() );
 
@@ -538,7 +543,9 @@ void SosoValentinesApp::mirrorIn()
 
 void SosoValentinesApp::draw()
 {
-	gl::clear( Color( 1.0f, 1.0f, 1.0f ) );
+//	if (mFirstRun) {gl::clear(Color( 0.932f, 0.1176f, 0.388f));}	//hot pink
+//	else { gl::clear(Color( 1.0f, 1.0f, 1.0f )); }
+	gl::clear(Color( 0.932f, 0.1176f, 0.388f));
 	gl::enableAlphaBlending( PREMULT );
 
   // draw original image

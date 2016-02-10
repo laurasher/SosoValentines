@@ -17,6 +17,7 @@
 #include "Resources.h"
 
 static const int WINDOW_WIDTH = 1080;
+static const int tri_height = 60;
 
 using namespace std;
 using namespace ci;
@@ -25,12 +26,13 @@ using namespace ci::app;
 TextRibbon::TextRibbon()
 : mCol(Color::black()), mTextCol(Color::black())
 {
-	mUserFont = Font( loadResource( BOLD ), 35 );
-	//		mUserFont = Font( loadResource( BOLD ), 30 );
-	mTagFont = Font( loadResource( LOVELICA ), 40 );
+	mUserFontM = Font( loadResource( ADELLE_SANS_REGULAR ), 30 );
+	mUserFontXL = Font( loadResource( ADELLE_SANS_REGULAR ), 90 );
+	mTagFontM = Font( loadResource( ADELLE_SANS_BOLD ), 30 );
+	mTagFontXL = Font( loadResource( ADELLE_SANS_BOLD ), 90 );
 	//	mTagFont = Font( loadResource( RES_OPEN_SANS ), 20 );
 
-	auto text_bg_img = loadImage( loadAsset("text_background.png") );
+	auto text_bg_img = loadImage( loadAsset("text_background_dropshadow.png") );
 	text_background_tex = gl::Texture2d::create(text_bg_img);
 }
 
@@ -39,10 +41,10 @@ void TextRibbon::showTitlePage()
 	auto logoImg = loadImage(loadAsset("SosoLogo.png"));
 	mLogo = gl::Texture2d::create(logoImg);
 
-	update("", "Valentines Day!");
+	update("", "Valentines Day!", mTagFontM, mTagFontXL);
 }
 
-void TextRibbon::update( string user, string mSearchTag )
+void TextRibbon::update( string user, string mSearchTag, Font mUserFont, Font mTagFont )
 {
 	//clear previous user text
 	mTrimTag.clear();
@@ -73,7 +75,7 @@ void TextRibbon::update( string user, string mSearchTag )
 	mCurPos.value() = vec2(-60, 0);
 	mCurAlpha = 0.0f;
 
-	makeText();
+	makeText( mUserFont, mTagFont );
 
 	ribbonIn( 4.0 );
 }
@@ -89,10 +91,10 @@ void TextRibbon::ribbonOut( float delay )
 {
 	// animate ribbon out
 	app::timeline().apply( &mCurAlpha, 0.0f, 0.4f, EaseInQuint()).delay(delay);
-	app::timeline().apply( &mCurPos, vec2(-60, 0), 0.4f, EaseInQuint()).delay(delay);
+	app::timeline().apply( &mCurPos, vec2((-1) * tri_height, 0), 0.4f, EaseInQuint()).delay(delay);
 }
 
-void TextRibbon::makeText()
+void TextRibbon::makeText( Font mUserFont, Font mTagFont )
 {
 	// reset the textures
 	mTagTex.reset();
@@ -102,12 +104,12 @@ void TextRibbon::makeText()
 	if( ! mTag.empty() ) {
 
 		mTagBox = TextBox().alignment(TextBox::CENTER).font(mTagFont).size(ivec2( WINDOW_WIDTH , TextBox::GROW)).text(mTag);
-		mTagBox.setColor(ColorA(mTextCol.r, mTextCol.g, mTextCol.b, 1));
+		mTagBox.setColor(ColorA(mTextCol.r, mTextCol.g, mTextCol.b, 1.0f));
 		mTagBox.setBackgroundColor(ColorA(0, 0, 0, 0));
 		mTagTex = gl::Texture::create( mTagBox.render() );
 	}
 
-	mUserBox = TextBox().alignment( TextBox::CENTER ).font( mUserFont ).size( ivec2( WINDOW_WIDTH-20, TextBox::GROW ) ).text( mUser );
+	mUserBox = TextBox().alignment( TextBox::CENTER ).font( mUserFont ).size( ivec2( WINDOW_WIDTH-(tri_height*5), TextBox::GROW ) ).text( mUser );
 
 	mUserBox.setColor(ColorA(mTextCol.r, mTextCol.g, mTextCol.b, 1));
 	mUserBox.setBackgroundColor( ColorA( 0, 0, 0, 0) );
@@ -118,7 +120,6 @@ void TextRibbon::makeText()
 //	mTextPos = vec2(0, getWindowHeight() - mRibbonSize.y - 500);
 }
 
-
 void TextRibbon::draw()
 {
 	gl::ScopedModelMatrix scopedMat;
@@ -128,22 +129,20 @@ void TextRibbon::draw()
 	float spacing = 0;
 	gl::color( 1, 1, 1, mCurAlpha );
 
-	// background image
-	auto rect = Rectf( text_background_tex->getBounds() ).getCenteredFit( getWindowBounds(), false );
-	//rect.offset(vec2(0.0f, -69.282f * 1.5));
-	rect.offset(vec2(0.0f, -60.0f * 0.33));
+	if (text_background_tex) {
+		auto rect = Rectf( text_background_tex->getBounds() ).getCenteredFit( getWindowBounds(), false );
+		//rect.offset(vec2(0.0f, -69.282f * 1.5));
+		rect.offset(vec2(0.0f, (-1) * tri_height * 0.33));
 
-	gl::draw( text_background_tex, rect );
-	//gl::draw( text_background_tex, Rectf( text_background_tex->getBounds() ).getCenteredFit( getWindowBounds(), false ) );
-	//gl::draw( text_background_tex, Rectf( text_background_tex->getBounds() ).getCenteredFit( getWindowBounds(), true ) );
-// testing
+		gl::draw( text_background_tex, rect );
+	}
 
 	// Now draw the text textures:
 	// check it the texture exists and if mTagBox has a height (meaning that there's something in that texture)
 	if ( mLogo ) {
 		auto logoRect = Rectf( mLogo->getBounds() ).getCenteredFit( getWindowBounds(), false );
 		//rect.offset(vec2(0.0f, -69.282f * 1.5));
-		logoRect.offset(vec2(0.0f, -60.0f * 0.33 + (-60*1)));
+		logoRect.offset(vec2(0.0f, (-1) * tri_height * 0.33 + ((-1) * tri_height *1)));
 
 		gl::draw( mLogo, logoRect );
 	}
@@ -151,7 +150,7 @@ void TextRibbon::draw()
 	if( mUserTex ){
 		auto textRect = Rectf( mUserTex->getBounds() ).getCenteredFit( getWindowBounds(), false );
 		//rect.offset(vec2(0.0f, -69.282f * 1.5));
-		textRect.offset(vec2(0.0f, -60.0f * 0.33 + (-60*1)));
+		textRect.offset(vec2(0.0f, (-1) * tri_height * 0.33 + ((-1) * tri_height *1)));
 
 		gl::draw( mUserTex, textRect );
 
@@ -164,7 +163,7 @@ void TextRibbon::draw()
 		auto textRect = Rectf( mTagTex->getBounds() ).getCenteredFit( getWindowBounds(), false );
 		//rect.offset(vec2(0.0f, -69.282f * 1.5));
 		//textRect.offset(vec2(0.0f, -60.0f * 0.33));
-		textRect.offset(vec2(0.0f, 60.0f ));
+		textRect.offset(vec2(0.0f, 1.0f * tri_height ));
 		gl::draw( mTagTex, textRect );
 	}
 }

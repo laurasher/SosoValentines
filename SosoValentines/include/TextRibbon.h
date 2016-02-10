@@ -16,19 +16,19 @@ class TextRibbon {
   public:
 	TextRibbon();
 	void	showTitlePage();
-	void	update( std::string user, std::string mSearchTag);
+	void	update( std::string user, std::string mSearchTag, cinder::Font mUserFont, cinder::Font mTagFont);
 	void	draw();
 	void	ribbonOut(float delay);
 	void	ribbonIn(float delay);
 	ci::gl::Texture2dRef	mLogo;
 	
   private:
-	void  makeText();
+	void  makeText( cinder::Font mUserFont, cinder::Font mTagFont );
 	void	drawTextShape();
 	
 	std::string		mTag, mUser, mTrimTag;
 	ci::vec2			mTextPos, mRibbonSize;
-	ci::Font			mUserFont, mTagFont;
+	ci::Font			mUserFontM, mUserFontXL, mTagFontM, mTagFontXL;
 	ci::ColorA		mCol, mTextCol;
 	
 	ci::gl::TextureRef	mUserTex, mTagTex;
@@ -37,5 +37,5 @@ class TextRibbon {
 	ci::Anim<ci::vec2>  mCurPos;
 	ci::Anim<float>     mCurAlpha;
 
-	ci::gl::TextureRef					text_background_tex;				// the loaded texture
+	ci::gl::TextureRef	text_background_tex;				// the loaded texture
 };

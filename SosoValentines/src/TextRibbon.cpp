@@ -18,7 +18,6 @@
 
 static const int WINDOW_WIDTH = 1080;
 static const int tri_height = 60;
-static const int MIRROR_DUR = 10.0f;
 
 using namespace std;
 using namespace ci;
@@ -27,10 +26,10 @@ using namespace ci::app;
 TextRibbon::TextRibbon()
 : mCol(Color::black()), mTextCol(Color::black())
 {
-	mUserFontM = Font( loadResource( BOLD ), 35 );
-	mUserFontXL = Font( loadResource( BOLD ), 35 );
-	mTagFontM = Font( loadResource( LOVELICA ), 40 );
-	mTagFontXL = Font( loadResource( BOLD ), 90 );
+	mUserFontM = Font( loadResource( ADELLE_SANS_REGULAR ), 35 );
+	mUserFontXL = Font( loadResource( ADELLE_SANS_REGULAR ), 35 );
+	mTagFontM = Font( loadResource( ADELLE_SANS_BOLD ), 40 );
+	mTagFontXL = Font( loadResource( ADELLE_SANS_BOLD ), 90 );
 	//	mTagFont = Font( loadResource( RES_OPEN_SANS ), 20 );
 
 	auto text_bg_img = loadImage( loadAsset("text_background.png") );
@@ -105,12 +104,12 @@ void TextRibbon::makeText( Font mUserFont, Font mTagFont )
 	if( ! mTag.empty() ) {
 
 		mTagBox = TextBox().alignment(TextBox::CENTER).font(mTagFont).size(ivec2( WINDOW_WIDTH , TextBox::GROW)).text(mTag);
-		mTagBox.setColor(ColorA(mTextCol.r, mTextCol.g, mTextCol.b, 1));
+		mTagBox.setColor(ColorA(mTextCol.r, mTextCol.g, mTextCol.b, 1.0f));
 		mTagBox.setBackgroundColor(ColorA(0, 0, 0, 0));
 		mTagTex = gl::Texture::create( mTagBox.render() );
 	}
 
-	mUserBox = TextBox().alignment( TextBox::CENTER ).font( mUserFont ).size( ivec2( WINDOW_WIDTH-20, TextBox::GROW ) ).text( mUser );
+	mUserBox = TextBox().alignment( TextBox::CENTER ).font( mUserFont ).size( ivec2( WINDOW_WIDTH-(tri_height*5), TextBox::GROW ) ).text( mUser );
 
 	mUserBox.setColor(ColorA(mTextCol.r, mTextCol.g, mTextCol.b, 1));
 	mUserBox.setBackgroundColor( ColorA( 0, 0, 0, 0) );

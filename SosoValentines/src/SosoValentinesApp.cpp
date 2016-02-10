@@ -28,8 +28,8 @@ static const bool PREMULT = false;
 static const string TAG = "";		// Instagram tag to search for
 int globalCount = 0;
 string	searchTag;
-Font mUserFontM = Font( loadResource( BOLD ), 35 );
-Font mTagFontM = Font( loadResource( BOLD ), 35 );
+Font mUserFontM = Font( loadResource( ADELLE_SANS_REGULAR ), 35 );
+Font mTagFontM = Font( loadResource( ADELLE_SANS_BOLD ), 35 );
 
 class SosoValentinesApp : public App {
 public:
@@ -147,10 +147,10 @@ void SosoValentinesApp::setup()
 		// Instagram stream
 		if(globalCount%2 == 0){
 			//		mInstaStream = make_shared<InstagramStream>( "sweetheartscandy", CLIENT_ID );// Image stream in a particular area
-			searchTag = "sosolimited";
+			searchTag = "Sweetheartscandy";
 		} else {
 			//		mInstaStream = make_shared<InstagramStream>( "valentinesday", CLIENT_ID );// Image stream in a particular area
-			searchTag = "sosolimited";
+			searchTag = "Sweetheartscandy";
 		}
 		mInstaStream = make_shared<InstagramStream>( searchTag, CLIENT_ID );// Image stream in a particular area
 	}

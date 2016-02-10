@@ -26,6 +26,8 @@
 		E00437551C63B5C1004CB782 /* Lovelica.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E00437541C63B5C1004CB782 /* Lovelica.ttf */; };
 		E00437571C63B857004CB782 /* TrianglePiece.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E00437561C63B857004CB782 /* TrianglePiece.cpp */; };
 		E0111B351C6A78C90004BAE0 /* NewsGothicStd.otf in Resources */ = {isa = PBXBuildFile; fileRef = E0111B341C6A78C90004BAE0 /* NewsGothicStd.otf */; };
+		E0111B381C6BB9E40004BAE0 /* AdelleSans_Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = E0111B361C6BB9E40004BAE0 /* AdelleSans_Bold.otf */; };
+		E0111B391C6BB9E40004BAE0 /* AdelleSans_Regular.otf in Resources */ = {isa = PBXBuildFile; fileRef = E0111B371C6BB9E40004BAE0 /* AdelleSans_Regular.otf */; };
 		E01A60CC1C59828300A1EA97 /* Asap-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E01A60C91C59828300A1EA97 /* Asap-Regular.ttf */; };
 		E01A60CD1C59828300A1EA97 /* Icon.png in Resources */ = {isa = PBXBuildFile; fileRef = E01A60CA1C59828300A1EA97 /* Icon.png */; };
 		E01A60CE1C59828300A1EA97 /* Kreon-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E01A60CB1C59828300A1EA97 /* Kreon-Bold.ttf */; };
@@ -59,6 +61,8 @@
 		E00437541C63B5C1004CB782 /* Lovelica.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Lovelica.ttf; path = ../resources/Lovelica.ttf; sourceTree = "<group>"; };
 		E00437561C63B857004CB782 /* TrianglePiece.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TrianglePiece.cpp; path = ../src/TrianglePiece.cpp; sourceTree = "<group>"; };
 		E0111B341C6A78C90004BAE0 /* NewsGothicStd.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = NewsGothicStd.otf; path = ../resources/NewsGothicStd.otf; sourceTree = "<group>"; };
+		E0111B361C6BB9E40004BAE0 /* AdelleSans_Bold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = AdelleSans_Bold.otf; path = ../resources/AdelleSans_Bold.otf; sourceTree = "<group>"; };
+		E0111B371C6BB9E40004BAE0 /* AdelleSans_Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = AdelleSans_Regular.otf; path = ../resources/AdelleSans_Regular.otf; sourceTree = "<group>"; };
 		E01A60C51C59824500A1EA97 /* InstagramStream.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = InstagramStream.h; path = ../include/InstagramStream.h; sourceTree = "<group>"; };
 		E01A60C61C59824500A1EA97 /* Resources.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = ../include/Resources.h; sourceTree = "<group>"; };
 		E01A60C71C59824500A1EA97 /* TextRibbon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TextRibbon.h; path = ../include/TextRibbon.h; sourceTree = "<group>"; };
@@ -176,6 +180,8 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				E0111B361C6BB9E40004BAE0 /* AdelleSans_Bold.otf */,
+				E0111B371C6BB9E40004BAE0 /* AdelleSans_Regular.otf */,
 				E0111B341C6A78C90004BAE0 /* NewsGothicStd.otf */,
 				E00437541C63B5C1004CB782 /* Lovelica.ttf */,
 				E01A60C91C59828300A1EA97 /* Asap-Regular.ttf */,
@@ -261,9 +267,11 @@
 				E01A60CD1C59828300A1EA97 /* Icon.png in Resources */,
 				E00437551C63B5C1004CB782 /* Lovelica.ttf in Resources */,
 				E01A60CE1C59828300A1EA97 /* Kreon-Bold.ttf in Resources */,
+				E0111B391C6BB9E40004BAE0 /* AdelleSans_Regular.otf in Resources */,
 				09E3BCC897A44AC78648D328 /* CinderApp.icns in Resources */,
 				E01A60CC1C59828300A1EA97 /* Asap-Regular.ttf in Resources */,
 				E0111B351C6A78C90004BAE0 /* NewsGothicStd.otf in Resources */,
+				E0111B381C6BB9E40004BAE0 /* AdelleSans_Bold.otf in Resources */,
 				A264A9211C584EAA00C9455F /* assets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

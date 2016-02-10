@@ -142,8 +142,8 @@ void InstagramStream::serviceGrams(string url)
 			}
 			catch( ci::Exception &exc ) {
 				CI_LOG_W( "exception caught, what: " << exc.what() );
-				console() << queryResult << endl;
-				console() << nextQueryString << endl;
+//				console() << queryResult << endl;
+//				console() << nextQueryString << endl;
 
 				// check if it's a 420 error
 				if(queryResult.getChild("meta").getChild("code").getValue() == "420"){

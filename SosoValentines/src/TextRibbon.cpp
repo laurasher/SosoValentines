@@ -67,8 +67,6 @@ void TextRibbon::update( string user, string mSearchTag, Font mUserFont, Font mT
 		}
 	}
 
-	console()<<mTrimTag<<endl;
-	//	mUser = user;
 	mUser = mTrimTag;
 
 

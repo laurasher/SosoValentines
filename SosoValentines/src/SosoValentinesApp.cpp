@@ -25,14 +25,16 @@ static const string CLIENT_ID = "def20410b5134f7d9b828668775aee4a";
 
 static const bool PREMULT = false;
 
+// Search terms
 int globalCount = 1;
-std::string									searchTag;
-std::string									last_searchTag;
+std::string	searchTag;
+std::string	tagDictionary[] = {"Sweetheartscandy","Valentinesday","Secretadmirer","Boxofchocolates","February14","Bemyvalentine"};
 static const string TAG = "";		// Instagram tag to search for
 int globalCount = 0;
-string	searchTag;
 Font mUserFontM = Font( loadResource( ADELLE_SANS_REGULAR ), 30 );
 Font mTagFontM = Font( loadResource( ADELLE_SANS_BOLD ), 30 );
+
+
 
 class SosoValentinesApp : public App {
 public:
@@ -97,8 +99,8 @@ private:
 	vec2 start;
 
 	// mouse vars
-	vec2 mousePos;
-	std::vector<vec2> mousePoints;
+	vec2												mousePos;
+	std::vector<vec2>						mousePoints;
 
 };
 
@@ -144,7 +146,7 @@ void SosoValentinesApp::setup()
 
 	// Image stream of a particular tag
 
-		searchTag = "Sweetheartscandy";
+		searchTag = tagDictionary[0];
 		mInstaStream = make_shared<InstagramStream>( searchTag, CLIENT_ID );
 
 	continueCycle();
@@ -507,13 +509,21 @@ void SosoValentinesApp::mirrorOut()
 {
 	 // Instagram stream with different hashtag
 		 if(globalCount%5 == 0){
-			 if(searchTag == "Valentinesday"){
-				 searchTag = "Sweetheartscandy";
-			 } else {
-				 searchTag = "Valentinesday";
+			 for (int i=0; i<5; i++) {
+				 if (searchTag == tagDictionary[i]){
+					 if(i==4){
+						searchTag = tagDictionary[0];
+						console()<<searchTag<<endl;
+						break;
+					 }
+					 else{
+						searchTag = tagDictionary[i+1];
+						console()<<searchTag<<endl;
+						break;
+					 }
+				 }
 			 }
 			mInstaStream = make_shared<InstagramStream>( searchTag, CLIENT_ID );
-			console()<<globalCount<<endl;
 		 }
 	continueCycle();
 	globalCount++;

@@ -30,7 +30,6 @@ int globalCount = 1;
 std::string	searchTag;
 std::string	tagDictionary[] = {"Sweetheartscandy","Valentinesday","Secretadmirer","Boxofchocolates","February14","Bemyvalentine"};
 static const string TAG = "";		// Instagram tag to search for
-int globalCount = 0;
 Font mUserFontM = Font( loadResource( ADELLE_SANS_REGULAR ), 30 );
 Font mTagFontM = Font( loadResource( ADELLE_SANS_BOLD ), 30 );
 
